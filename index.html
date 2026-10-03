@@ -1,56 +1,399 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#000000"><meta name="description" content="شاهرخ؛ طراحی و ساخت تجهیزات حرفه‌ای برای فضاهای کاری صنعتی.">
-<title>شاهرخ | تجهیزات حرفه‌ای فضای کار</title>
-<link rel="icon" type="image/png" href="assets/images/brand/shahrokh-logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/reset.css"><link rel="stylesheet" href="assets/css/variables.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/layout.css"><link rel="stylesheet" href="assets/css/sections.css"><link rel="stylesheet" href="assets/css/responsive.css">
-</head>
-<body>
-<a class="skip-link" href="#main">پرش به محتوای اصلی</a><div class="grain" aria-hidden="true"></div>
-<header class="site-header" data-header><a class="brand-lockup" href="#top" aria-label="صفحه اصلی شاهرخ"><img src="assets/images/brand/shahrokh-logo-light.png" alt="نشان تجاری شاهرخ" width="504" height="155"></a><nav class="desktop-nav" aria-label="ناوبری اصلی"><a href="#products">محصولات</a><a href="#about">درباره شاهرخ</a><a href="#capabilities">توانمندی‌ها</a><a href="#contact">تماس با ما</a></nav><a class="header-cta" href="#products">مشاهده محصولات <span aria-hidden="true">↗</span></a><button class="header-search" type="button" aria-label="جست‌وجو">⌕</button><button class="menu-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button></header>
-<div class="mobile-menu" id="mobile-menu" aria-hidden="true"><div class="mobile-menu__inner"><p class="micro-label">ناوبری شاهرخ</p><nav aria-label="ناوبری موبایل"><a href="#products">محصولات <span>↗</span></a><a href="#about">درباره شاهرخ <span>↗</span></a><a href="#capabilities">توانمندی‌ها <span>↗</span></a><a href="#contact">تماس با ما <span>↗</span></a></nav><p class="mobile-menu__note">برای حرفه‌ای کار کردن، فضای حرفه‌ای لازم است.</p></div></div>
-<main id="main">
-<section class="hero scene-dark" id="top">
-  <div class="hero__grid" aria-hidden="true"></div>
-  <div class="hero__copy page-shell">
-    <div class="hero-product-code reveal"><span>WBG905</span><i></i></div>
-    <p class="kicker reveal">تجهیزات حرفه‌ای فضای کار</p>
-    <h1 class="hero__title reveal">برای کار<br><em>حرفه‌ای ساخته شده است.</em></h1>
-    <p class="hero__lead reveal">میز کار صنعتی WBG905؛ ترکیبی از استحکام، نظم و کارایی برای محیط‌های حرفه‌ای. طراحی شده تا ابزارها همیشه در دسترس باشند و تمرکز شما روی کار باقی بماند.</p>
-    <div class="hero-actions reveal"><a class="button button--red" href="#wbg-story">مشاهده محصول WBG905 <span aria-hidden="true">→</span></a><a class="video-button" href="#contact"><span class="video-button__icon" aria-hidden="true">▶</span> تماشای ویدئو</a></div>
-  </div>
-  <div class="hero__visual-wrap">
-    <div class="hero__media media-frame" data-media-slot="video-01">
-      <!-- ویدئوی نهایی: assets/videos/wbg905-hero.webm یا .mp4 را به‌عنوان source قرار دهید. -->
-      <video class="media-video" muted loop playsinline preload="none" poster="assets/images/ui/wbg905-hero-reference.webp" aria-label="ویدئوی معرفی WBG905"></video>
-      <div class="hero-image"></div>
-      <div class="media-placeholder"><div class="placeholder-lines" aria-hidden="true"></div><p class="media-placeholder__label">جایگاه ویدئوی معرفی محصول</p></div>
-      <div class="media-caption"><span class="signal-dot"></span> تصویر نهایی محصول به‌زودی</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="شاهرخ؛ طراحی و ساخت تجهیزات حرفه‌ای برای فضاهای کاری صنعتی."
+    />
+    <title>شاهرخ | تجهیزات حرفه‌ای فضای کار</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="assets/images/brand/shahrokh-logo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Vazirmatn:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/reset.css" />
+    <link rel="stylesheet" href="assets/css/variables.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/sections.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <link rel="stylesheet" href="assets/css/header-refinement.css" />
+    <link rel="stylesheet" href="assets/css/hero-fullscreen.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="site-header" data-header>
+      <a class="brand-lockup" href="#top" aria-label="صفحه اصلی شاهرخ"
+        ><img
+          src="assets/images/brand/shahrokh-logo-light.png"
+          alt="نشان تجاری شاهرخ"
+          width="504"
+          height="155"
+      /></a>
+      <nav class="desktop-nav" aria-label="ناوبری اصلی">
+        <a href="#products">محصولات</a><a href="#about">درباره شاهرخ</a
+        ><a href="#capabilities">توانمندی‌ها</a
+        ><a href="#contact">تماس با ما</a>
+      </nav>
+      <a class="header-cta" href="#products"
+        >مشاهده محصولات <span aria-hidden="true">↗</span></a
+      ><button class="header-search" type="button" aria-label="جست‌وجو">
+        ⌕</button
+      ><button
+        class="menu-toggle"
+        type="button"
+        aria-label="باز کردن منو"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span></span><span></span>
+      </button>
+    </header>
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+      <div class="mobile-menu__inner">
+        <p class="micro-label">ناوبری شاهرخ</p>
+        <nav aria-label="ناوبری موبایل">
+          <a href="#products">محصولات <span>↗</span></a
+          ><a href="#about">درباره شاهرخ <span>↗</span></a
+          ><a href="#capabilities">توانمندی‌ها <span>↗</span></a
+          ><a href="#contact">تماس با ما <span>↗</span></a>
+        </nav>
+        <p class="mobile-menu__note">
+          برای حرفه‌ای کار کردن، فضای حرفه‌ای لازم است.
+        </p>
+      </div>
     </div>
-    <div class="hero-stepper" aria-label="مراحل معرفی محصول"><span class="is-active">۰۱</span><span>۰۲</span><span>۰۳</span></div>
-  </div>
-  <div class="hero-features page-shell">
-    <div class="hero-feature"><span class="hero-feature__icon" aria-hidden="true">◇</span><div><strong>ساختار مقاوم</strong><small>مناسب استفاده صنعتی</small></div></div>
-    <div class="hero-feature"><span class="hero-feature__icon" aria-hidden="true">⊞</span><div><strong>طراحی ماژولار</strong><small>قابل توسعه و شخصی‌سازی</small></div></div>
-    <div class="hero-feature"><span class="hero-feature__icon" aria-hidden="true">⚙</span><div><strong>دسترسی بهتر</strong><small>نظم بیشتر در محیط کار</small></div></div>
-  </div>
-  <div class="hero__foot page-shell"><span>کمی پایین‌تر بروید</span><i></i><span>↓</span></div>
-</section>
-<section class="brand-intro scene-light" id="about"><div class="page-shell brand-intro__layout"><p class="section-marker">۰۲ / درباره شاهرخ</p><div class="brand-intro__body"><h2 class="display-heading">محیط کار،<br><em>بخشی از کار است.</em></h2><p class="body-lead">شاهرخ برای محیط‌هایی طراحی می‌کند که در آن‌ها کیفیت، نظم و جدیت فقط شعار نیست؛ بخشی از هر روز کاری است.</p></div><div class="brand-intro__aside"><span>ش</span><p>طراحی مهندسی‌محور برای فضاهای کاری صنعتی و حرفه‌ای.</p></div></div></section>
-<section class="wbg-story scene-dark" id="wbg-story"><div class="wbg-story__sticky"><div class="page-shell story-head"><p class="section-marker">۰۳ / محصول شاخص</p><div><p class="kicker kicker--red">WBG905 / میز کار صنعتی</p><h2 class="display-heading display-heading--light">شروعِ<br><em>یک شیفت بهتر.</em></h2></div><p class="story-head__meta">تصویر محصول<br>در انتظار رندر نهایی</p></div><div class="story-media media-frame"><div class="placeholder-lines" aria-hidden="true"></div><div class="product-drawing product-drawing--large" aria-hidden="true"><span></span><i></i><b></b><strong></strong></div><p class="media-placeholder__code">WBG905</p></div><div class="story-progress" aria-hidden="true"><span></span></div></div><div class="story-panels page-shell" aria-live="polite"><article class="story-panel is-active" data-story-panel="0"><span>۰۱</span><h3>فضای کار، منظم‌تر</h3><p>وقتی هر چیز جای خود را دارد، تمرکز می‌تواند روی کار بماند.</p></article><article class="story-panel" data-story-panel="1"><span>۰۲</span><h3>ابزار، در دسترس‌تر</h3><p>ساختار روشن، حرکت بین وظایف را ساده‌تر و طبیعی‌تر می‌کند.</p></article><article class="story-panel" data-story-panel="2"><span>۰۳</span><h3>برای محیط حرفه‌ای</h3><p>یک پایه‌ی جدی برای کار روزمره، بدون ادعای اضافه.</p></article></div></section>
-<section class="ecosystem scene-light" id="products"><div class="page-shell"><div class="ecosystem__head"><p class="section-marker">۰۴ / خانواده محصولات</p><h2 class="display-heading">یک سیستم،<br><em>چند مسیر کاری.</em></h2><p class="body-copy">محصولات شاهرخ برای ساختن محیط‌های کاری منسجم کنار هم قرار می‌گیرند.</p></div><div class="product-list"><a class="product-line" href="#contact"><span class="product-line__number">۰۱</span><span class="product-line__title">میزهای کار صنعتی</span><span class="product-line__note">برای مونتاژ، تعمیر و کار فنی</span><span class="product-line__arrow">↗</span></a><a class="product-line" href="#contact"><span class="product-line__number">۰۲</span><span class="product-line__title">کمد و نگهداری ابزار</span><span class="product-line__note">نظم برای ابزارهای هر روز</span><span class="product-line__arrow">↗</span></a><a class="product-line" href="#contact"><span class="product-line__number">۰۳</span><span class="product-line__title">تجهیزات فضای کارگاهی</span><span class="product-line__note">سیستم‌هایی برای یک محیط کامل</span><span class="product-line__arrow">↗</span></a></div></div></section>
-<section class="motion-story scene-red"><div class="page-shell motion-story__layout"><div class="motion-story__copy"><p class="section-marker">۰۵ / در حرکت</p><h2 class="display-heading display-heading--light">نظم در<br><em>جزئیات است.</em></h2><p class="body-copy body-copy--light">حرکت درست بین ابزار و وظیفه، از فضایی شروع می‌شود که برای کار طراحی شده باشد.</p></div><div class="motion-frame media-frame" data-media-slot="video-02"><!-- ویدئوی نهایی: assets/videos/workspace-story.webm یا .mp4 --><video class="media-video" muted loop playsinline preload="none" aria-label="ویدئوی داستان فضای کار"></video><div class="media-placeholder media-placeholder--light"><div class="placeholder-lines" aria-hidden="true"></div><div class="play-mark" aria-hidden="true">▶</div><p class="media-placeholder__label">جایگاه ویدئوی دوم</p></div></div></div></section>
-<section class="capabilities scene-light" id="capabilities"><div class="page-shell capabilities__layout"><div class="capabilities__intro"><p class="section-marker">۰۶ / توانمندی‌ها</p><h2 class="display-heading">کمتر دیده شوید.<br><em>بیشتر کار کنید.</em></h2></div><div class="capabilities__list"><article class="capability"><span>۰۱</span><div><h3>طراحی برای محیط صنعتی</h3><p>راه‌حل‌هایی که از واقعیت کار شروع می‌شوند، نه از تزئینات.</p></div></article><article class="capability"><span>۰۲</span><div><h3>نظم و دسترسی بهتر</h3><p>چیدمانی روشن برای کاهش اصطکاک در مسیر کارهای روزانه.</p></div></article><article class="capability"><span>۰۳</span><div><h3>ساختار قابل توسعه</h3><p>پایه‌ای منعطف برای نیازهایی که در طول زمان تغییر می‌کنند.</p></div></article><article class="capability"><span>۰۴</span><div><h3>نگاه مهندسی</h3><p>ترکیب عملکرد، تناسب و کیفیت در یک زبان بصری منسجم.</p></div></article></div></div></section>
-<section class="detail-story scene-dark"><div class="page-shell detail-story__layout"><div class="detail-story__media media-frame" data-media-slot="video-03"><!-- ویدئوی نهایی: assets/videos/detail-story.webm یا .mp4 --><video class="media-video" muted loop playsinline preload="none" aria-label="ویدئوی جزئیات محصول"></video><div class="media-placeholder"><div class="placeholder-lines" aria-hidden="true"></div><div class="detail-drawing" aria-hidden="true"></div><p class="media-placeholder__label">جایگاه ویدئوی سوم</p></div></div><div class="detail-story__copy"><p class="section-marker">۰۷ / جزئیات</p><h2 class="display-heading display-heading--light">آماده برای<br><em>شیفت بعدی.</em></h2><p class="body-copy body-copy--light">وقتی محیط درست حل شده باشد، کار می‌تواند در مرکز توجه بماند.</p></div></div></section>
-<section class="credibility scene-red"><div class="page-shell credibility__layout"><p class="section-marker">۰۸ / شاهرخ</p><div><h2 class="display-heading display-heading--light">برای کسانی که<br>کار را <em>جدی می‌گیرند.</em></h2><p class="body-lead body-lead--light">یک تجربه‌ی حرفه‌ای از برندی که با زبان محصولش صحبت می‌کند.</p></div><div class="credibility__mark"><img src="assets/images/brand/shahrokh-logo-light.png" alt="نشان تجاری شاهرخ" width="504" height="155"><span>طراحی برای حرفه‌ای‌ها</span></div></div></section>
-<section class="final-cta scene-dark" id="contact"><div class="page-shell final-cta__inner"><p class="section-marker">۰۹ / قدم بعدی</p><h2 class="display-heading display-heading--light">فضای کاری<br><em>بعدی‌تان کجاست؟</em></h2><p class="body-copy body-copy--light">برای شناخت محصولات و راه‌حل‌های شاهرخ با ما در تماس باشید.</p><a class="button button--outline" href="mailto:info@shahrokhtools.com">تماس با شاهرخ <span aria-hidden="true">↗</span></a></div></section>
-</main>
-<footer class="site-footer scene-dark"><div class="page-shell site-footer__inner"><img src="assets/images/brand/shahrokh-logo-light.png" alt="شاهرخ" width="504" height="155"><p>تجهیزات حرفه‌ای فضای کار</p><a href="mailto:info@shahrokhtools.com">info@shahrokhtools.com</a><small>© شاهرخ — تمامی حقوق محفوظ است.</small></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script><script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script><script src="assets/js/animations.js"></script><script src="assets/js/main.js"></script>
-</body></html>
-
-
+    <main id="main">
+      <section class="hero scene-dark" id="top">
+        <div class="hero__grid" aria-hidden="true"></div>
+        <div class="hero__copy page-shell">
+          <div class="hero-product-code reveal"><span>WBG905</span><i></i></div>
+          <p class="kicker reveal">تجهیزات حرفه‌ای فضای کار</p>
+          <h1 class="hero__title reveal">
+            <span>برای کار حرفه‌ای</span><em>ساخته شده است</em>
+          </h1>
+          <p class="hero__lead reveal">
+            میز کار صنعتی WBG905؛ ترکیبی از استحکام، نظم و کارایی برای محیط‌های
+            حرفه‌ای. طراحی شده تا ابزارها همیشه در دسترس باشند و تمرکز شما روی
+            کار باقی بماند.
+          </p>
+          <div class="hero-actions reveal">
+            <a class="button button--red" href="#wbg-story"
+              >مشاهده محصول WBG905 <span aria-hidden="true">←</span></a
+            ><a class="video-button" href="#contact"
+              ><span class="video-button__icon" aria-hidden="true">▶</span>
+              تماشای ویدئو</a
+            >
+          </div>
+        </div>
+        <div class="hero__visual-wrap">
+          <div class="hero__media media-frame" data-media-slot="video-01">
+            <!-- ویدئوی نهایی: assets/videos/wbg905-hero.webm یا .mp4 را به‌عنوان source قرار دهید. -->
+            <video
+              class="media-video"
+              muted
+              loop
+              playsinline
+              preload="none"
+              poster="assets/images/ui/wbg905-hero-reference.webp"
+              aria-label="ویدئوی معرفی WBG905"
+            ></video>
+            <div class="hero-image"></div>
+            <div class="media-placeholder">
+              <div class="placeholder-lines" aria-hidden="true"></div>
+              <p class="media-placeholder__label">جایگاه ویدئوی معرفی محصول</p>
+            </div>
+            <div class="media-caption">
+              <span class="signal-dot"></span> تصویر نهایی محصول به‌زودی
+            </div>
+          </div>
+          <div class="hero-stepper" aria-label="مراحل معرفی محصول">
+            <span class="is-active">۰۱</span><span>۰۲</span><span>۰۳</span>
+          </div>
+        </div>
+        <div class="hero-features page-shell">
+          <div class="hero-feature">
+            <span class="hero-feature__icon" aria-hidden="true">◇</span>
+            <div>
+              <strong>ساختار مقاوم</strong><small>مناسب استفاده صنعتی</small>
+            </div>
+          </div>
+          <div class="hero-feature">
+            <span class="hero-feature__icon" aria-hidden="true">⊞</span>
+            <div>
+              <strong>طراحی ماژولار</strong
+              ><small>قابل توسعه و شخصی‌سازی</small>
+            </div>
+          </div>
+          <div class="hero-feature">
+            <span class="hero-feature__icon" aria-hidden="true">⚙</span>
+            <div>
+              <strong>دسترسی بهتر</strong><small>نظم بیشتر در محیط کار</small>
+            </div>
+          </div>
+        </div>
+        <div class="hero__foot page-shell">
+          <span>کمی پایین‌تر بروید</span><i></i><span>↓</span>
+        </div>
+      </section>
+      <section class="brand-intro scene-light" id="about">
+        <div class="page-shell brand-intro__layout">
+          <p class="section-marker">۰۲ / درباره شاهرخ</p>
+          <div class="brand-intro__body">
+            <h2 class="display-heading">
+              محیط کار،<br /><em>بخشی از کار است.</em>
+            </h2>
+            <p class="body-lead">
+              شاهرخ برای محیط‌هایی طراحی می‌کند که در آن‌ها کیفیت، نظم و جدیت
+              فقط شعار نیست؛ بخشی از هر روز کاری است.
+            </p>
+          </div>
+          <div class="brand-intro__aside">
+            <span>ش</span>
+            <p>طراحی مهندسی‌محور برای فضاهای کاری صنعتی و حرفه‌ای.</p>
+          </div>
+        </div>
+      </section>
+      <section class="wbg-story scene-dark" id="wbg-story">
+        <div class="wbg-story__sticky">
+          <div class="page-shell story-head">
+            <p class="section-marker">۰۳ / محصول شاخص</p>
+            <div>
+              <p class="kicker kicker--red">WBG905 / میز کار صنعتی</p>
+              <h2 class="display-heading display-heading--light">
+                شروعِ<br /><em>یک شیفت بهتر.</em>
+              </h2>
+            </div>
+            <p class="story-head__meta">
+              تصویر محصول<br />در انتظار رندر نهایی
+            </p>
+          </div>
+          <div class="story-media media-frame">
+            <div class="placeholder-lines" aria-hidden="true"></div>
+            <div
+              class="product-drawing product-drawing--large"
+              aria-hidden="true"
+            >
+              <span></span><i></i><b></b><strong></strong>
+            </div>
+            <p class="media-placeholder__code">WBG905</p>
+          </div>
+          <div class="story-progress" aria-hidden="true"><span></span></div>
+        </div>
+        <div class="story-panels page-shell" aria-live="polite">
+          <article class="story-panel is-active" data-story-panel="0">
+            <span>۰۱</span>
+            <h3>فضای کار، منظم‌تر</h3>
+            <p>وقتی هر چیز جای خود را دارد، تمرکز می‌تواند روی کار بماند.</p>
+          </article>
+          <article class="story-panel" data-story-panel="1">
+            <span>۰۲</span>
+            <h3>ابزار، در دسترس‌تر</h3>
+            <p>ساختار روشن، حرکت بین وظایف را ساده‌تر و طبیعی‌تر می‌کند.</p>
+          </article>
+          <article class="story-panel" data-story-panel="2">
+            <span>۰۳</span>
+            <h3>برای محیط حرفه‌ای</h3>
+            <p>یک پایه‌ی جدی برای کار روزمره، بدون ادعای اضافه.</p>
+          </article>
+        </div>
+      </section>
+      <section class="ecosystem scene-light" id="products">
+        <div class="page-shell">
+          <div class="ecosystem__head">
+            <p class="section-marker">۰۴ / خانواده محصولات</p>
+            <h2 class="display-heading">
+              یک سیستم،<br /><em>چند مسیر کاری.</em>
+            </h2>
+            <p class="body-copy">
+              محصولات شاهرخ برای ساختن محیط‌های کاری منسجم کنار هم قرار
+              می‌گیرند.
+            </p>
+          </div>
+          <div class="product-list">
+            <a class="product-line" href="#contact"
+              ><span class="product-line__number">۰۱</span
+              ><span class="product-line__title">میزهای کار صنعتی</span
+              ><span class="product-line__note"
+                >برای مونتاژ، تعمیر و کار فنی</span
+              ><span class="product-line__arrow">↗</span></a
+            ><a class="product-line" href="#contact"
+              ><span class="product-line__number">۰۲</span
+              ><span class="product-line__title">کمد و نگهداری ابزار</span
+              ><span class="product-line__note">نظم برای ابزارهای هر روز</span
+              ><span class="product-line__arrow">↗</span></a
+            ><a class="product-line" href="#contact"
+              ><span class="product-line__number">۰۳</span
+              ><span class="product-line__title">تجهیزات فضای کارگاهی</span
+              ><span class="product-line__note"
+                >سیستم‌هایی برای یک محیط کامل</span
+              ><span class="product-line__arrow">↗</span></a
+            >
+          </div>
+        </div>
+      </section>
+      <section class="motion-story scene-red">
+        <div class="page-shell motion-story__layout">
+          <div class="motion-story__copy">
+            <p class="section-marker">۰۵ / در حرکت</p>
+            <h2 class="display-heading display-heading--light">
+              نظم در<br /><em>جزئیات است.</em>
+            </h2>
+            <p class="body-copy body-copy--light">
+              حرکت درست بین ابزار و وظیفه، از فضایی شروع می‌شود که برای کار
+              طراحی شده باشد.
+            </p>
+          </div>
+          <div class="motion-frame media-frame" data-media-slot="video-02">
+            <!-- ویدئوی نهایی: assets/videos/workspace-story.webm یا .mp4 --><video
+              class="media-video"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-label="ویدئوی داستان فضای کار"
+            ></video>
+            <div class="media-placeholder media-placeholder--light">
+              <div class="placeholder-lines" aria-hidden="true"></div>
+              <div class="play-mark" aria-hidden="true">▶</div>
+              <p class="media-placeholder__label">جایگاه ویدئوی دوم</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="capabilities scene-light" id="capabilities">
+        <div class="page-shell capabilities__layout">
+          <div class="capabilities__intro">
+            <p class="section-marker">۰۶ / توانمندی‌ها</p>
+            <h2 class="display-heading">
+              کمتر دیده شوید.<br /><em>بیشتر کار کنید.</em>
+            </h2>
+          </div>
+          <div class="capabilities__list">
+            <article class="capability">
+              <span>۰۱</span>
+              <div>
+                <h3>طراحی برای محیط صنعتی</h3>
+                <p>راه‌حل‌هایی که از واقعیت کار شروع می‌شوند، نه از تزئینات.</p>
+              </div>
+            </article>
+            <article class="capability">
+              <span>۰۲</span>
+              <div>
+                <h3>نظم و دسترسی بهتر</h3>
+                <p>چیدمانی روشن برای کاهش اصطکاک در مسیر کارهای روزانه.</p>
+              </div>
+            </article>
+            <article class="capability">
+              <span>۰۳</span>
+              <div>
+                <h3>ساختار قابل توسعه</h3>
+                <p>پایه‌ای منعطف برای نیازهایی که در طول زمان تغییر می‌کنند.</p>
+              </div>
+            </article>
+            <article class="capability">
+              <span>۰۴</span>
+              <div>
+                <h3>نگاه مهندسی</h3>
+                <p>ترکیب عملکرد، تناسب و کیفیت در یک زبان بصری منسجم.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="detail-story scene-dark">
+        <div class="page-shell detail-story__layout">
+          <div
+            class="detail-story__media media-frame"
+            data-media-slot="video-03"
+          >
+            <!-- ویدئوی نهایی: assets/videos/detail-story.webm یا .mp4 --><video
+              class="media-video"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-label="ویدئوی جزئیات محصول"
+            ></video>
+            <div class="media-placeholder">
+              <div class="placeholder-lines" aria-hidden="true"></div>
+              <div class="detail-drawing" aria-hidden="true"></div>
+              <p class="media-placeholder__label">جایگاه ویدئوی سوم</p>
+            </div>
+          </div>
+          <div class="detail-story__copy">
+            <p class="section-marker">۰۷ / جزئیات</p>
+            <h2 class="display-heading display-heading--light">
+              آماده برای<br /><em>شیفت بعدی.</em>
+            </h2>
+            <p class="body-copy body-copy--light">
+              وقتی محیط درست حل شده باشد، کار می‌تواند در مرکز توجه بماند.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="credibility scene-red">
+        <div class="page-shell credibility__layout">
+          <p class="section-marker">۰۸ / شاهرخ</p>
+          <div>
+            <h2 class="display-heading display-heading--light">
+              برای کسانی که<br />کار را <em>جدی می‌گیرند.</em>
+            </h2>
+            <p class="body-lead body-lead--light">
+              یک تجربه‌ی حرفه‌ای از برندی که با زبان محصولش صحبت می‌کند.
+            </p>
+          </div>
+          <div class="credibility__mark">
+            <img
+              src="assets/images/brand/shahrokh-logo-light.png"
+              alt="نشان تجاری شاهرخ"
+              width="504"
+              height="155"
+            /><span>طراحی برای حرفه‌ای‌ها</span>
+          </div>
+        </div>
+      </section>
+      <section class="final-cta scene-dark" id="contact">
+        <div class="page-shell final-cta__inner">
+          <p class="section-marker">۰۹ / قدم بعدی</p>
+          <h2 class="display-heading display-heading--light">
+            فضای کاری<br /><em>بعدی‌تان کجاست؟</em>
+          </h2>
+          <p class="body-copy body-copy--light">
+            برای شناخت محصولات و راه‌حل‌های شاهرخ با ما در تماس باشید.
+          </p>
+          <a class="button button--outline" href="mailto:info@shahrokhtools.com"
+            >تماس با شاهرخ <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer scene-dark">
+      <div class="page-shell site-footer__inner">
+        <img
+          src="assets/images/brand/shahrokh-logo-light.png"
+          alt="شاهرخ"
+          width="504"
+          height="155"
+        />
+        <p>تجهیزات حرفه‌ای فضای کار</p>
+        <a href="mailto:info@shahrokhtools.com">info@shahrokhtools.com</a
+        ><small>© شاهرخ — تمامی حقوق محفوظ است.</small>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="assets/js/animations.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
