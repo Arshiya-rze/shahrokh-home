@@ -18,6 +18,7 @@ python3 -m http.server 8080
 - لوگوی استفاده‌شده از صفحه‌ی لوگوتایپ برندبوک استخراج شده و در `assets/images/brand/` قرار دارد.
 - فونت برند `B Nazanin` در ابتدای stack قرار دارد و `Vazirmatn` fallback وب آن است تا جایگزینی بعدی ساده باشد.
 - فایل مدل واقعی `WBG905.STEP` در `assets/models/` نگهداری می‌شود.
+- `assets/images/ui/wbg905-hero-reference.webp` برش موقت از UI ارائه‌شده است و باید بعداً با رندر نهایی محصول جایگزین شود.
 
 ## ساختار
 
