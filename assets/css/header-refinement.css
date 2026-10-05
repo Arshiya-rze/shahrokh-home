@@ -1,3 +1,29 @@
+/* The global header remains independent from the pinned Hero. */
+.site-header {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 60;
+  background: transparent;
+  border-block-end-color: transparent;
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+  transition:
+    background-color .45s ease,
+    border-color .45s ease,
+    -webkit-backdrop-filter .45s ease,
+    backdrop-filter .45s ease;
+}
+
+.site-header.is-sticky-context {
+  background-color: rgba(10, 10, 10, .92);
+  border-block-end-color: rgba(255, 255, 255, .12);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.reduced-motion .site-header { transition: none; }
+
 @media (min-width: 700px) {
   .site-header {
     justify-content: flex-start;

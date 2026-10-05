@@ -32,7 +32,7 @@
   <body>
     <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
     <div class="grain" aria-hidden="true"></div>
-    <header class="site-header" data-header>
+    <header class="site-header" data-header data-hero-header>
       <a class="brand-lockup" href="#top" aria-label="صفحه اصلی شاهرخ"
         ><img
           src="assets/images/brand/shahrokh-logo-light.png"
@@ -77,30 +77,49 @@
       </div>
     </div>
     <main id="main">
-      <section class="hero scene-dark" id="top">
+      <section class="hero scene-dark" id="top" data-hero>
         <div class="hero__grid" aria-hidden="true"></div>
         <div class="hero__copy page-shell">
-          <div class="hero-product-code reveal"><span>WBG905</span><i></i></div>
-          <p class="kicker reveal">تجهیزات حرفه‌ای فضای کار</p>
-          <h1 class="hero__title reveal">
-            <span>برای کار حرفه‌ای</span><em>ساخته شده است</em>
+          <div class="hero-product-code reveal" data-hero-label>
+            <span>WBG905</span><i></i>
+          </div>
+          <p class="kicker reveal" data-hero-kicker>تجهیزات حرفه‌ای فضای کار</p>
+          <h1 class="hero__title reveal" data-hero-title>
+            <span data-hero-title-line>برای کار حرفه‌ای</span>
+            <em data-hero-title-line>ساخته شده است</em>
           </h1>
-          <p class="hero__lead reveal">
+          <p class="hero__lead reveal" data-hero-description>
             میز کار صنعتی WBG905؛ ترکیبی از استحکام، نظم و کارایی برای محیط‌های
             حرفه‌ای. طراحی شده تا ابزارها همیشه در دسترس باشند و تمرکز شما روی
             کار باقی بماند.
           </p>
-          <div class="hero-actions reveal">
+          <div class="hero-actions reveal" data-hero-actions>
             <a class="button button--red" href="#wbg-story"
               >مشاهده محصول WBG905 <span aria-hidden="true">←</span></a
-            ><a class="video-button" href="#contact"
-              ><span class="video-button__icon" aria-hidden="true">▶</span>
-              <span class="video-button__label">تماشای ویدئو</span></a
+            ><button
+              class="video-button"
+              type="button"
+              data-video-placeholder
+              aria-describedby="hero-video-status"
             >
+              <span class="video-button__icon" aria-hidden="true">▶</span>
+              <span class="video-button__label">تماشای ویدئو</span>
+            </button>
           </div>
+          <p
+            class="hero-video-status"
+            id="hero-video-status"
+            role="status"
+            aria-live="polite"
+            hidden
+          ></p>
         </div>
         <div class="hero__visual-wrap">
-          <div class="hero__media media-frame" data-media-slot="video-01">
+          <div
+            class="hero__media media-frame"
+            data-media-slot="video-01"
+            data-hero-product
+          >
             <!-- ویدئوی نهایی: assets/videos/wbg905-hero.webm یا .mp4 را به‌عنوان source قرار دهید. -->
             <video
               class="media-video"
@@ -111,7 +130,7 @@
               poster="assets/images/ui/wbg905-hero-reference.webp"
               aria-label="ویدئوی معرفی WBG905"
             ></video>
-            <div class="hero-image"></div>
+            <div class="hero-image" data-hero-background></div>
             <div class="media-placeholder">
               <div class="placeholder-lines" aria-hidden="true"></div>
               <p class="media-placeholder__label">جایگاه ویدئوی معرفی محصول</p>
@@ -120,32 +139,46 @@
               <span class="signal-dot"></span> تصویر نهایی محصول به‌زودی
             </div>
           </div>
-          <div class="hero-stepper" aria-label="مراحل معرفی محصول">
-            <span class="is-active">۰۱</span><span>۰۲</span><span>۰۳</span>
+          <div class="hero-stepper" role="group" aria-label="روایت ویژگی‌های محصول">
+            <ol class="hero-stepper__list" data-hero-progress>
+              <li data-hero-step="1" data-hero-feature="1">
+                <span class="hero-stepper__marker" aria-hidden="true"></span>
+                <span class="hero-stepper__number">۰۱</span>
+                <span class="hero-stepper__label">نظم بیشتر</span>
+              </li>
+              <li data-hero-step="2" data-hero-feature="2">
+                <span class="hero-stepper__number">۰۲</span>
+                <span class="hero-stepper__label">دسترسی سریع</span>
+              </li>
+              <li data-hero-step="3" data-hero-feature="3">
+                <span class="hero-stepper__number">۰۳</span>
+                <span class="hero-stepper__label">طراحی ماژولار</span>
+              </li>
+            </ol>
           </div>
         </div>
-        <div class="hero-features page-shell">
-          <div class="hero-feature">
+        <div class="hero-features page-shell" data-hero-features>
+          <div class="hero-feature" data-hero-feature-item>
             <span class="hero-feature__icon" aria-hidden="true">◇</span>
             <div>
               <strong>ساختار مقاوم</strong><small>مناسب استفاده صنعتی</small>
             </div>
           </div>
-          <div class="hero-feature">
+          <div class="hero-feature" data-hero-feature-item>
             <span class="hero-feature__icon" aria-hidden="true">⊞</span>
             <div>
               <strong>طراحی ماژولار</strong
               ><small>قابل توسعه و شخصی‌سازی</small>
             </div>
           </div>
-          <div class="hero-feature">
+          <div class="hero-feature" data-hero-feature-item>
             <span class="hero-feature__icon" aria-hidden="true">⚙</span>
             <div>
               <strong>دسترسی بهتر</strong><small>نظم بیشتر در محیط کار</small>
             </div>
           </div>
         </div>
-        <div class="hero__foot page-shell">
+        <div class="hero__foot page-shell" data-hero-cue>
           <span>کمی پایین‌تر بروید</span><i></i><span>↓</span>
         </div>
       </section>
@@ -396,6 +429,7 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Observer.min.js"></script>
     <script src="assets/js/animations.js"></script>
     <script src="assets/js/main.js"></script>
   </body>
