@@ -10,28 +10,67 @@
   const header = document.querySelector("[data-header]");
   const progressList = hero.querySelector("[data-hero-progress]");
   const steps = gsap.utils.toArray("[data-hero-step]", hero);
-  const labels = steps.map((step) => step.querySelector(".hero-stepper__label"));
+  const stepLabels = steps.map((step) => step.querySelector(".hero-stepper__label"));
   const title = hero.querySelector("[data-hero-title]");
   const description = hero.querySelector("[data-hero-description]");
   const actions = hero.querySelector("[data-hero-actions]");
   const product = hero.querySelector("[data-hero-product]");
   const featureBar = hero.querySelector("[data-hero-features]");
   const cue = hero.querySelector("[data-hero-cue]");
+  const stepper = hero.querySelector(".hero-stepper");
+  const featureContent = hero.querySelector("[data-hero-feature-content]");
+  const featureNumber = hero.querySelector("[data-feature-number]");
+  const featureTitle = hero.querySelector("[data-feature-title]");
+  const featureDescription = hero.querySelector("[data-feature-description]");
+
+  const HERO_STATES = [
+    { index: 0, type: "initial", scale: 1 },
+    {
+      index: 1,
+      number: "01",
+      title: "نظم بیشتر",
+      description:
+        "چیدمان هدفمند ابزارها و تجهیزات، فضای کار را منظم‌تر می‌کند و دسترسی به بخش‌های موردنیاز را ساده‌تر می‌سازد.",
+      scale: 1.035,
+    },
+    {
+      index: 2,
+      number: "02",
+      title: "دسترسی سریع",
+      description:
+        "هر ابزار در جای مشخص خود قرار می‌گیرد تا مسیر کار روان‌تر باشد و تجهیزات همیشه در دسترس بمانند.",
+      scale: 1.055,
+    },
+    {
+      index: 3,
+      number: "03",
+      title: "طراحی ماژولار",
+      description:
+        "ساختار WBG905 برای ترکیب و توسعه بخش‌های مختلف طراحی شده تا فضای کار با نیازهای حرفه‌ای هماهنگ شود.",
+      scale: 1.07,
+    },
+  ];
+
+  const COOLDOWN_MS = 180;
+  const TRANSITION_DURATION = 0.74;
+  const GESTURE_IDLE_DELAY = 0.22;
 
   let currentHeroState = 0;
   let isAnimating = false;
-  let gestureArmed = true;
-  let gestureEnded = true;
+  let gestureReady = true;
+  let gestureSettled = true;
+  let animationFinished = true;
   let storyExited = false;
+  let storyExiting = false;
   let storyObserver;
-  let boundaryObserver;
   let storyTrigger;
-  let gestureArmTimer;
+  let activeTimeline;
+  let cooldownTimer;
+  let idleTimer;
+  let transitionId = 0;
+  let transitionFromState = 0;
 
-  const productScales = [1, 1.035, 1.055, 1.07];
-  const transitionDuration = 0.74;
-
-  function setProgressState(state) {
+  function updateProgress(state) {
     if (progressList) progressList.dataset.activeStep = String(state);
 
     steps.forEach((step, index) => {
@@ -42,170 +81,264 @@
     });
   }
 
-  function setInitialStoryVisuals() {
-    currentHeroState = 0;
-    hero.dataset.state = "0";
-    setProgressState(0);
-    gsap.set(labels, { autoAlpha: 0, y: 8 });
-    gsap.set(product, { scale: 1, transformOrigin: "38% 55%" });
-    gsap.set([title, featureBar, cue], { autoAlpha: 1, y: 0 });
-    gsap.set([description, actions], { autoAlpha: 1, y: 0 });
+  function renderFeature(state) {
+    const feature = HERO_STATES[state];
+    if (!featureContent) return;
+
+    if (state === 0) {
+      featureContent.setAttribute("aria-hidden", "true");
+      return;
+    }
+
+    featureNumber.textContent = `WBG905 / ${feature.number}`;
+    featureTitle.textContent = feature.title;
+    featureDescription.textContent = feature.description;
+    featureContent.setAttribute("aria-hidden", "false");
   }
 
-  function showHeroState(state) {
-    gsap.set(labels, { autoAlpha: 0, y: 8 });
-    if (state > 0 && labels[state - 1]) gsap.set(labels[state - 1], { autoAlpha: 1, y: 0 });
-    gsap.set(product, { scale: productScales[state], transformOrigin: "38% 55%" });
-    gsap.set(title, { autoAlpha: state === 0 ? 1 : 0.12, y: state === 0 ? 0 : -4 });
+  function setHeroVisualState(state) {
+    const feature = HERO_STATES[state];
+    currentHeroState = state;
+    hero.dataset.state = String(state);
+    updateProgress(state);
+    renderFeature(state);
+
+    gsap.set(stepLabels, { autoAlpha: 0, y: 8 });
+    if (state > 0 && stepLabels[state - 1]) {
+      gsap.set(stepLabels[state - 1], { autoAlpha: 1, y: 0 });
+    }
+    gsap.set(product, { scale: feature.scale, transformOrigin: "38% 55%" });
+    gsap.set(title, { autoAlpha: state === 0 ? 1 : 0.08, y: state === 0 ? 0 : -4 });
     gsap.set([description, actions, featureBar, cue], {
       autoAlpha: state === 0 ? 1 : 0,
       y: state === 0 ? 0 : 5,
     });
+    gsap.set(stepper, { autoAlpha: 1 });
   }
 
-  function scheduleGestureRearm(delay = 0.42) {
-    gestureArmTimer?.kill();
-    gestureArmTimer = gsap.delayedCall(delay, () => {
-      gestureEnded = true;
-      if (!isAnimating && !storyExited) gestureArmed = true;
+  function setInitialHeroState() {
+    setHeroVisualState(0);
+  }
+
+  function scheduleCooldown() {
+    cooldownTimer?.kill();
+    cooldownTimer = gsap.delayedCall(COOLDOWN_MS / 1000, () => {
+      cooldownTimer = undefined;
+      if (!storyExited && !storyExiting && animationFinished && gestureSettled) {
+        isAnimating = false;
+        gestureReady = true;
+      }
     });
   }
 
-  function markGestureEnded() {
-    gestureEnded = true;
-    scheduleGestureRearm();
+  function tryReleaseInteraction() {
+    if (animationFinished && gestureSettled && !storyExited && !storyExiting) {
+      scheduleCooldown();
+    }
   }
 
-  function finishTransition() {
-    isAnimating = false;
-    if (gestureEnded && !storyExited) gestureArmed = true;
+  function noteGestureActivity() {
+    gestureSettled = false;
+    idleTimer?.kill();
+    idleTimer = undefined;
+    cooldownTimer?.kill();
+    cooldownTimer = undefined;
   }
 
-  function goToHeroState(nextState) {
-    const clampedState = gsap.utils.clamp(0, 3, nextState);
-    if (isAnimating || clampedState === currentHeroState) return;
+  function markGestureIdle() {
+    idleTimer?.kill();
+    idleTimer = undefined;
+    gestureSettled = true;
+    tryReleaseInteraction();
+  }
 
-    const previousState = currentHeroState;
-    currentHeroState = clampedState;
-    hero.dataset.state = String(clampedState);
-    setProgressState(clampedState);
+  function waitForGestureIdle(delay = GESTURE_IDLE_DELAY) {
+    idleTimer?.kill();
+    idleTimer = gsap.delayedCall(delay, markGestureIdle);
+  }
+
+  function finishAnimation(id) {
+    if (id !== transitionId) return;
+    activeTimeline = undefined;
+    animationFinished = true;
+    tryReleaseInteraction();
+  }
+
+  function beginAnimation(timelineBuilder) {
     isAnimating = true;
+    gestureReady = false;
+    animationFinished = false;
+    cooldownTimer?.kill();
+    cooldownTimer = undefined;
 
-    const timeline = gsap.timeline({
+    const id = ++transitionId;
+    activeTimeline = gsap.timeline({
       defaults: { ease: "power2.inOut" },
-      onComplete: finishTransition,
+      onComplete: () => finishAnimation(id),
+      onInterrupt: () => finishAnimation(id),
     });
+    timelineBuilder(activeTimeline);
+  }
 
-    if (previousState > 0 && labels[previousState - 1]) {
-      timeline.to(labels[previousState - 1], {
-        autoAlpha: 0,
-        y: -5,
-        duration: transitionDuration * 0.42,
-      }, 0);
+  function requestHeroState(nextState) {
+    if (isAnimating || storyExited || storyExiting || !gestureReady) return;
+
+    const next = gsap.utils.clamp(0, HERO_STATES.length - 1, nextState);
+    if (next === currentHeroState) {
+      gestureReady = true;
+      animationFinished = true;
+      return;
     }
 
-    if (clampedState > 0 && labels[clampedState - 1]) {
+    const previous = currentHeroState;
+    transitionFromState = previous;
+    currentHeroState = next;
+    hero.dataset.state = String(next);
+    updateProgress(next);
+    noteGestureActivity();
+
+    beginAnimation((timeline) => {
+      if (previous > 0) {
+        timeline.to(featureContent, {
+          autoAlpha: 0,
+          y: -14,
+          duration: 0.3,
+          ease: "power2.out",
+        }, 0);
+      }
+
+      timeline.call(() => renderFeature(next), null, 0.28);
       timeline.fromTo(
-        labels[clampedState - 1],
-        { autoAlpha: 0, y: 8 },
-        { autoAlpha: 1, y: 0, duration: transitionDuration * 0.62 },
-        transitionDuration * 0.28,
+        featureContent,
+        { autoAlpha: 0, y: 18, immediateRender: false },
+        { autoAlpha: 1, y: 0, duration: 0.46, ease: "power3.out" },
+        0.3,
       );
-    }
 
-    timeline.to(product, {
-      scale: productScales[clampedState],
-      duration: transitionDuration,
-    }, 0);
+      if (previous > 0) {
+        timeline.to(stepLabels[previous - 1], {
+          autoAlpha: 0,
+          y: -8,
+          duration: 0.28,
+          ease: "power2.out",
+        }, 0);
+      }
+      if (next > 0 && stepLabels[next - 1]) {
+        timeline.fromTo(
+          stepLabels[next - 1],
+          { autoAlpha: 0, y: 18, immediateRender: false },
+          { autoAlpha: 1, y: 0, duration: 0.46, ease: "power3.out" },
+          0.3,
+        );
+      }
 
-    timeline.to(title, {
-      autoAlpha: clampedState === 0 ? 1 : 0.12,
-      y: clampedState === 0 ? 0 : -4,
-      duration: transitionDuration * 0.72,
-    }, 0);
-
-    timeline.to([description, actions], {
-      autoAlpha: clampedState === 0 ? 1 : 0,
-      y: clampedState === 0 ? 0 : 5,
-      duration: transitionDuration * 0.58,
-      stagger: 0.035,
-    }, 0);
-
-    timeline.to([featureBar, cue], {
-      autoAlpha: clampedState === 0 ? 1 : 0,
-      y: clampedState === 0 ? 0 : 4,
-      duration: transitionDuration * 0.58,
-      stagger: 0.025,
-    }, 0);
+      const state = HERO_STATES[next];
+      timeline.to(product, { scale: state.scale, duration: TRANSITION_DURATION }, 0);
+      timeline.to(title, {
+        autoAlpha: next === 0 ? 1 : 0.08,
+        y: next === 0 ? 0 : -4,
+        duration: 0.42,
+      }, 0);
+      timeline.to([description, actions], {
+        autoAlpha: next === 0 ? 1 : 0,
+        y: next === 0 ? 0 : 5,
+        duration: 0.36,
+        stagger: 0.035,
+      }, 0);
+      timeline.to([featureBar, cue], {
+        autoAlpha: next === 0 ? 1 : 0,
+        y: next === 0 ? 0 : 4,
+        duration: 0.36,
+        stagger: 0.025,
+      }, 0);
+    });
   }
 
   function exitHeroStory() {
-    if (isAnimating || storyExited) return;
+    if (isAnimating || storyExited || storyExiting) return;
 
-    isAnimating = true;
-    gestureArmed = false;
-    const exitTimeline = gsap.timeline({
-      defaults: { ease: "power2.inOut" },
-      onComplete: () => {
-        storyExited = true;
+    noteGestureActivity();
+    storyExiting = true;
+    transitionFromState = currentHeroState;
+    beginAnimation((timeline) => {
+      timeline.to(featureContent, {
+        autoAlpha: 0,
+        y: -14,
+        duration: 0.3,
+        ease: "power2.out",
+      }, 0);
+      timeline.to(stepper, { autoAlpha: 0.2, duration: 0.48 }, 0);
+      timeline.to(product, { scale: 1.02, duration: 0.72 }, 0);
+      timeline.to(title, { autoAlpha: 0, duration: 0.38 }, 0);
+      timeline.to([description, actions, featureBar, cue], {
+        autoAlpha: 0,
+        duration: 0.36,
+        stagger: 0.025,
+      }, 0);
+      timeline.eventCallback("onComplete", () => {
+        activeTimeline = undefined;
+        animationFinished = true;
         isAnimating = false;
+        storyExiting = false;
+        storyExited = true;
         storyObserver?.disable();
-
         if (storyTrigger) {
           window.scrollTo({ top: storyTrigger.end, behavior: "smooth" });
         }
-      },
+      });
+      timeline.eventCallback("onInterrupt", () => {
+        activeTimeline = undefined;
+        animationFinished = true;
+        isAnimating = false;
+        storyExiting = false;
+      });
     });
-
-    exitTimeline.to(labels[2], { autoAlpha: 0, y: -5, duration: 0.36 }, 0);
-    exitTimeline.to([title, description, actions, featureBar, cue], {
-      autoAlpha: 0,
-      duration: 0.5,
-      stagger: 0.025,
-    }, 0);
-    exitTimeline.to(product, { scale: productScales[3], duration: 0.6 }, 0);
   }
 
-  function handleStoryGesture(direction) {
-    if (isAnimating || storyExited || !gestureArmed) {
-      if (!storyExited) {
-        gestureEnded = false;
-        scheduleGestureRearm();
+  function requestDirection(direction) {
+    noteGestureActivity();
+
+    if (isAnimating) {
+      const reverseExit = storyExiting && direction < 0;
+      const reverseTransition =
+        !storyExiting &&
+        currentHeroState !== transitionFromState &&
+        (direction > 0 ? currentHeroState + 1 : currentHeroState - 1) === transitionFromState;
+
+      if (reverseExit || reverseTransition) {
+        activeTimeline?.kill();
+        isAnimating = false;
+        animationFinished = true;
+        gestureReady = true;
+        storyExited = false;
+        storyExiting = false;
+        setHeroVisualState(transitionFromState);
+
+        if (reverseExit) requestHeroState(transitionFromState - 1);
+        return;
       }
       return;
     }
 
-    gestureArmed = false;
-    gestureEnded = false;
+    if (storyExited || storyExiting || !gestureReady) return;
 
     if (direction > 0) {
-      if (currentHeroState < 3) goToHeroState(currentHeroState + 1);
-      else exitHeroStory();
+      if (currentHeroState < HERO_STATES.length - 1) {
+        requestHeroState(currentHeroState + 1);
+      } else {
+        exitHeroStory();
+      }
       return;
     }
 
     if (currentHeroState > 0) {
-      goToHeroState(currentHeroState - 1);
+      requestHeroState(currentHeroState - 1);
       return;
     }
 
-    // The current Hero is the first page section; keep the top edge native-safe.
-    gestureEnded = true;
-    gestureArmed = true;
-  }
-
-  function forwardPageGesture(observer, direction) {
-    const rawDelta = Number(observer.event?.deltaY);
-    const accumulatedDelta = Number(observer.deltaY);
-    const distance = Math.max(
-      24,
-      Math.abs(Number.isFinite(rawDelta) && rawDelta ? rawDelta : accumulatedDelta || 0),
-    );
-    const root = document.documentElement;
-    const previousScrollBehavior = root.style.scrollBehavior;
-    root.style.scrollBehavior = "auto";
-    window.scrollBy(0, direction * distance);
-    root.style.scrollBehavior = previousScrollBehavior;
+    // Hero is the first section; at its top there is no earlier content to reveal.
+    gestureSettled = true;
+    gestureReady = true;
   }
 
   function initPersistentHeader() {
@@ -231,7 +364,6 @@
     const titleLines = gsap.utils.toArray("[data-hero-title-line]", hero);
     const background = hero.querySelector("[data-hero-background]");
     const actionItems = actions ? Array.from(actions.children) : [];
-
     const intro = gsap.timeline({ defaults: { ease: "power2.out" } });
 
     if (header) {
@@ -278,42 +410,28 @@
         autoAlpha: 1, y: 0, duration: 0.36,
       }, 1.24);
     }
-
     return intro;
   }
 
   function initHeroStepController() {
     if (!Observer) return () => {};
 
-    setInitialStoryVisuals();
+    setHeroVisualState(0);
+    storyObserver?.kill();
+    storyTrigger?.kill();
 
     storyObserver = Observer.create({
-      type: "wheel,touch",
       target: window,
+      type: "wheel,touch",
+      wheelSpeed: 1,
+      tolerance: 48,
+      onStopDelay: GESTURE_IDLE_DELAY,
       preventDefault: true,
-      tolerance: 55,
-      onStopDelay: 0.4,
-      onDown: () => handleStoryGesture(1),
-      onUp: () => handleStoryGesture(-1),
-      onStop: markGestureEnded,
+      onDown: () => requestDirection(1),
+      onUp: () => requestDirection(-1),
+      onStop: markGestureIdle,
     });
     storyObserver.disable();
-
-    boundaryObserver = Observer.create({
-      type: "wheel,touch",
-      target: window,
-      preventDefault: true,
-      tolerance: 1,
-      onStopDelay: 0.35,
-      onDown: (observer) => {
-        if (!isAnimating && storyExited) forwardPageGesture(observer, 1);
-      },
-      onUp: (observer) => {
-        if (!isAnimating && storyExited) forwardPageGesture(observer, -1);
-      },
-      onStop: markGestureEnded,
-    });
-    boundaryObserver.disable();
 
     storyTrigger = ScrollTrigger.create({
       trigger: hero,
@@ -324,38 +442,27 @@
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onEnter: () => {
-        if (!storyExited) {
-          header?.classList.remove("is-sticky-context");
-          boundaryObserver.disable();
-          gestureArmed = true;
-          storyObserver.enable();
-        }
+        if (storyExited) return;
+        header?.classList.remove("is-sticky-context");
+        storyObserver.enable();
       },
       onLeave: () => {
-        if (storyExited) {
-          header?.classList.add("is-sticky-context");
-          storyObserver.disable();
-          boundaryObserver.enable();
-        }
+        storyObserver.disable();
       },
       onEnterBack: () => {
         storyExited = false;
-        currentHeroState = 3;
-        hero.dataset.state = "3";
-        setProgressState(3);
-        showHeroState(3);
+        storyExiting = false;
+        setHeroVisualState(3);
         header?.classList.remove("is-sticky-context");
-        boundaryObserver.disable();
-        gestureArmed = false;
-        gestureEnded = false;
+        gestureReady = false;
+        gestureSettled = false;
+        animationFinished = true;
+        isAnimating = false;
         storyObserver.enable();
-        scheduleGestureRearm(0.5);
+        waitForGestureIdle(0.28);
       },
       onLeaveBack: () => {
-        if (currentHeroState === 0) {
-          storyObserver.disable();
-          header?.classList.remove("is-sticky-context");
-        }
+        if (currentHeroState === 0) storyObserver.disable();
       },
     });
 
@@ -363,23 +470,33 @@
 
     return () => {
       storyObserver?.kill();
-      boundaryObserver?.kill();
       storyTrigger?.kill();
-      gestureArmTimer?.kill();
+      activeTimeline?.kill();
+      cooldownTimer?.kill();
+      idleTimer?.kill();
       storyObserver = undefined;
-      boundaryObserver = undefined;
       storyTrigger = undefined;
-      storyExited = false;
+      activeTimeline = undefined;
+      cooldownTimer = undefined;
+      idleTimer = undefined;
+      transitionId += 1;
+      currentHeroState = 0;
       isAnimating = false;
-      gestureArmed = true;
-      setInitialStoryVisuals();
+      gestureReady = true;
+      gestureSettled = true;
+      animationFinished = true;
+      storyExited = false;
+      storyExiting = false;
+      setInitialHeroState();
     };
   }
 
   function initSectionReveals() {
+    const aboutCleanup = initAboutReveal();
+
     gsap.utils
       .toArray(
-        ".brand-intro__body,.ecosystem__head,.capabilities__intro,.detail-story__copy,.final-cta__inner",
+        ".ecosystem__head,.capabilities__intro,.detail-story__copy,.final-cta__inner",
       )
       .forEach((block) => {
         gsap.from(block, {
@@ -429,7 +546,6 @@
         duration: 1,
         ease: "none",
       });
-
       panels.forEach((panel, index) => {
         story
           .to(panel, { autoAlpha: 1, duration: 0.22 }, index === 0 ? 0 : 0.42 + index * 0.56)
@@ -439,17 +555,94 @@
             index === panels.length - 1 ? "+=0.35" : "+=0.42",
           );
       });
-
       story.to(".story-progress span", { width: "100%", duration: 1, ease: "none" }, 0);
     });
 
-    return () => sectionMedia.revert();
+    return () => {
+      sectionMedia.revert();
+      aboutCleanup?.();
+    };
+  }
+
+  function initAboutReveal() {
+    const section = document.querySelector("[data-about-section]");
+    if (!section) return;
+
+    const meta = section.querySelector("[data-about-meta]");
+    const metaRule = meta?.querySelector("i");
+    const titleLines = gsap.utils.toArray("[data-about-title-line]", section);
+    const description = section.querySelector("[data-about-description]");
+    const cta = section.querySelector("[data-about-cta]");
+    const media = section.querySelector("[data-about-media]");
+    const word = section.querySelector(".about-shahrokh__word");
+    const features = gsap.utils.toArray("[data-about-feature]", section);
+
+    const revealContext = gsap.context(() => {
+      const reveal = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        scrollTrigger: {
+          trigger: section,
+          start: "top 78%",
+          once: true,
+        },
+      });
+
+      reveal.from(meta, { autoAlpha: 0, y: 12, duration: .5 }, 0);
+      if (metaRule) {
+        reveal.to(metaRule, { scaleX: 1, duration: .46, ease: "power2.inOut" }, .08);
+      }
+      reveal.from(titleLines, { autoAlpha: 0, y: 28, duration: .62, stagger: .12 }, .12);
+      reveal.from(description, { autoAlpha: 0, y: 18, duration: .55 }, .48);
+      reveal.from(cta, { autoAlpha: 0, y: 12, duration: .45 }, .72);
+      reveal.from(media, { autoAlpha: 0, scale: 1.035, y: 24, duration: 1.05 }, .12);
+
+      gsap.from(features, {
+        autoAlpha: 0,
+        y: 20,
+        duration: .52,
+        stagger: .1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: section.querySelector("[data-about-features]"),
+          start: "top 88%",
+          once: true,
+        },
+      });
+    }, section);
+
+    const parallax = gsap.matchMedia();
+    parallax.add("(min-width: 1024px)", () => {
+      gsap.to(media, {
+        yPercent: -3,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: .8,
+        },
+      });
+      gsap.to(word, {
+        xPercent: -2,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    });
+
+    return () => {
+      revealContext.revert();
+      parallax.revert();
+    };
   }
 
   const motionQueries = gsap.matchMedia();
-
   motionQueries.add("(prefers-reduced-motion: no-preference)", () => {
-    setInitialStoryVisuals();
+    setInitialHeroState();
     initHeroIntro();
     const headerCleanup = initPersistentHeader();
     const sectionCleanup = initSectionReveals();
@@ -465,6 +658,7 @@
 
   motionQueries.add("(prefers-reduced-motion: reduce)", () => {
     document.documentElement.classList.add("reduced-motion");
+    setInitialHeroState();
     const headerCleanup = initPersistentHeader();
     return () => {
       document.documentElement.classList.remove("reduced-motion");

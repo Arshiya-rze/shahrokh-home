@@ -1,0 +1,317 @@
+.about-shahrokh {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: 6.5rem 2.25rem;
+  background:
+    radial-gradient(ellipse at 18% 30%, rgba(59, 70, 74, .25), transparent 46%),
+    linear-gradient(135deg, #11191c 0%, #080c0e 58%, #060809 100%);
+  color: var(--white);
+}
+
+.about-shahrokh__main {
+  display: grid;
+  gap: 1.65rem;
+  width: 100%;
+  margin: 0;
+  padding-inline: 1.15rem;
+}
+
+.about-shahrokh__content {
+  position: relative;
+  z-index: 2;
+  padding-inline-end: .85rem;
+  border-inline-end: 1px solid rgba(255, 255, 255, .32);
+  direction: rtl;
+  text-align: right;
+}
+
+.about-shahrokh__meta {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  margin-block-end: 1.55rem;
+  color: rgba(255, 255, 255, .76);
+  font-size: .9rem;
+}
+
+.about-shahrokh__number {
+  color: rgba(255, 255, 255, .62);
+  font-family: Arial, sans-serif;
+  direction: ltr;
+}
+
+.about-shahrokh__meta i {
+  display: block;
+  width: 2.8rem;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: right center;
+  background: var(--red);
+}
+
+.about-shahrokh__title {
+  display: grid;
+  gap: .02em;
+  margin: 0;
+  font-size: clamp(1.9rem, 8vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -.045em;
+  line-height: 1.3;
+}
+
+.about-shahrokh__title span,
+.about-shahrokh__title em {
+  display: block;
+  font-style: normal;
+}
+
+.about-shahrokh__title em { color: var(--red); }
+.about-shahrokh__title span,
+.about-shahrokh__title em { white-space: nowrap; }
+
+.about-shahrokh__description {
+  max-width: 39rem;
+  margin-block: 1rem 1.3rem;
+  color: rgba(255, 255, 255, .78);
+  font-size: clamp(.94rem, 4vw, 1.08rem);
+  line-height: 1.95;
+}
+
+.about-shahrokh__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.35rem;
+  min-height: 3.2rem;
+  padding: .3rem .45rem .3rem 1.15rem;
+  border: 1px solid rgba(255, 255, 255, .7);
+  border-radius: 999px;
+  color: var(--white);
+  font-size: .88rem;
+  transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+}
+
+.about-shahrokh__cta-icon {
+  display: grid;
+  flex: 0 0 2.35rem;
+  width: 2.35rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .48);
+  border-radius: 50%;
+  direction: ltr;
+  font: 1.2rem/1 Arial, sans-serif;
+  transition: transform .25s ease, border-color .25s ease;
+}
+
+.about-shahrokh__cta:hover,
+.about-shahrokh__cta:focus-visible {
+  border-color: var(--red);
+  background: var(--red);
+  color: var(--white);
+}
+
+.about-shahrokh__cta:hover .about-shahrokh__cta-icon,
+.about-shahrokh__cta:focus-visible .about-shahrokh__cta-icon {
+  transform: translateX(-4px);
+  border-color: rgba(255, 255, 255, .85);
+}
+
+.about-shahrokh__media {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: calc(100% + 2.3rem);
+  margin-inline: -1.15rem;
+  aspect-ratio: 1.34 / 1;
+  background: #101619;
+}
+
+.about-shahrokh__media::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(0deg, rgba(7, 10, 12, .34), transparent 22%),
+    linear-gradient(90deg, rgba(8, 12, 14, .26), transparent 35%);
+  content: "";
+  pointer-events: none;
+}
+
+.about-shahrokh__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 54%;
+}
+
+.about-shahrokh__word {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: 3%;
+  inset-inline-start: 50%;
+  color: transparent;
+  font: 800 clamp(3.8rem, 14vw, 12rem)/1 Arial, sans-serif;
+  letter-spacing: .035em;
+  opacity: .16;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, .6);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.about-shahrokh__features {
+  display: grid;
+  gap: .5rem;
+  width: min(calc(100% - 2.3rem), 80rem);
+  margin: 1.5rem auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-shahrokh__feature {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  min-width: 0;
+  min-height: 4.55rem;
+  padding: .65rem .75rem;
+  border: 1px solid rgba(255, 255, 255, .17);
+  border-radius: 1rem;
+  direction: rtl;
+  text-align: right;
+}
+
+.about-shahrokh__feature-icon {
+  position: relative;
+  display: grid;
+  flex: 0 0 3rem;
+  width: 3rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .09);
+  color: rgba(255, 255, 255, .9);
+}
+
+.about-shahrokh__feature-icon::after {
+  position: absolute;
+  inset-inline-start: -.55rem;
+  inset-block: .45rem;
+  width: 1px;
+  background: var(--red);
+  content: "";
+}
+
+.about-shahrokh__feature-icon svg {
+  width: 1.7rem;
+  height: 1.7rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.about-shahrokh__feature-copy { min-width: 0; }
+
+.about-shahrokh__feature strong,
+.about-shahrokh__feature small {
+  display: block;
+}
+
+.about-shahrokh__feature strong {
+  color: var(--white);
+  font-size: .96rem;
+  font-weight: 700;
+}
+
+.about-shahrokh__feature small {
+  margin-block-start: .12rem;
+  color: rgba(255, 255, 255, .67);
+  font-size: .82rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 1024px) {
+  .about-shahrokh { padding-block-start: 7rem; }
+  .about-shahrokh__main {
+    grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    padding-inline-start: clamp(2.5rem, 7vw, 7.5rem);
+    padding-inline-end: 0;
+    direction: ltr;
+  }
+  .about-shahrokh__content {
+    padding-inline-end: clamp(1.2rem, 3.4vw, 3.4rem);
+    border-inline-end: 1px solid rgba(255, 255, 255, .36);
+  }
+  .about-shahrokh__meta { margin-block-end: 2rem; }
+  .about-shahrokh__title { font-size: clamp(2.5rem, 4.5vw, 4.6rem); }
+  .about-shahrokh__description { margin-block: 1.35rem 1.7rem; }
+  .about-shahrokh__media {
+    width: 100%;
+    margin: 0;
+    aspect-ratio: 1.28 / 1;
+  }
+  .about-shahrokh__features {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-block-start: 2.4rem;
+  }
+  .about-shahrokh__feature {
+    min-height: 5.4rem;
+    padding: .5rem clamp(.45rem, 1.3vw, 1.2rem);
+    border: 0;
+    border-radius: 0;
+  }
+  .about-shahrokh__feature + .about-shahrokh__feature {
+    border-inline-start: 1px solid rgba(255, 255, 255, .24);
+  }
+  .about-shahrokh__feature-icon { flex-basis: 3.3rem; width: 3.3rem; }
+  .about-shahrokh__feature-icon::after { inset-inline-start: -.8rem; }
+  .about-shahrokh__feature strong { font-size: .9rem; }
+  .about-shahrokh__feature small { font-size: .73rem; }
+}
+
+@media (min-width: 1024px) {
+  .about-shahrokh {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: 100svh;
+    min-height: 42rem;
+    padding-block: clamp(5.5rem, 10svh, 7.5rem) 1.25rem;
+  }
+  .about-shahrokh__main {
+    grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+    min-height: 0;
+    height: 100%;
+  }
+  .about-shahrokh__title {
+    font-size: clamp(2.35rem, 3.6vw, 4.1rem);
+    line-height: 1.25;
+  }
+  .about-shahrokh__media {
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  .about-shahrokh__features { margin-block-start: 1.25rem; }
+  .about-shahrokh__feature { gap: 1rem; padding-inline: 1.2rem; }
+  .about-shahrokh__feature strong { font-size: 1rem; }
+  .about-shahrokh__feature small { font-size: .78rem; }
+}
+
+@media (max-width: 380px) {
+  .about-shahrokh__title { font-size: 2.05rem; }
+  .about-shahrokh__feature { min-height: 4.25rem; }
+  .about-shahrokh__feature-icon { flex-basis: 2.7rem; width: 2.7rem; }
+  .about-shahrokh__feature strong { font-size: .9rem; }
+  .about-shahrokh__feature small { font-size: .76rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-shahrokh__cta,
+  .about-shahrokh__cta-icon { transition: none; }
+}

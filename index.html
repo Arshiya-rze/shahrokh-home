@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="assets/css/responsive.css" />
     <link rel="stylesheet" href="assets/css/header-refinement.css" />
     <link rel="stylesheet" href="assets/css/hero-fullscreen.css" />
+    <link rel="stylesheet" href="assets/css/about-shahrokh.css" />
   </head>
   <body>
     <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
@@ -88,6 +89,16 @@
             <span data-hero-title-line>برای کار حرفه‌ای</span>
             <em data-hero-title-line>ساخته شده است</em>
           </h1>
+          <div class="hero-feature-content" data-hero-feature-content aria-hidden="true">
+            <div class="hero-feature-content__eyebrow" dir="ltr">
+              <span data-feature-number>WBG905 / 01</span><i aria-hidden="true"></i>
+            </div>
+            <h2 data-feature-title>نظم بیشتر</h2>
+            <p data-feature-description>
+              چیدمان هدفمند ابزارها و تجهیزات، فضای کار را منظم‌تر می‌کند و
+              دسترسی به بخش‌های موردنیاز را ساده‌تر می‌سازد.
+            </p>
+          </div>
           <p class="hero__lead reveal" data-hero-description>
             میز کار صنعتی WBG905؛ ترکیبی از استحکام، نظم و کارایی برای محیط‌های
             حرفه‌ای. طراحی شده تا ابزارها همیشه در دسترس باشند و تمرکز شما روی
@@ -182,23 +193,101 @@
           <span>کمی پایین‌تر بروید</span><i></i><span>↓</span>
         </div>
       </section>
-      <section class="brand-intro scene-light" id="about">
-        <div class="page-shell brand-intro__layout">
-          <p class="section-marker">۰۲ / درباره شاهرخ</p>
-          <div class="brand-intro__body">
-            <h2 class="display-heading">
-              محیط کار،<br /><em>بخشی از کار است.</em>
+      <section
+        class="about-shahrokh"
+        id="about"
+        data-about-section
+        aria-labelledby="about-title"
+      >
+        <div class="about-shahrokh__main page-shell">
+          <div class="about-shahrokh__content">
+            <div class="about-shahrokh__meta" data-about-meta>
+              <span class="about-shahrokh__number">۰۲</span>
+              <i aria-hidden="true"></i>
+              <span>درباره شاهرخ</span>
+            </div>
+            <h2 class="about-shahrokh__title" id="about-title">
+              <span data-about-title-line>راهکارهای صنعتی</span>
+              <em data-about-title-line>برای فردای بهتر</em>
             </h2>
-            <p class="body-lead">
-              شاهرخ برای محیط‌هایی طراحی می‌کند که در آن‌ها کیفیت، نظم و جدیت
-              فقط شعار نیست؛ بخشی از هر روز کاری است.
+            <p class="about-shahrokh__description" data-about-description>
+              ما در شاهرخ، با تمرکز بر طراحی و تولید سیستم‌های کارگاهی، به دنبال
+              ایجاد محیط‌هایی کاری منظم، کارآمدتر و حرفه‌ای‌تر هستیم. محصولاتی
+              که در دل محیط‌های واقعی صنعتی متولد شده‌اند و برای استفاده
+              طولانی‌مدت و حرفه‌ای ساخته می‌شوند.
             </p>
+            <a class="about-shahrokh__cta" href="#contact" data-about-cta>
+              <span>بیشتر درباره شاهرخ</span>
+              <span class="about-shahrokh__cta-icon" aria-hidden="true">←</span>
+            </a>
           </div>
-          <div class="brand-intro__aside">
-            <span>ش</span>
-            <p>طراحی مهندسی‌محور برای فضاهای کاری صنعتی و حرفه‌ای.</p>
-          </div>
+
+          <figure class="about-shahrokh__media" data-about-media>
+            <span class="about-shahrokh__word" aria-hidden="true">SHAHROKH</span>
+            <img
+              src="assets/images/ui/wbg905-hero-reference.webp"
+              alt="میز کار و تجهیزات نگهداری ابزار شاهرخ در محیط کارگاهی"
+              width="1200"
+              height="857"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
         </div>
+
+        <ul class="about-shahrokh__features page-shell" data-about-features>
+          <li class="about-shahrokh__feature" data-about-feature>
+            <span class="about-shahrokh__feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M4 12 9 5h14l5 7-12 15L4 12Z" />
+                <path d="m4 12 24 0M9 5l7 22 7-22M9 5l7 7 7-7" />
+              </svg>
+            </span>
+            <span class="about-shahrokh__feature-copy">
+              <strong>کیفیت ماندگار</strong>
+              <small>ساختار مقاوم برای استفاده حرفه‌ای</small>
+            </span>
+          </li>
+          <li class="about-shahrokh__feature" data-about-feature>
+            <span class="about-shahrokh__feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <rect x="5" y="5" width="9" height="9" rx="1" />
+                <rect x="18" y="5" width="9" height="9" rx="1" />
+                <rect x="5" y="18" width="9" height="9" rx="1" />
+                <rect x="18" y="18" width="9" height="9" rx="1" />
+              </svg>
+            </span>
+            <span class="about-shahrokh__feature-copy">
+              <strong>طراحی ماژولار</strong>
+              <small>قابل توسعه متناسب با نیاز شما</small>
+            </span>
+          </li>
+          <li class="about-shahrokh__feature" data-about-feature>
+            <span class="about-shahrokh__feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="m13 3 1.2 3.1a10 10 0 0 1 3.6 0L19 3l4 2-1.2 3a10 10 0 0 1 2.5 2.5l3-1.2 2 4-3.1 1.2a10 10 0 0 1 0 3.6l3.1 1.2-2 4-3-1.2a10 10 0 0 1-2.5 2.5l1.2 3-4 2-1.2-3.1a10 10 0 0 1-3.6 0L13 29l-4-2 1.2-3a10 10 0 0 1-2.5-2.5l-3 1.2-2-4 3.1-1.2a10 10 0 0 1 0-3.6L2.7 12.7l2-4 3 1.2a10 10 0 0 1 2.5-2.5L9 5l4-2Z" />
+                <circle cx="16" cy="16" r="4" />
+              </svg>
+            </span>
+            <span class="about-shahrokh__feature-copy">
+              <strong>محیط کاری منظم</strong>
+              <small>دسترسی بهتر، بهره‌وری بیشتر</small>
+            </span>
+          </li>
+          <li class="about-shahrokh__feature" data-about-feature>
+            <span class="about-shahrokh__feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <circle cx="12" cy="10" r="5" />
+                <path d="M3.5 27v-2.5a8.5 8.5 0 0 1 17 0V27h-17Z" />
+                <path d="M21 5.5a5 5 0 0 1 0 9.5m2.5 3a7 7 0 0 1 5 6.7V27h-5" />
+              </svg>
+            </span>
+            <span class="about-shahrokh__feature-copy">
+              <strong>مناسب صنایع مختلف</strong>
+              <small>راهکارهای متنوع برای محیط‌های واقعی</small>
+            </span>
+          </li>
+        </ul>
       </section>
       <section class="wbg-story scene-dark" id="wbg-story">
         <div class="wbg-story__sticky">
