@@ -39,7 +39,7 @@
       title: "دسترسی سریع",
       description:
         "هر ابزار در جای مشخص خود قرار می‌گیرد تا مسیر کار روان‌تر باشد و تجهیزات همیشه در دسترس بمانند.",
-      scale: 1.055,
+      scale: 1.05,
     },
     {
       index: 3,
@@ -47,13 +47,13 @@
       title: "طراحی ماژولار",
       description:
         "ساختار WBG905 برای ترکیب و توسعه بخش‌های مختلف طراحی شده تا فضای کار با نیازهای حرفه‌ای هماهنگ شود.",
-      scale: 1.07,
+      scale: 1.065,
     },
   ];
 
-  const COOLDOWN_MS = 180;
-  const TRANSITION_DURATION = 0.74;
-  const GESTURE_IDLE_DELAY = 0.22;
+  const COOLDOWN_MS = 150;
+  const TRANSITION_DURATION = 0.5;
+  const GESTURE_IDLE_DELAY = 0.16;
 
   let currentHeroState = 0;
   let isAnimating = false;
@@ -90,7 +90,7 @@
       return;
     }
 
-    featureNumber.textContent = `WBG905 / ${feature.number}`;
+    featureNumber.textContent = "WBG905";
     featureTitle.textContent = feature.title;
     featureDescription.textContent = feature.description;
     featureContent.setAttribute("aria-hidden", "false");
@@ -108,7 +108,8 @@
       gsap.set(stepLabels[state - 1], { autoAlpha: 1, y: 0 });
     }
     gsap.set(product, { scale: feature.scale, transformOrigin: "38% 55%" });
-    gsap.set(title, { autoAlpha: state === 0 ? 1 : 0.08, y: state === 0 ? 0 : -4 });
+    gsap.set(featureContent, { autoAlpha: state === 0 ? 0 : 1, y: 0 });
+    gsap.set(title, { autoAlpha: state === 0 ? 1 : 0.05, y: state === 0 ? 0 : -4 });
     gsap.set([description, actions, featureBar, cue], {
       autoAlpha: state === 0 ? 1 : 0,
       y: state === 0 ? 0 : 5,
@@ -202,40 +203,42 @@
         timeline.to(featureContent, {
           autoAlpha: 0,
           y: -14,
-          duration: 0.3,
+          duration: 0.24,
           ease: "power2.out",
         }, 0);
       }
 
-      timeline.call(() => renderFeature(next), null, 0.28);
-      timeline.fromTo(
-        featureContent,
-        { autoAlpha: 0, y: 18, immediateRender: false },
-        { autoAlpha: 1, y: 0, duration: 0.46, ease: "power3.out" },
-        0.3,
-      );
+      timeline.call(() => renderFeature(next), null, previous > 0 ? 0.24 : 0);
+      if (next > 0) {
+        timeline.fromTo(
+          featureContent,
+          { autoAlpha: 0, y: 14, immediateRender: false },
+          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" },
+          previous > 0 ? 0.24 : 0,
+        );
+      }
 
       if (previous > 0) {
         timeline.to(stepLabels[previous - 1], {
           autoAlpha: 0,
           y: -8,
-          duration: 0.28,
+          duration: 0.24,
           ease: "power2.out",
         }, 0);
       }
       if (next > 0 && stepLabels[next - 1]) {
         timeline.fromTo(
           stepLabels[next - 1],
-          { autoAlpha: 0, y: 18, immediateRender: false },
-          { autoAlpha: 1, y: 0, duration: 0.46, ease: "power3.out" },
-          0.3,
+          { autoAlpha: 0, y: 14, immediateRender: false },
+          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" },
+          previous > 0 ? 0.24 : 0,
         );
       }
 
       const state = HERO_STATES[next];
       timeline.to(product, { scale: state.scale, duration: TRANSITION_DURATION }, 0);
       timeline.to(title, {
-        autoAlpha: next === 0 ? 1 : 0.08,
+        autoAlpha: next === 0 ? 1 : 0.05,
         y: next === 0 ? 0 : -4,
         duration: 0.42,
       }, 0);
@@ -291,6 +294,9 @@
         animationFinished = true;
         isAnimating = false;
         storyExiting = false;
+        gestureReady = true;
+        gestureSettled = true;
+        scheduleCooldown();
       });
     });
   }
@@ -582,7 +588,7 @@
         defaults: { ease: "power3.out" },
         scrollTrigger: {
           trigger: section,
-          start: "top 78%",
+          start: "top 90%",
           once: true,
         },
       });
