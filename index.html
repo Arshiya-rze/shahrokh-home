@@ -9,11 +9,7 @@
       content="شاهرخ؛ طراحی و ساخت تجهیزات حرفه‌ای برای فضاهای کاری صنعتی."
     />
     <title>شاهرخ | تجهیزات حرفه‌ای فضای کار</title>
-    <link
-      rel="icon"
-      type="image/png"
-      href="assets/images/brand/shahrokh-logo.png"
-    />
+    <link rel="icon" type="image/svg+xml" href="assets/images/brand/logo.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -36,20 +32,7 @@
     <div class="grain" aria-hidden="true"></div>
     <header class="site-header" data-header data-hero-header>
       <a class="brand-lockup" href="#top" aria-label="صفحه اصلی شاهرخ"
-        ><img
-          class="brand-lockup__light"
-          src="assets/images/brand/shahrokh-logo-light.png"
-          alt="نشان تجاری شاهرخ"
-          width="504"
-          height="155"
-        /><img
-          class="brand-lockup__dark"
-          src="assets/images/brand/shahrokh-logo.png"
-          alt=""
-          aria-hidden="true"
-          width="504"
-          height="155"
-      /></a>
+        ><img class="brand-logo" src="assets/images/brand/logo.svg" alt="نشان تجاری شاهرخ" /></a>
       <nav class="desktop-nav" aria-label="ناوبری اصلی">
         <a href="#products">محصولات</a><a href="#about">درباره شاهرخ</a
         ><a href="#capabilities">توانمندی‌ها</a
@@ -87,7 +70,7 @@
       </div>
     </div>
     <main id="main">
-      <section class="hero scene-dark" id="top" data-hero>
+      <section class="hero scene-light" id="top" data-hero>
         <div class="hero__grid" aria-hidden="true"></div>
         <div class="hero__copy page-shell">
           <div class="hero-product-code reveal" data-hero-label>
@@ -99,9 +82,6 @@
             <em data-hero-title-line>ساخته شده است</em>
           </h1>
           <div class="hero-feature-content" data-hero-feature-content aria-hidden="true">
-            <div class="hero-feature-content__eyebrow" dir="ltr">
-              <span data-feature-number>WBG905</span><i aria-hidden="true"></i>
-            </div>
             <h2 data-feature-title>نظم بیشتر</h2>
             <p data-feature-description>
               چیدمان هدفمند ابزارها و تجهیزات، فضای کار را منظم‌تر می‌کند و
@@ -139,25 +119,26 @@
             class="hero__media media-frame"
             data-media-slot="video-01"
             data-hero-product
+            data-hero-background
           >
-            <!-- ویدئوی نهایی: assets/videos/wbg905-hero.webm یا .mp4 را به‌عنوان source قرار دهید. -->
             <video
               class="media-video"
               muted
               loop
               playsinline
-              preload="none"
-              poster="assets/images/ui/wbg905-hero-reference.webp"
+              preload="metadata"
+              poster="assets/images/posters/wbg905-hero-poster.webp"
               aria-label="ویدئوی معرفی WBG905"
-            ></video>
-            <div class="hero-image" data-hero-background></div>
-            <div class="media-placeholder">
-              <div class="placeholder-lines" aria-hidden="true"></div>
-              <p class="media-placeholder__label">جایگاه ویدئوی معرفی محصول</p>
-            </div>
-            <div class="media-caption">
-              <span class="signal-dot"></span> تصویر نهایی محصول به‌زودی
-            </div>
+            >
+              <source src="assets/videos/wbg905-hero.webm" type="video/webm" />
+              <source src="assets/videos/wbg905-hero.mp4" type="video/mp4" />
+            </video>
+            <img
+              class="hero-product-fallback"
+              src="assets/images/products/wbg905.jpg"
+              alt=""
+              aria-hidden="true"
+            />
           </div>
           <div class="hero-stepper" role="group" aria-label="روایت ویژگی‌های محصول">
             <ol class="hero-stepper__list" data-hero-progress>
@@ -234,10 +215,10 @@
           <figure class="about-shahrokh__media" data-about-media>
             <span class="about-shahrokh__word" aria-hidden="true">SHAHROKH</span>
             <img
-              src="assets/images/ui/wbg905-hero-reference.webp"
-              alt="میز کار و تجهیزات نگهداری ابزار شاهرخ در محیط کارگاهی"
-              width="1200"
-              height="857"
+              src="assets/images/products/wbg905.jpg"
+              alt="میز کار صنعتی واقعی WBG905 با بدنه آبی و نقره‌ای"
+              width="580"
+              height="580"
               loading="lazy"
               decoding="async"
             />
@@ -489,10 +470,9 @@
           </div>
           <div class="credibility__mark">
             <img
-              src="assets/images/brand/shahrokh-logo.png"
+              class="brand-logo"
+              src="assets/images/brand/logo.svg"
               alt="نشان تجاری شاهرخ"
-              width="504"
-              height="155"
             /><span>طراحی برای حرفه‌ای‌ها</span>
           </div>
         </div>
@@ -515,10 +495,9 @@
     <footer class="site-footer scene-light">
       <div class="page-shell site-footer__inner">
         <img
-          src="assets/images/brand/shahrokh-logo.png"
+          class="brand-logo"
+          src="assets/images/brand/logo.svg"
           alt="شاهرخ"
-          width="504"
-          height="155"
         />
         <p>تجهیزات حرفه‌ای فضای کار</p>
         <a href="mailto:info@shahrokhtools.com">info@shahrokhtools.com</a

@@ -1,5 +1,13 @@
 :root {
   color-scheme: light;
+  --color-bg: #f4f4f1;
+  --color-surface: #f8f8f5;
+  --color-text: #171717;
+  --color-text-muted: #666;
+  --color-border: #d8d8d4;
+  --color-media-dark: #151719;
+  --red: #ed3237;
+  --color-brand-red: #ed3237;
   --ink: #171717;
   --gray: #68696b;
   --gray-soft: #e5e5e2;
@@ -79,10 +87,12 @@ body {
   display: block;
   width: min(16rem, 100%);
   height: auto;
-  aspect-ratio: 504 / 155;
   object-fit: contain;
   object-position: right center;
 }
+
+.credibility__mark .brand-logo { width: min(16rem, 100%); }
+.site-footer .brand-logo { width: 6.8rem; }
 
 .site-footer {
   background: #ededeb;
@@ -92,7 +102,8 @@ body {
 .site-footer a { color: var(--ink); }
 .site-footer small { color: var(--gray); }
 
-.site-header.is-sticky-context .header-search { color: var(--ink); }
+.site-header.is-sticky-context .header-search,
+.site-header.is-sticky-context .menu-toggle { color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
   .site-header,

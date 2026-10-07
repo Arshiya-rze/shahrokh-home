@@ -19,7 +19,6 @@
   const cue = hero.querySelector("[data-hero-cue]");
   const stepper = hero.querySelector(".hero-stepper");
   const featureContent = hero.querySelector("[data-hero-feature-content]");
-  const featureNumber = hero.querySelector("[data-feature-number]");
   const featureTitle = hero.querySelector("[data-feature-title]");
   const featureDescription = hero.querySelector("[data-feature-description]");
 
@@ -31,7 +30,7 @@
       title: "نظم بیشتر",
       description:
         "چیدمان هدفمند ابزارها و تجهیزات، فضای کار را منظم‌تر می‌کند و دسترسی به بخش‌های موردنیاز را ساده‌تر می‌سازد.",
-      scale: 1.035,
+      scale: 1.005,
     },
     {
       index: 2,
@@ -39,7 +38,7 @@
       title: "دسترسی سریع",
       description:
         "هر ابزار در جای مشخص خود قرار می‌گیرد تا مسیر کار روان‌تر باشد و تجهیزات همیشه در دسترس بمانند.",
-      scale: 1.05,
+      scale: 1.01,
     },
     {
       index: 3,
@@ -47,7 +46,7 @@
       title: "طراحی ماژولار",
       description:
         "ساختار WBG905 برای ترکیب و توسعه بخش‌های مختلف طراحی شده تا فضای کار با نیازهای حرفه‌ای هماهنگ شود.",
-      scale: 1.065,
+      scale: 1.015,
     },
   ];
 
@@ -90,7 +89,6 @@
       return;
     }
 
-    featureNumber.textContent = "WBG905";
     featureTitle.textContent = feature.title;
     featureDescription.textContent = feature.description;
     featureContent.setAttribute("aria-hidden", "false");
@@ -107,9 +105,9 @@
     if (state > 0 && stepLabels[state - 1]) {
       gsap.set(stepLabels[state - 1], { autoAlpha: 1, y: 0 });
     }
-    gsap.set(product, { scale: feature.scale, transformOrigin: "38% 55%" });
+    gsap.set(product, { scale: feature.scale, transformOrigin: "50% 55%" });
     gsap.set(featureContent, { autoAlpha: state === 0 ? 0 : 1, y: 0 });
-    gsap.set(title, { autoAlpha: state === 0 ? 1 : 0.05, y: state === 0 ? 0 : -4 });
+    gsap.set(title, { autoAlpha: state === 0 ? 1 : 0, y: state === 0 ? 0 : -4 });
     gsap.set([description, actions, featureBar, cue], {
       autoAlpha: state === 0 ? 1 : 0,
       y: state === 0 ? 0 : 5,
@@ -238,7 +236,7 @@
       const state = HERO_STATES[next];
       timeline.to(product, { scale: state.scale, duration: TRANSITION_DURATION }, 0);
       timeline.to(title, {
-        autoAlpha: next === 0 ? 1 : 0.05,
+        autoAlpha: next === 0 ? 1 : 0,
         y: next === 0 ? 0 : -4,
         duration: 0.42,
       }, 0);
@@ -364,6 +362,30 @@
   }
 
   function initHeroIntro() {
+    const compactIntro = window.matchMedia("(max-width: 699px)").matches;
+    const timings = compactIntro
+      ? {
+          header: 0.25,
+          label: 0.3,
+          rule: 0.2,
+          kicker: 0.28,
+          title: 0.34,
+          titleStagger: 0.04,
+          description: 0.28,
+          actions: 0.25,
+          actionStagger: 0.05,
+        }
+      : {
+          header: 0.45,
+          label: 0.38,
+          rule: 0.36,
+          kicker: 0.38,
+          title: 0.52,
+          titleStagger: 0.12,
+          description: 0.42,
+          actions: 0.38,
+          actionStagger: 0.1,
+        };
     const label = hero.querySelector("[data-hero-label]");
     const redRule = label?.querySelector("i");
     const kicker = hero.querySelector("[data-hero-kicker]");
@@ -373,45 +395,49 @@
     const intro = gsap.timeline({ defaults: { ease: "power2.out" } });
 
     if (header) {
-      intro.fromTo(header, { autoAlpha: 0, y: -12 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 0);
+      intro.fromTo(header, { autoAlpha: 0, y: -12 }, { autoAlpha: 1, y: 0, duration: timings.header }, 0);
     }
     if (label) {
-      intro.fromTo(label, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.38 }, 0.12);
+      intro.fromTo(label, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: timings.label }, compactIntro ? 0.08 : 0.12);
     }
     if (redRule) {
       intro.fromTo(redRule, { scaleX: 0, transformOrigin: "right center" }, {
-        scaleX: 1, duration: 0.36, ease: "power2.inOut",
-      }, 0.2);
+        scaleX: 1, duration: timings.rule, ease: "power2.inOut",
+      }, compactIntro ? 0.12 : 0.2);
     }
     if (kicker) {
-      intro.fromTo(kicker, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.38 }, 0.18);
+      intro.fromTo(kicker, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: timings.kicker }, compactIntro ? 0.1 : 0.18);
     }
     if (titleLines.length) {
       intro.fromTo(titleLines, { autoAlpha: 0, y: 32 }, {
-        autoAlpha: 1, y: 0, duration: 0.52, stagger: 0.12, ease: "power3.out",
-      }, 0.28);
+        autoAlpha: 1, y: 0, duration: timings.title, stagger: timings.titleStagger, ease: "power3.out",
+      }, compactIntro ? 0.15 : 0.28);
     }
     if (description) {
       intro.fromTo(description, { autoAlpha: 0, y: 16 }, {
-        autoAlpha: 1, y: 0, duration: 0.42,
-      }, 0.8);
+        autoAlpha: 1, y: 0, duration: timings.description,
+      }, compactIntro ? 0.36 : 0.8);
     }
     if (actionItems.length) {
       intro.fromTo(actionItems, { autoAlpha: 0, y: 12 }, {
-        autoAlpha: 1, y: 0, duration: 0.38, stagger: 0.1,
-      }, 1.02);
+        autoAlpha: 1, y: 0, duration: timings.actions, stagger: timings.actionStagger,
+      }, compactIntro ? 0.52 : 1.02);
     }
     if (background) {
       intro.fromTo(background, { autoAlpha: 0, scale: 1.025, y: 10 }, {
-        autoAlpha: 1, scale: 1, y: 0, duration: 0.82, ease: "power2.out",
-      }, 0.34);
+        autoAlpha: 1,
+        scale: 1,
+        y: 0,
+        duration: compactIntro ? 0.55 : 0.82,
+        ease: "power2.out",
+      }, compactIntro ? 0.18 : 0.34);
     }
-    if (featureBar) {
+    if (featureBar && !compactIntro) {
       intro.fromTo(featureBar, { autoAlpha: 0, y: 10 }, {
         autoAlpha: 1, y: 0, duration: 0.42,
       }, 1.18);
     }
-    if (cue) {
+    if (cue && !compactIntro) {
       intro.fromTo(cue, { autoAlpha: 0, y: 8 }, {
         autoAlpha: 1, y: 0, duration: 0.36,
       }, 1.24);
