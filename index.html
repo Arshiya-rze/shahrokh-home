@@ -407,23 +407,26 @@
         <div class="page-shell">
           <div class="product-range__overview">
             <div class="product-range__stage" id="product-range-stage" data-product-range-stage>
-              <ol class="product-range__index" aria-label="محصولات موجود">
-                <li><a href="#product-range-stage" aria-current="step" aria-label="محصول ۱: WBG905">۰۱</a></li>
+              <ol class="product-range__index" aria-label="محصولات دارای تصویر تأییدشده">
+                <li><span aria-current="step" aria-label="محصول ۱: WBG905">۰۱</span></li>
               </ol>
-              <img
-                class="product-range__showcase"
-                src="assets/images/posters/wbg905-hero-poster.webp"
-                alt="میز کار صنعتی واقعی شاهرخ مدل WBG905 در فضای کارگاهی"
-                width="1280"
-                height="704"
-                fetchpriority="high"
-                decoding="async"
-              />
+              <picture class="product-range__visual">
+                <source media="(max-width: 767px)" srcset="assets/images/products/wbg905/wbg905-cutout.webp" type="image/webp" />
+                <img
+                  class="product-range__showcase"
+                  src="assets/images/posters/wbg905-hero-poster.webp"
+                  alt="میز کار صنعتی واقعی شاهرخ مدل WBG905"
+                  width="1280"
+                  height="704"
+                  fetchpriority="high"
+                  decoding="async"
+                />
+              </picture>
               <div class="product-range__badge">
                 <span class="product-range__badge-icon" aria-hidden="true">◇</span>
                 <span><strong>طراحی ماژولار</strong><small>قابلیت ترکیب و توسعه بر اساس نیاز</small></span>
               </div>
-              <span class="product-range__model">WBG905</span>
+              <span class="product-range__model" aria-hidden="true">WBG905</span>
             </div>
 
             <header class="product-range__intro" data-product-range-intro>
@@ -440,7 +443,7 @@
               <a href="#product-range-categories">مشاهده همه <span aria-hidden="true">←</span></a>
             </div>
             <a class="product-range__product-card" href="#wbg905-product-story" data-product-range-card>
-              <img src="assets/images/posters/wbg905-hero-poster.webp" alt="" width="1280" height="704" loading="lazy" decoding="async" />
+              <img src="assets/images/products/wbg905/wbg905-cutout.webp" alt="" width="580" height="580" loading="lazy" decoding="async" />
               <span class="product-range__product-copy">
                 <strong>WBG905</strong>
                 <b>میز کار صنعتی</b>
@@ -459,15 +462,15 @@
             <div class="product-range__category-grid">
               <a class="product-range__category-card" href="#wbg905-product-story" data-product-range-card>
                 <picture>
-                  <img src="assets/images/product-categories/industrial-workbench.webp" alt="تصویر مفهومی و مستقل میز کار صنعتی" width="1254" height="1254" loading="lazy" decoding="async" />
+                  <img src="assets/images/products/wbg905/feature-surface.jpg" alt="نمای سطح کار محصول واقعی WBG905" width="500" height="307" loading="lazy" decoding="async" />
                 </picture>
                 <span class="product-range__category-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 12h22v4H5zM8 16v10m16-10v10M5 26h22M9 8h14"/></svg></span>
-                <span class="product-range__category-copy"><strong>میزهای کار صنعتی</strong><small>سطح مقاوم برای مونتاژ و تعمیر</small></span>
+                <span class="product-range__category-copy"><strong>میزهای کار صنعتی</strong><small>فضای کار حرفه‌ای با WBG905</small></span>
                 <span class="product-range__arrow" aria-hidden="true">←</span>
               </a>
               <a class="product-range__category-card" href="#wbg905-product-details" data-product-range-card>
                 <picture>
-                  <img src="assets/images/product-categories/tool-organization-panel.webp" alt="تصویر مفهومی پنل مستقل ابزار و نظم‌دهی" width="1254" height="1254" loading="lazy" decoding="async" />
+                  <img src="assets/images/products/wbg905/feature-panel.jpg" alt="نمای پنل و فضای نظم‌دهی ابزار در WBG905" width="470" height="288" loading="lazy" decoding="async" />
                 </picture>
                 <span class="product-range__category-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6zM10 11h12M10 16h12M10 21h8"/></svg></span>
                 <span class="product-range__category-copy"><strong>پنل ابزار و نظم‌دهی</strong><small>ابزارهای پرکاربرد در دسترس</small></span>
@@ -475,7 +478,7 @@
               </a>
               <a class="product-range__category-card" href="#wbg905-product-details" data-product-range-card>
                 <picture>
-                  <img src="assets/images/product-categories/rolling-tool-drawers.webp" alt="تصویر مفهومی مستقل از کشوی ابزار چرخ‌دار" width="1254" height="1254" loading="lazy" decoding="async" />
+                  <img src="assets/images/products/wbg905/feature-drawers.jpg" alt="نمای کشوهای ابزار در میز کار WBG905" width="470" height="288" loading="lazy" decoding="async" />
                 </picture>
                 <span class="product-range__category-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 5h20v22H6zM6 12h20M6 20h20M13 8.5h6M13 16h6M13 23.5h6"/></svg></span>
                 <span class="product-range__category-copy"><strong>کشوهای ابزار</strong><small>نگهداری ابزارهای پرکاربرد</small></span>
@@ -483,17 +486,17 @@
               </a>
               <a class="product-range__category-card" href="#wbg905-product-details" data-product-range-card>
                 <picture>
-                  <img src="assets/images/product-categories/storage-cabinet.webp" alt="تصویر مفهومی کمد مستقل نگهداری ابزار و تجهیزات" width="1254" height="1254" loading="lazy" decoding="async" />
+                  <img src="assets/images/products/wbg905/feature-storage.jpg" alt="نمای فضای ذخیره‌سازی میز کار WBG905" width="450" height="276" loading="lazy" decoding="async" />
                 </picture>
                 <span class="product-range__category-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 5h22v22H5zM16 5v22M5 16h22"/></svg></span>
-                <span class="product-range__category-copy"><strong>کمد و فضای ذخیره‌سازی</strong><small>نگهداری امن ابزار و تجهیزات</small></span>
+                <span class="product-range__category-copy"><strong>کمد و فضای ذخیره‌سازی</strong><small>فضای نگهداری در میز کار</small></span>
                 <span class="product-range__arrow" aria-hidden="true">←</span>
               </a>
             </div>
           </section>
 
           <a class="product-range__promo" href="#wbg905-product-story">
-            <img src="assets/images/posters/wbg905-hero-poster.webp" alt="" width="1280" height="704" loading="lazy" decoding="async" />
+            <img src="assets/images/products/wbg905/feature-surface.jpg" alt="" width="500" height="307" loading="lazy" decoding="async" />
             <span class="product-range__promo-copy"><small>کیفیت ساخت حرفه‌ای</small><strong>فضای کاری<br /><em>خود را بسازید</em></strong><span class="product-range__promo-button">مشاهده محصولات <b aria-hidden="true">←</b></span></span>
           </a>
 
