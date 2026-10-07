@@ -151,3 +151,16 @@
     padding-inline: 1.15rem;
   }
 }
+
+@media (max-width: 999px) {
+  .site-header .menu-toggle,
+  .site-header .header-search {
+    inline-size: 44px;
+    block-size: 44px;
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+  }
+}

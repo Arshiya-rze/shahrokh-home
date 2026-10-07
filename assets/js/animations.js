@@ -525,6 +525,7 @@
 
   function initSectionReveals() {
     const aboutCleanup = initAboutReveal();
+    const productStoryCleanup = initWbg905ProductStory();
 
     gsap.utils
       .toArray(
@@ -560,39 +561,95 @@
       });
     });
 
-    const sectionMedia = gsap.matchMedia();
-    sectionMedia.add("(min-width: 700px)", () => {
-      const panels = gsap.utils.toArray(".story-panel");
-      const story = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".wbg-story",
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.5,
-        },
-      });
+    return () => {
+      productStoryCleanup?.();
+      aboutCleanup?.();
+    };
+  }
 
-      story.to(".story-media .product-drawing", {
-        scale: 1.16,
-        x: -38,
-        duration: 1,
+  function initWbg905ProductStory() {
+    const section = document.querySelector("#wbg905-product-story");
+    if (!section) return;
+
+    const meta = section.querySelector("[data-product-meta]");
+    const code = section.querySelector("[data-product-code]");
+    const headline = section.querySelector("[data-product-headline]");
+    const description = section.querySelector("[data-product-description]");
+    const actions = gsap.utils.toArray("[data-product-actions] > *", section);
+    const stage = section.querySelector("[data-product-stage]");
+    const callouts = gsap.utils.toArray("[data-product-callout]", section);
+    const benefits = gsap.utils.toArray("[data-product-benefit]", section);
+    const detailsHeading = section.querySelector("[data-product-details-heading]");
+    const features = gsap.utils.toArray("[data-product-feature]", section);
+    const finalCta = section.querySelector("[data-product-final]");
+
+    const context = gsap.context(() => {
+      const intro = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        scrollTrigger: { trigger: section, start: "top 84%", once: true },
+      });
+      intro.from(meta, { autoAlpha: 0, y: 12, duration: .4 }, 0);
+      intro.from(code, { autoAlpha: 0, y: 18, duration: .55 }, .05);
+      intro.from(headline, { autoAlpha: 0, y: 20, duration: .55 }, .12);
+      intro.from(description, { autoAlpha: 0, y: 14, duration: .48 }, .28);
+      intro.from(actions, { autoAlpha: 0, y: 12, duration: .38, stagger: .07 }, .38);
+      intro.from(stage, { autoAlpha: 0, y: 20, scale: 1.015, duration: .85 }, .08);
+      intro.from(benefits, { autoAlpha: 0, y: 14, duration: .45, stagger: .08 }, .36);
+
+      if (callouts.length) {
+        gsap.from(callouts, {
+          autoAlpha: 0,
+          y: 8,
+          duration: .38,
+          stagger: .07,
+          ease: "power2.out",
+          scrollTrigger: { trigger: stage, start: "top 72%", once: true },
+        });
+        gsap.from(callouts.map((callout) => callout.querySelector(".wbg905-product-story__callout-line")), {
+          scaleX: 0,
+          duration: .42,
+          stagger: .07,
+          ease: "power2.out",
+          scrollTrigger: { trigger: stage, start: "top 72%", once: true },
+        });
+      }
+
+      gsap.from(detailsHeading, {
+        autoAlpha: 0,
+        y: 18,
+        duration: .52,
+        ease: "power3.out",
+        scrollTrigger: { trigger: detailsHeading, start: "top 88%", once: true },
+      });
+      gsap.from(features, {
+        autoAlpha: 0,
+        y: 18,
+        duration: .48,
+        stagger: .08,
+        ease: "power3.out",
+        scrollTrigger: { trigger: features[0], start: "top 88%", once: true },
+      });
+      gsap.from(finalCta, {
+        autoAlpha: 0,
+        y: 16,
+        duration: .5,
+        ease: "power3.out",
+        scrollTrigger: { trigger: finalCta, start: "top 90%", once: true },
+      });
+    }, section);
+
+    const parallax = gsap.matchMedia();
+    parallax.add("(min-width: 1200px)", () => {
+      gsap.to(stage, {
+        yPercent: -1.5,
         ease: "none",
+        scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: .9 },
       });
-      panels.forEach((panel, index) => {
-        story
-          .to(panel, { autoAlpha: 1, duration: 0.22 }, index === 0 ? 0 : 0.42 + index * 0.56)
-          .to(
-            panel,
-            { autoAlpha: index === panels.length - 1 ? 1 : 0.28, duration: 0.18 },
-            index === panels.length - 1 ? "+=0.35" : "+=0.42",
-          );
-      });
-      story.to(".story-progress span", { width: "100%", duration: 1, ease: "none" }, 0);
     });
 
     return () => {
-      sectionMedia.revert();
-      aboutCleanup?.();
+      context.revert();
+      parallax.revert();
     };
   }
 
