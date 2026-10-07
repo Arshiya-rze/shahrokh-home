@@ -1,0 +1,100 @@
+:root {
+  color-scheme: light;
+  --ink: #171717;
+  --gray: #68696b;
+  --gray-soft: #e5e5e2;
+  --line: rgba(0, 0, 0, .16);
+}
+
+body {
+  background: #f5f5f2;
+  color: var(--ink);
+}
+
+.scene-dark:not(#top) {
+  background: #f5f5f2;
+  color: var(--ink);
+}
+
+.scene-red {
+  background: #f0f0ed;
+  color: var(--ink);
+}
+
+.scene-red .section-marker { color: var(--gray); }
+.scene-red .display-heading em { color: var(--red); }
+.body-copy--light,
+.body-lead--light { color: rgba(23, 23, 23, .72); }
+
+.button--outline {
+  border-color: rgba(23, 23, 23, .52);
+  color: var(--ink);
+}
+
+.button--outline:hover,
+.button--outline:focus-visible {
+  border-color: var(--red);
+  background: var(--red);
+  color: #fff;
+}
+
+.mobile-menu {
+  background: #f5f5f2;
+  color: var(--ink);
+}
+
+.mobile-menu nav { border-color: rgba(0, 0, 0, .15); }
+.mobile-menu nav a { border-color: rgba(0, 0, 0, .15); }
+.mobile-menu__note { color: var(--gray); }
+
+.media-frame,
+.media-placeholder {
+  background-color: #e5e5e1;
+}
+
+.placeholder-lines {
+  opacity: .42;
+  background:
+    linear-gradient(90deg, transparent 49.8%, rgba(242, 28, 43, .24) 50%, transparent 50.2%),
+    linear-gradient(0deg, transparent 49.8%, rgba(0, 0, 0, .12) 50%, transparent 50.2%),
+    repeating-linear-gradient(90deg, transparent 0 5.9rem, rgba(0, 0, 0, .06) 6rem 6.05rem);
+}
+
+.media-placeholder__label,
+.media-caption,
+.story-head__meta { color: rgba(23, 23, 23, .62); }
+
+.wbg-story .story-head__meta { color: rgba(23, 23, 23, .62); }
+.wbg-story .story-media { border-color: rgba(0, 0, 0, .16); }
+.wbg-story .story-panel { border-color: rgba(0, 0, 0, .14); }
+.wbg-story .story-panel p { color: rgba(23, 23, 23, .72); }
+.wbg-story .story-progress { background: rgba(0, 0, 0, .16); }
+
+.credibility__mark {
+  justify-items: end;
+  color: var(--gray);
+}
+
+.credibility__mark img {
+  display: block;
+  width: min(16rem, 100%);
+  height: auto;
+  aspect-ratio: 504 / 155;
+  object-fit: contain;
+  object-position: right center;
+}
+
+.site-footer {
+  background: #ededeb;
+  color: var(--ink);
+}
+
+.site-footer a { color: var(--ink); }
+.site-footer small { color: var(--gray); }
+
+.site-header.is-sticky-context .header-search { color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .mobile-menu { transition: none; }
+}

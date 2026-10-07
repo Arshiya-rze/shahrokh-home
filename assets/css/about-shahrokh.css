@@ -4,9 +4,9 @@
   overflow: hidden;
   padding-block: 6.5rem 3.5rem;
   background:
-    radial-gradient(ellipse at 18% 30%, rgba(59, 70, 74, .25), transparent 46%),
-    linear-gradient(135deg, #11191c 0%, #080c0e 58%, #060809 100%);
-  color: var(--white);
+    radial-gradient(ellipse at 18% 30%, rgba(59, 70, 74, .09), transparent 46%),
+    linear-gradient(135deg, #f7f7f4 0%, #f0f1ee 58%, #f8f8f6 100%);
+  color: #171717;
 }
 
 .about-shahrokh__main {
@@ -21,7 +21,7 @@
   position: relative;
   z-index: 2;
   padding-inline-end: .85rem;
-  border-inline-end: 1px solid rgba(255, 255, 255, .32);
+  border-inline-end: 1px solid rgba(0, 0, 0, .25);
   direction: rtl;
   text-align: right;
 }
@@ -31,12 +31,12 @@
   align-items: center;
   gap: .85rem;
   margin-block-end: 1.55rem;
-  color: rgba(255, 255, 255, .76);
+  color: rgba(23, 23, 23, .72);
   font-size: .9rem;
 }
 
 .about-shahrokh__number {
-  color: rgba(255, 255, 255, .62);
+  color: rgba(23, 23, 23, .58);
   font: 500 .82rem/1 Arial, sans-serif;
   letter-spacing: .04em;
   direction: ltr;
@@ -78,7 +78,7 @@
 .about-shahrokh__description {
   max-width: 35rem;
   margin-block: 1rem 1.3rem;
-  color: rgba(255, 255, 255, .78);
+  color: rgba(23, 23, 23, .76);
   font-size: clamp(.94rem, 4vw, 1.08rem);
   line-height: 1.95;
 }
@@ -94,9 +94,9 @@
   gap: 1.35rem;
   min-height: 3.2rem;
   padding: .3rem .45rem .3rem 1.15rem;
-  border: 1px solid rgba(255, 255, 255, .7);
+  border: 1px solid rgba(23, 23, 23, .62);
   border-radius: 999px;
-  color: var(--white);
+  color: #171717;
   font-size: .88rem;
   transition: background-color .25s ease, border-color .25s ease, color .25s ease;
 }
@@ -107,7 +107,7 @@
   width: 2.35rem;
   aspect-ratio: 1;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, .48);
+  border: 1px solid rgba(23, 23, 23, .45);
   border-radius: 50%;
   direction: ltr;
   font: 1.2rem/1 Arial, sans-serif;
@@ -116,15 +116,15 @@
 
 .about-shahrokh__cta:hover,
 .about-shahrokh__cta:focus-visible {
-  border-color: rgba(255, 255, 255, .95);
-  background: rgba(255, 255, 255, .09);
-  color: var(--white);
+  border-color: rgba(23, 23, 23, .8);
+  background: rgba(0, 0, 0, .045);
+  color: #171717;
 }
 
 .about-shahrokh__cta:hover .about-shahrokh__cta-icon,
 .about-shahrokh__cta:focus-visible .about-shahrokh__cta-icon {
   transform: translateX(-4px);
-  border-color: rgba(255, 255, 255, .85);
+  border-color: rgba(23, 23, 23, .72);
 }
 
 .about-shahrokh__media {
@@ -135,7 +135,7 @@
   margin-inline: -1.15rem;
   margin-block: 0;
   aspect-ratio: 1.34 / 1;
-  background: #101619;
+  background: #e5e5e1;
 }
 
 .about-shahrokh__media::after {
@@ -167,7 +167,7 @@
   letter-spacing: .035em;
   opacity: .05;
   white-space: nowrap;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, .6);
+  -webkit-text-stroke: 1px rgba(0, 0, 0, .42);
   transform: translateX(-50%);
   pointer-events: none;
 }
@@ -188,7 +188,7 @@
   min-width: 0;
   min-height: 4.55rem;
   padding: .65rem .75rem;
-  border: 1px solid rgba(255, 255, 255, .17);
+  border: 1px solid rgba(0, 0, 0, .15);
   border-radius: 1rem;
   direction: rtl;
   text-align: right;
@@ -202,8 +202,8 @@
   aspect-ratio: 1;
   place-items: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, .09);
-  color: rgba(255, 255, 255, .9);
+  background: rgba(0, 0, 0, .07);
+  color: rgba(23, 23, 23, .88);
 }
 
 .about-shahrokh__feature-icon::after {
@@ -237,7 +237,7 @@
 }
 
 .about-shahrokh__feature strong {
-  color: var(--white);
+  color: #171717;
   font-size: .96rem;
   font-weight: 700;
   line-height: 1.45;
@@ -245,7 +245,7 @@
 
 .about-shahrokh__feature small {
   margin-block-start: .12rem;
-  color: rgba(255, 255, 255, .67);
+  color: rgba(23, 23, 23, .7);
   font-size: .82rem;
   line-height: 1.6;
   min-height: 2em;
@@ -275,7 +275,7 @@
   }
   .about-shahrokh__content {
     padding-inline-end: clamp(1.2rem, 3.4vw, 3.4rem);
-    border-inline-end: 1px solid rgba(255, 255, 255, .36);
+    border-inline-end: 1px solid rgba(0, 0, 0, .25);
   }
   .about-shahrokh__meta { margin-block-end: 2rem; }
   .about-shahrokh__title { font-size: clamp(2.5rem, 4.5vw, 4.6rem); }
@@ -305,7 +305,7 @@
   }
   .about-shahrokh__feature-copy { min-height: 3.25rem; }
   .about-shahrokh__feature + .about-shahrokh__feature {
-    border-inline-start: 1px solid rgba(255, 255, 255, .24);
+    border-inline-start: 1px solid rgba(0, 0, 0, .16);
   }
   .about-shahrokh__feature-icon { flex-basis: 3.3rem; width: 3.3rem; }
   .about-shahrokh__feature-icon::after { inset-inline-start: -.8rem; }

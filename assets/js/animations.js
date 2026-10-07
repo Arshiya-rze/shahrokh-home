@@ -506,9 +506,9 @@
       )
       .forEach((block) => {
         gsap.from(block, {
-          y: 42,
+          y: 28,
           autoAlpha: 0,
-          duration: 1,
+          duration: 0.85,
           ease: "power3.out",
           scrollTrigger: { trigger: block, start: "top 78%" },
         });
@@ -516,10 +516,10 @@
 
     gsap.utils.toArray(".product-line,.capability").forEach((item, index) => {
       gsap.from(item, {
-        y: 24,
+        y: 18,
         autoAlpha: 0,
-        duration: 0.65,
-        delay: (index % 4) * 0.06,
+        duration: 0.55,
+        delay: (index % 4) * 0.045,
         ease: "power2.out",
         scrollTrigger: { trigger: item, start: "top 88%" },
       });
@@ -527,9 +527,9 @@
 
     gsap.utils.toArray(".motion-frame,.detail-story__media").forEach((media) => {
       gsap.from(media, {
-        scale: 0.94,
+        scale: 0.97,
         autoAlpha: 0,
-        duration: 1,
+        duration: 0.82,
         scrollTrigger: { trigger: media, start: "top 82%" },
       });
     });
@@ -542,7 +542,7 @@
           trigger: ".wbg-story",
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.7,
+          scrub: 0.5,
         },
       });
 

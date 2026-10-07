@@ -16,11 +16,16 @@
 }
 
 .site-header.is-sticky-context {
-  background-color: rgba(10, 10, 10, .92);
-  border-block-end-color: rgba(255, 255, 255, .12);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background-color: rgba(248, 248, 245, .96);
+  border-block-end-color: rgba(0, 0, 0, .12);
+  color: #171717;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
+
+.brand-lockup__dark { display: none; }
+.site-header.is-sticky-context .brand-lockup__light { display: none; }
+.site-header.is-sticky-context .brand-lockup__dark { display: block; }
 
 .reduced-motion .site-header { transition: none; }
 
