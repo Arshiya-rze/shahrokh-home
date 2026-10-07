@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="assets/css/about-shahrokh.css" />
     <link rel="stylesheet" href="assets/css/light-theme.css" />
     <link rel="stylesheet" href="assets/css/wbg905-product-story.css" />
+    <link rel="stylesheet" href="assets/css/product-range.css" />
   </head>
   <body>
     <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
@@ -402,38 +403,105 @@
           <a class="wbg905-product-story__button wbg905-product-story__button--primary" href="#products">مشاهده محصول WBG905 <span aria-hidden="true">←</span></a>
         </div>
       </section>
-      <section class="ecosystem scene-light" id="products">
+      <section class="product-range scene-light" id="products" aria-labelledby="product-range-title">
         <div class="page-shell">
-          <div class="ecosystem__head">
-            <p class="section-marker">۰۴ / خانواده محصولات</p>
-            <h2 class="display-heading">
-              یک سیستم،<br /><em>چند مسیر کاری.</em>
-            </h2>
-            <p class="body-copy">
-              محصولات شاهرخ برای ساختن محیط‌های کاری منسجم کنار هم قرار
-              می‌گیرند.
-            </p>
+          <div class="product-range__overview">
+            <div class="product-range__stage" id="product-range-stage" data-product-range-stage>
+              <ol class="product-range__index" aria-label="محصولات موجود">
+                <li><a href="#product-range-stage" aria-current="step" aria-label="محصول ۱: WBG905">۰۱</a></li>
+              </ol>
+              <img
+                class="product-range__showcase"
+                src="assets/images/posters/wbg905-hero-poster.webp"
+                alt="میز کار صنعتی واقعی شاهرخ مدل WBG905 در فضای کارگاهی"
+                width="1280"
+                height="704"
+                fetchpriority="high"
+                decoding="async"
+              />
+              <div class="product-range__badge">
+                <span class="product-range__badge-icon" aria-hidden="true">◇</span>
+                <span><strong>طراحی ماژولار</strong><small>قابلیت ترکیب و توسعه بر اساس نیاز</small></span>
+              </div>
+              <span class="product-range__model">WBG905</span>
+            </div>
+
+            <header class="product-range__intro" data-product-range-intro>
+              <p class="product-range__eyebrow"><i aria-hidden="true"></i> ۰۴ / محصولات</p>
+              <h2 id="product-range-title">مجموعه‌ای از<br /><em>راهکارهای حرفه‌ای</em></h2>
+              <p class="product-range__lead">محصولات شاهرخ با تمرکز بر کیفیت، دوام و کارایی، برای محیط‌های صنعتی و حرفه‌ای طراحی شده‌اند. هر محصول پاسخی دقیق به نیازهای واقعی فضای کار است.</p>
+              <a class="product-range__all-link" href="#product-range-categories">مشاهده همه محصولات <span aria-hidden="true">←</span></a>
+            </header>
           </div>
-          <div class="product-list">
-            <a class="product-line" href="#contact"
-              ><span class="product-line__number">۰۱</span
-              ><span class="product-line__title">میزهای کار صنعتی</span
-              ><span class="product-line__note"
-                >برای مونتاژ، تعمیر و کار فنی</span
-              ><span class="product-line__arrow">↗</span></a
-            ><a class="product-line" href="#contact"
-              ><span class="product-line__number">۰۲</span
-              ><span class="product-line__title">کمد و نگهداری ابزار</span
-              ><span class="product-line__note">نظم برای ابزارهای هر روز</span
-              ><span class="product-line__arrow">↗</span></a
-            ><a class="product-line" href="#contact"
-              ><span class="product-line__number">۰۳</span
-              ><span class="product-line__title">تجهیزات فضای کارگاهی</span
-              ><span class="product-line__note"
-                >سیستم‌هایی برای یک محیط کامل</span
-              ><span class="product-line__arrow">↗</span></a
-            >
+
+          <div class="product-range__featured" aria-labelledby="product-range-featured-title">
+            <div class="product-range__subhead">
+              <h3 id="product-range-featured-title">محصولات منتخب</h3>
+              <a href="#product-range-categories">مشاهده همه <span aria-hidden="true">←</span></a>
+            </div>
+            <a class="product-range__product-card" href="#wbg905-product-story" data-product-range-card>
+              <img src="assets/images/posters/wbg905-hero-poster.webp" alt="" width="1280" height="704" loading="lazy" decoding="async" />
+              <span class="product-range__product-copy">
+                <strong>WBG905</strong>
+                <b>میز کار صنعتی</b>
+                <span>ترکیبی از استحکام، نظم و کارایی برای محیط‌های حرفه‌ای</span>
+              </span>
+              <span class="product-range__arrow" aria-hidden="true">←</span>
+            </a>
           </div>
+
+          <section class="product-range__categories" id="product-range-categories" aria-labelledby="product-range-category-title">
+            <header class="product-range__category-heading">
+              <p class="product-range__eyebrow"><i aria-hidden="true"></i> دسته‌بندی محصولات</p>
+              <h3 id="product-range-category-title">با هر نیاز،<br /><em>یک راهکار حرفه‌ای</em></h3>
+              <p>محصولات شاهرخ در دسته‌بندی‌های متنوع، پاسخگوی نیازهای مختلف محیط‌های کاری هستند.</p>
+            </header>
+            <div class="product-range__category-grid">
+              <a class="product-range__category-card" href="#wbg905-product-story" data-product-range-card>
+                <picture>
+                  <img src="assets/images/product-categories/industrial-workbench.webp" alt="تصویر مفهومی و مستقل میز کار صنعتی" width="1254" height="1254" loading="lazy" decoding="async" />
+                </picture>
+                <span class="product-range__category-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 12h22v4H5zM8 16v10m16-10v10M5 26h22M9 8h14"/></svg></span>
+                <span class="product-range__category-copy"><strong>میزهای کار صنعتی</strong><small>سطح مقاوم برای مونتاژ و تعمیر</small></span>
+                <span class="product-range__arrow" aria-hidden="true">←</span>
+              </a>
+              <a class="product-range__category-card" href="#wbg905-product-details" data-product-range-card>
+                <picture>
+                  <img src="assets/images/product-categories/tool-organization-panel.webp" alt="تصویر مفهومی پنل مستقل ابزار و نظم‌دهی" width="1254" height="1254" loading="lazy" decoding="async" />
+                </picture>
+                <span class="product-range__category-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6zM10 11h12M10 16h12M10 21h8"/></svg></span>
+                <span class="product-range__category-copy"><strong>پنل ابزار و نظم‌دهی</strong><small>ابزارهای پرکاربرد در دسترس</small></span>
+                <span class="product-range__arrow" aria-hidden="true">←</span>
+              </a>
+              <a class="product-range__category-card" href="#wbg905-product-details" data-product-range-card>
+                <picture>
+                  <img src="assets/images/product-categories/rolling-tool-drawers.webp" alt="تصویر مفهومی مستقل از کشوی ابزار چرخ‌دار" width="1254" height="1254" loading="lazy" decoding="async" />
+                </picture>
+                <span class="product-range__category-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 5h20v22H6zM6 12h20M6 20h20M13 8.5h6M13 16h6M13 23.5h6"/></svg></span>
+                <span class="product-range__category-copy"><strong>کشوهای ابزار</strong><small>نگهداری ابزارهای پرکاربرد</small></span>
+                <span class="product-range__arrow" aria-hidden="true">←</span>
+              </a>
+              <a class="product-range__category-card" href="#wbg905-product-details" data-product-range-card>
+                <picture>
+                  <img src="assets/images/product-categories/storage-cabinet.webp" alt="تصویر مفهومی کمد مستقل نگهداری ابزار و تجهیزات" width="1254" height="1254" loading="lazy" decoding="async" />
+                </picture>
+                <span class="product-range__category-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 5h22v22H5zM16 5v22M5 16h22"/></svg></span>
+                <span class="product-range__category-copy"><strong>کمد و فضای ذخیره‌سازی</strong><small>نگهداری امن ابزار و تجهیزات</small></span>
+                <span class="product-range__arrow" aria-hidden="true">←</span>
+              </a>
+            </div>
+          </section>
+
+          <a class="product-range__promo" href="#wbg905-product-story">
+            <img src="assets/images/posters/wbg905-hero-poster.webp" alt="" width="1280" height="704" loading="lazy" decoding="async" />
+            <span class="product-range__promo-copy"><small>کیفیت ساخت حرفه‌ای</small><strong>فضای کاری<br /><em>خود را بسازید</em></strong><span class="product-range__promo-button">مشاهده محصولات <b aria-hidden="true">←</b></span></span>
+          </a>
+
+          <ul class="product-range__values" aria-label="ارزش‌های شاهرخ">
+            <li class="product-range__value" data-product-range-card><span class="product-range__value-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m13 3 6 0 1 4 3 1 3-2 4 5-3 3v4l3 3-4 5-3-2-3 1-1 4h-6l-1-4-3-1-3 2-4-5 3-3v-4l-3-3 4-5 3 2 3-1z"/><circle cx="16" cy="16" r="4"/></svg></span><span><strong>کیفیت ساخت</strong><small>تمرکز بر کیفیت و دوام</small></span></li>
+            <li class="product-range__value" data-product-range-card><span class="product-range__value-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m16 4 3.5 7 7.5 1-5.5 5.5 1.3 8L16 22l-6.8 3.5 1.3-8L5 12l7.5-1z"/></svg></span><span><strong>طراحی کاربردی</strong><small>متناسب با نیاز فضای کار</small></span></li>
+            <li class="product-range__value" data-product-range-card><span class="product-range__value-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m16 3 10 4v8c0 6-4.2 10.8-10 14-5.8-3.2-10-8-10-14V7z"/><path d="M11 16h10M16 11v10"/></svg></span><span><strong>پشتیبانی و خدمات</strong><small>برای آشنایی، با ما در ارتباط باشید</small></span></li>
+          </ul>
         </div>
       </section>
       <section class="motion-story scene-red">

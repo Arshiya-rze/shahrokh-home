@@ -526,10 +526,11 @@
   function initSectionReveals() {
     const aboutCleanup = initAboutReveal();
     const productStoryCleanup = initWbg905ProductStory();
+    const productRangeCleanup = initProductRangeReveal();
 
     gsap.utils
       .toArray(
-        ".ecosystem__head,.capabilities__intro,.detail-story__copy,.final-cta__inner",
+        ".capabilities__intro,.detail-story__copy,.final-cta__inner",
       )
       .forEach((block) => {
         gsap.from(block, {
@@ -541,7 +542,7 @@
         });
       });
 
-    gsap.utils.toArray(".product-line,.capability").forEach((item, index) => {
+    gsap.utils.toArray(".capability").forEach((item, index) => {
       gsap.from(item, {
         y: 18,
         autoAlpha: 0,
@@ -563,8 +564,63 @@
 
     return () => {
       productStoryCleanup?.();
+      productRangeCleanup?.();
       aboutCleanup?.();
     };
+  }
+
+  function initProductRangeReveal() {
+    const section = document.querySelector(".product-range");
+    if (!section) return;
+
+    const meta = section.querySelector(".product-range__intro .product-range__eyebrow");
+    const title = section.querySelector("#product-range-title");
+    const lead = section.querySelector(".product-range__lead");
+    const cta = section.querySelector(".product-range__all-link");
+    const stage = section.querySelector("[data-product-range-stage]");
+    const featuredCard = section.querySelector(".product-range__product-card");
+    const categoryCards = gsap.utils.toArray(".product-range__category-card", section);
+    const values = gsap.utils.toArray(".product-range__value", section);
+
+    const context = gsap.context(() => {
+      const intro = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        scrollTrigger: { trigger: section, start: "top 86%", once: true },
+      });
+      intro.from(meta, { autoAlpha: 0, y: 12, duration: .55 }, 0);
+      intro.from(title, { autoAlpha: 0, y: 20, duration: .68 }, .08);
+      intro.from(lead, { autoAlpha: 0, y: 16, duration: .58 }, .22);
+      intro.from(cta, { autoAlpha: 0, y: 12, duration: .5 }, .34);
+      intro.from(stage, { autoAlpha: 0, y: 18, scale: 1.015, duration: .82 }, .08);
+
+      if (featuredCard && window.matchMedia("(max-width: 1279px)").matches) {
+        gsap.from(featuredCard, {
+          autoAlpha: 0,
+          y: 18,
+          duration: .58,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: featuredCard,
+            start: "top 88%",
+            once: true,
+          },
+        });
+      }
+
+      [[categoryCards, section.querySelector(".product-range__categories")], [values, section.querySelector(".product-range__values")]].forEach(([items, trigger]) => {
+        if (!items.length || !trigger) return;
+        gsap.from(items, {
+          autoAlpha: 0,
+          y: 18,
+          duration: .58,
+          stagger: .085,
+          ease: "power3.out",
+          scrollTrigger: { trigger, start: "top 88%", once: true },
+        });
+      });
+    }, section);
+
+    return () => context.revert();
   }
 
   function initWbg905ProductStory() {
