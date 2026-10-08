@@ -7,6 +7,38 @@
   gsap.registerPlugin(ScrollTrigger);
   if (Observer) gsap.registerPlugin(Observer);
 
+  const capabilitiesSection = document.querySelector(".capabilities-section");
+  if (capabilitiesSection && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const capabilitiesEntrance = capabilitiesSection.querySelectorAll(
+      ".capabilities-section__intro, .capabilities-section__card, .capabilities-section__process li",
+    );
+    gsap.fromTo(
+      capabilitiesEntrance,
+      { autoAlpha: 0, y: 14 },
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.65,
+        stagger: 0.07,
+        ease: "power2.out",
+        clearProps: "all",
+        scrollTrigger: { trigger: capabilitiesSection, start: "top 76%", once: true },
+      },
+    );
+    gsap.fromTo(
+      capabilitiesSection.querySelector(".capabilities-section__visual"),
+      { autoAlpha: 0, scale: 1.015 },
+      {
+        autoAlpha: 1,
+        scale: 1,
+        duration: 0.8,
+        ease: "power2.out",
+        clearProps: "all",
+        scrollTrigger: { trigger: capabilitiesSection, start: "top 76%", once: true },
+      },
+    );
+  }
+
   const header = document.querySelector("[data-header]");
   const progressList = hero.querySelector("[data-hero-progress]");
   const steps = gsap.utils.toArray("[data-hero-step]", hero);
