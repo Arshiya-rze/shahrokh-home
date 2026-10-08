@@ -33,6 +33,11 @@
   mix-blend-mode: multiply;
 }
 
+.site-header .brand-logo {
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
 .site-header .header-search,
 .site-header .menu-toggle,
 .site-header .desktop-nav a { color: #171717; }
@@ -121,7 +126,7 @@
   .menu-toggle { display: none; }
 }
 @media (max-width: 699px) {
-  .brand-lockup { order: 1; inline-size: 4.8rem; }
+  .brand-lockup { order: 1; inline-size: clamp(74px, 20vw, 96px); }
   .header-search { order: 2; }
   .header-cta {
     display: none;
