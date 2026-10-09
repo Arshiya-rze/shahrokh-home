@@ -121,7 +121,7 @@
   .site-footer__banner {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
     gap: 28px;
     overflow: hidden;
@@ -154,7 +154,7 @@
 }
 
 @media (min-width: 1024px) {
-  .site-footer__columns { grid-template-columns: 1.3fr 1fr 1.1fr .95fr; column-gap: 0; margin-block-start: 42px; }
+  .site-footer__columns { grid-template-columns: 1.3fr 1fr 1.1fr; column-gap: 0; margin-block-start: 42px; }
   .site-footer__column { padding: 8px 28px 4px; }
   .site-footer__column + .site-footer__column { position: relative; border-inline-start: 0; }
   .site-footer__column + .site-footer__column::before { position: absolute; inset-block: 8px 4px; inset-inline-start: 0; width: 1px; background: var(--footer-line); content: ""; }

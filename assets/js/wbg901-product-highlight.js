@@ -3,7 +3,6 @@
   if (!section) return;
 
   const mainImage = section.querySelector('[data-wbg901-main-media]');
-  const fallback = section.querySelector('[data-wbg901-media-fallback]');
   const gallery = section.querySelector('[data-wbg901-gallery]');
   const videoPanel = section.querySelector('[data-wbg901-video-panel]');
   const video = section.querySelector('[data-wbg901-video]');
@@ -36,7 +35,6 @@
   if (await assetExists(mainMedia, 'image')) {
     mainImage.src = mainMedia;
     mainImage.hidden = false;
-    fallback.hidden = true;
     section.classList.add('has-main-media');
   }
 
@@ -61,7 +59,6 @@
         mainImage.src = item.src;
         mainImage.alt = item.alt;
         mainImage.hidden = false;
-        fallback.hidden = true;
         section.classList.add('has-main-media');
         gallery.querySelectorAll('[role="option"]').forEach((option) => option.setAttribute('aria-selected', String(option === button)));
       });

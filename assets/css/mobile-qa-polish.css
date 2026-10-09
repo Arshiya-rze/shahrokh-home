@@ -1,0 +1,111 @@
+:root {
+  --mobile-gutter: clamp(16px, 5vw, 22px);
+  --mobile-section-space: clamp(56px, 16vw, 72px);
+  --mobile-card-gap: 14px;
+  --mobile-text-secondary: #62666a;
+}
+
+html { scroll-padding-block-start: 5.25rem; }
+body { overflow-x: visible; }
+.header-search[hidden] { display: none !important; }
+.site-header.is-sticky-context {
+  box-shadow: 0 1px 5px rgba(23, 35, 41, .07);
+  border-block-end-color: rgba(23, 35, 41, .12);
+  transition-duration: .2s;
+}
+.site-header :is(.menu-toggle, .header-search),
+.site-header .brand-lockup { min-width: 44px; min-height: 44px; }
+.site-header .header-cta { min-height: 44px; }
+.mobile-menu {
+  z-index: 55;
+  padding-block-start: calc(5.5rem + env(safe-area-inset-top));
+  padding-block-end: calc(1.5rem + env(safe-area-inset-bottom));
+  transition: opacity .24s ease, transform .24s ease, visibility 0s linear .24s;
+}
+.mobile-menu.is-open { transition-delay: 0s; }
+.mobile-menu nav a { min-height: 60px; }
+
+@media (max-width: 699px) {
+  html { scroll-padding-block-start: 4.75rem; }
+
+  #top .hero__title { font-size: clamp(2.125rem, 8.8vw, 2.6rem); line-height: 1.24; }
+  #top .hero__lead {
+    color: #555b60;
+    font-size: .9375rem;
+    line-height: 1.9;
+  }
+  #top .hero-actions { gap: 10px; }
+  #top .hero-actions .button--red,
+  #top .video-button {
+    min-height: 50px;
+    block-size: auto;
+    padding: 8px 12px;
+    font-size: .875rem;
+    line-height: 1.45;
+  }
+  #top .hero-actions .button--red { min-width: 0; }
+  #top .video-button { min-width: 0; }
+  #top .video-button__icon { width: 32px; height: 32px; flex-basis: 32px; }
+
+  .about-shahrokh__description,
+  .product-range__lead,
+  .product-range__category-copy small,
+  .capabilities-section__card p,
+  .capabilities-section__process small,
+  .industry-applications__intro > p,
+  .industry-applications__card p,
+  .industry-applications__benefit-intro p,
+  .industry-applications__benefit-list small,
+  .wbg901-product__lead,
+  .wbg901-product__features small,
+  .brand-trust-about__description,
+  .brand-trust-about__values p,
+  .site-footer__mobile-brand p {
+    color: var(--mobile-text-secondary);
+  }
+
+  .site-footer { scroll-margin-block-start: 4.75rem; }
+  .about-shahrokh__main { padding-inline: 16px; }
+  .about-shahrokh__media { width: calc(100% + 32px); margin-inline: -16px; }
+  .wbg905-product-story__stage { overflow: clip; }
+}
+
+@media (max-width: 374px) {
+  #top .hero__title { font-size: 2.125rem; }
+  #top .hero-actions { flex-direction: column; align-items: stretch; }
+  #top .hero-actions .button--red,
+  #top .video-button { width: 100%; flex: 0 0 auto; justify-content: space-between; }
+}
+
+@media (min-width: 375px) and (max-width: 699px) {
+  #top .hero-actions .button--red {
+    flex: 1.4 1 0;
+    gap: 6px;
+    padding-inline: 8px;
+    font-size: .8125rem;
+    white-space: nowrap;
+  }
+  #top .video-button {
+    flex: 1 1 0;
+    gap: 6px;
+    padding-inline: 8px;
+    font-size: .8125rem;
+  }
+  #top .video-button__icon { width: 30px; height: 30px; flex-basis: 30px; }
+}
+
+@media (max-width: 375px) {
+  .wbg901-product__stage { width: 100%; min-width: 0; min-height: 0; aspect-ratio: 1; }
+}
+
+@media (min-width: 1024px) {
+  /* The artwork intentionally bleeds to the viewport edge at this breakpoint. */
+  .capabilities-section { overflow-x: clip; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .mobile-menu,
+  .site-header,
+  .menu-toggle span { transition: none !important; }
+}
