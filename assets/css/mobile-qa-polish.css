@@ -28,6 +28,9 @@ body { overflow-x: visible; }
 @media (max-width: 699px) {
   html { scroll-padding-block-start: 4.75rem; }
 
+  .capabilities-section { padding-block-end: 24px; }
+  .industry-applications__intro { padding-block-start: 32px; }
+
   #top .hero__title { font-size: clamp(2.125rem, 8.8vw, 2.6rem); line-height: 1.24; }
   #top .hero__lead {
     color: #555b60;
@@ -96,11 +99,6 @@ body { overflow-x: visible; }
 
 @media (max-width: 375px) {
   .wbg901-product__stage { width: 100%; min-width: 0; min-height: 0; aspect-ratio: 1; }
-}
-
-@media (min-width: 1024px) {
-  /* The artwork intentionally bleeds to the viewport edge at this breakpoint. */
-  .capabilities-section { overflow-x: clip; }
 }
 
 @media (prefers-reduced-motion: reduce) {

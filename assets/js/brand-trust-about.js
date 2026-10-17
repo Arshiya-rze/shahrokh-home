@@ -39,25 +39,23 @@
     section.classList.add('has-stats');
   }
 
-  const videoPath = 'assets/videos/shahrokh-intro.mp4';
+  // Enable only after a verified introduction video has been added.
+  const videoPath = '';
   const videoTrigger = section.querySelector('[data-brand-video-trigger]');
   const videoDialog = section.querySelector('[data-brand-video-dialog]');
   const video = section.querySelector('[data-brand-video]');
   const closeVideo = section.querySelector('[data-brand-video-close]');
 
-  fetch(videoPath, { method: 'HEAD', cache: 'no-store' })
-    .then((response) => {
-      if (!response.ok || !response.headers.get('content-type')?.startsWith('video/')) return;
-      video.src = videoPath;
-      videoTrigger.hidden = false;
-      videoTrigger.addEventListener('click', () => {
-        videoDialog.showModal();
-        video.play().catch(() => {});
-      });
-      closeVideo.addEventListener('click', () => videoDialog.close());
-      videoDialog.addEventListener('close', () => video.pause());
-    })
-    .catch(() => {});
+  if (videoPath) {
+    video.src = videoPath;
+    videoTrigger.hidden = false;
+    videoTrigger.addEventListener('click', () => {
+      videoDialog.showModal();
+      video.play().catch(() => {});
+    });
+    closeVideo.addEventListener('click', () => videoDialog.close());
+    videoDialog.addEventListener('close', () => video.pause());
+  }
 
   if (window.gsap && window.ScrollTrigger && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     window.gsap.registerPlugin(window.ScrollTrigger);

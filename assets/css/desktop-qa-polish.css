@@ -1,0 +1,133 @@
+@media (min-width: 1024px) {
+  :root {
+    --shell: min(1360px, calc(100% - clamp(64px, 8vw, 144px)));
+  }
+
+  html { scroll-padding-block-start: 5.25rem; }
+  main > section[id],
+  .site-footer { scroll-margin-block-start: 5.25rem; }
+
+  .site-header { min-height: 72px; }
+  .desktop-nav { gap: clamp(20px, 1.8vw, 28px); font-size: 14px; }
+  .desktop-nav a { opacity: .88; }
+  .desktop-nav a:hover { color: var(--red); }
+  .header-cta { min-height: 46px; padding-inline: 16px; font-size: 13px; }
+
+  .about-shahrokh__main.page-shell,
+  .about-shahrokh__features.page-shell,
+  .product-range .page-shell,
+  .industry-applications .page-shell,
+  .wbg901-product__shell,
+  .brand-trust-about__shell,
+  .site-footer__inner {
+    width: var(--shell);
+    max-width: none;
+  }
+
+  .about-shahrokh__main.page-shell {
+    padding-inline: 0;
+  }
+  .about-shahrokh__features.page-shell { margin-inline: auto; }
+
+  .wbg905-product-story {
+    --product-container-max: 1360px;
+    --product-gutter: 0px;
+    padding-inline: 0;
+    padding-block-end: clamp(44px, 4vw, 64px);
+  }
+  .wbg905-product-story__overview,
+  .wbg905-product-story__details,
+  .wbg905-product-story__final {
+    width: var(--shell);
+    max-width: none;
+  }
+  .wbg905-product-story__final { margin-block-start: 28px; }
+  .wbg905-product-story__benefit p,
+  .wbg905-product-story__feature-copy p { font-size: 14px; }
+
+  .product-range { padding-block-start: 20px; }
+  .product-range__product-copy > span,
+  .product-range__category-copy small { font-size: 14px; }
+  .product-range__categories { margin-block-start: 18px; }
+
+  .capabilities-section .page-shell,
+  .capabilities-section__journey { width: var(--shell); }
+  .capabilities-section__visual {
+    width: calc(100% + clamp(32px, 4vw, 72px) - 6px);
+    margin-inline-start: calc(clamp(-72px, -4vw, -32px) + 6px);
+  }
+  .capabilities-section__card p,
+  .capabilities-section__process small { font-size: 14px; }
+  .capabilities-section__cards { gap: 14px; }
+
+  .industry-applications__benefit-list strong { font-size: 15px; }
+  .industry-applications__benefit-list small { font-size: 13px; }
+
+  .wbg901-product { padding-block: 40px 64px; }
+  .wbg901-product__stage {
+    height: clamp(360px, 30vw, 430px);
+    min-height: 360px;
+  }
+  .wbg901-product.has-main-media .wbg901-product__stage {
+    height: clamp(520px, 40vw, 620px);
+    min-height: 520px;
+  }
+  .wbg901-product__features li { min-height: 62px; }
+  .wbg901-product__features strong { font-size: 16px; }
+
+  .brand-trust-about { padding-block: 16px 72px; }
+  .brand-trust-about__shell { row-gap: 24px; }
+  .brand-trust-about__stat-label { font-size: 13px; }
+  .brand-trust-about__values li { min-height: 188px; }
+  .brand-trust-about__values p { font-size: 14px; }
+
+  .site-footer__banner {
+    min-height: 156px;
+    grid-template-columns: minmax(0, 1fr) 230px;
+    gap: 36px;
+    padding-block: 28px;
+  }
+  .site-footer__banner h2 { font-size: clamp(27px, 2.5vw, 36px); }
+  .site-footer__banner p { font-size: 16px; }
+  .site-footer__banner-actions { justify-content: flex-start; }
+  .site-footer__primary-cta { width: 230px; min-height: 52px; font-size: 15px; }
+  .site-footer__columns { margin-block-start: 36px; }
+  .site-footer__column li > a { font-size: 15px; }
+  .site-footer__bottom { padding-block-end: 32px; }
+
+  .industry-applications__card,
+  .capabilities-section__card,
+  .product-range__category-card,
+  .brand-trust-about__values li { border-radius: 16px; }
+}
+
+@media (min-width: 1504px) {
+  .capabilities-section__visual {
+    width: calc(100% + 50vw - 695px);
+    margin-inline-start: calc(695px - 50vw);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .wbg901-product__shell { column-gap: 30px; }
+  .wbg901-product__intro h2 { font-size: clamp(48px, 4.2vw, 56px); }
+  .wbg901-product__features li { min-height: 56px; }
+  .wbg901-product__features strong { font-size: 15px; }
+  .brand-trust-about__hero { grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr); column-gap: 28px; }
+  .brand-trust-about__media { height: 500px; }
+  .brand-trust-about__values { gap: 10px; }
+  .brand-trust-about__values li { padding-inline: 12px; }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .wbg901-product__cta,
+  .site-footer__primary-cta { transition: filter .18s ease, transform .18s ease; }
+  .wbg901-product__cta:hover,
+  .site-footer__primary-cta:hover { filter: brightness(.96); transform: translateY(-1px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .wbg901-product__cta,
+  .site-footer__primary-cta { transition: none !important; }
+}
