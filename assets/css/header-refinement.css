@@ -168,4 +168,36 @@
     display: grid;
     place-items: center;
   }
+
+  .site-header .menu-toggle {
+    position: relative;
+    gap: 0;
+  }
+
+  .site-header .menu-toggle span {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: 18px;
+    height: 1.5px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    transition: transform .2s ease;
+  }
+
+  .site-header .menu-toggle span:first-child {
+    transform: translate(-50%, calc(-50% - 3px));
+  }
+
+  .site-header .menu-toggle span:last-child {
+    transform: translate(-50%, calc(-50% + 3px));
+  }
+
+  body.menu-open .site-header .menu-toggle span:first-child {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  body.menu-open .site-header .menu-toggle span:last-child {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
 }
