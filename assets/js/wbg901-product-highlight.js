@@ -1,119 +1,93 @@
-(async () => {
+(() => {
   const section = document.querySelector('.wbg901-product');
   if (!section) return;
 
+  const stage = section.querySelector('.wbg901-product__stage');
   const mainImage = section.querySelector('[data-wbg901-main-media]');
-  const gallery = section.querySelector('[data-wbg901-gallery]');
-  const videoPanel = section.querySelector('[data-wbg901-video-panel]');
-  const video = section.querySelector('[data-wbg901-video]');
-  const playButton = section.querySelector('[data-wbg901-play]');
-  const specsPanel = section.querySelector('[data-wbg901-specs]');
+  const frameCounter = section.querySelector('[data-wbg901-frame-count]');
+  const frameCount = 24;
+  const initialFrame = 10;
+  const basePath = 'assets/images/products/wbg901';
+  const frameUrls = Array.from({ length: frameCount }, (_, index) =>
+    `${basePath}/0_${index}.webp`
+  );
+  const cachedFrames = new Set([initialFrame]);
+  const loadingFrames = new Map();
+  const numberFormat = new Intl.NumberFormat('fa-IR');
+  let selectedFrame = initialFrame;
+  let requestedFrame = initialFrame;
+  let scrollFrame = 0;
 
-  const mainMedia = 'assets/images/products/wbg901/wbg901-main.webp';
-  const detailMedia = [
-    { src: 'assets/images/products/wbg901/wbg901-worktop.webp', label: 'سطح کار', alt: 'نمای نزدیک سطح کار ایستگاه WBG901' },
-    { src: 'assets/images/products/wbg901/wbg901-storage.webp', label: 'فضای ذخیره‌سازی', alt: 'نمای نزدیک فضای ذخیره‌سازی ایستگاه WBG901' },
-    { src: 'assets/images/products/wbg901/wbg901-tool-panel.webp', label: 'پنل ابزار', alt: 'نمای نزدیک پنل ابزار ایستگاه WBG901' },
-    { src: 'assets/images/products/wbg901/wbg901-base.webp', label: 'پایه و ساختار', alt: 'نمای نزدیک پایه و ساختار ایستگاه WBG901' },
-  ];
-  // Keep empty until verified WBG901 values are supplied by the client.
-  const verifiedSpecs = [];
+  section.classList.add('has-main-media', 'has-frame-sequence');
 
-  const assetExists = async (src, mediaType) => {
-    try {
-      const response = await fetch(src, { method: 'HEAD', cache: 'no-store' });
-      return response.ok && response.headers.get('content-type')?.startsWith(`${mediaType}/`);
-    } catch {
-      return false;
+  const showFrame = (index) => {
+    requestedFrame = index;
+    if (!cachedFrames.has(index)) {
+      loadFrame(index);
+      return;
     }
+
+    if (selectedFrame !== index) {
+      mainImage.src = frameUrls[index];
+      selectedFrame = index;
+    }
+    frameCounter.textContent = `${numberFormat.format(index + 1)} / ${numberFormat.format(frameCount)}`;
   };
 
-  const availableDetails = (await Promise.all(detailMedia.map(async (item) =>
-    await assetExists(item.src, 'image') ? item : null,
-  ))).filter(Boolean);
+  const loadFrame = (index) => {
+    if (cachedFrames.has(index) || loadingFrames.has(index)) return;
 
-  if (await assetExists(mainMedia, 'image')) {
-    mainImage.src = mainMedia;
-    mainImage.hidden = false;
-    section.classList.add('has-main-media');
+    const image = new Image();
+    image.decoding = 'async';
+    loadingFrames.set(index, image);
+    image.onload = async () => {
+      try { await image.decode(); } catch { /* onload already confirms the frame is usable */ }
+      cachedFrames.add(index);
+      loadingFrames.delete(index);
+      if (requestedFrame === index) showFrame(index);
+    };
+    image.onerror = () => loadingFrames.delete(index);
+    image.src = frameUrls[index];
+  };
+
+  const updateFromScroll = () => {
+    scrollFrame = 0;
+    const viewportHeight = window.innerHeight;
+    const bounds = stage.getBoundingClientRect();
+    const progress = Math.max(0, Math.min(1,
+      (viewportHeight - bounds.top) / (viewportHeight + bounds.height)
+    ));
+    const offset = Math.round(progress * frameCount);
+    showFrame((initialFrame + offset) % frameCount);
+  };
+
+  const scheduleScrollUpdate = () => {
+    if (!scrollFrame) scrollFrame = window.requestAnimationFrame(updateFromScroll);
+  };
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
+    window.addEventListener('resize', scheduleScrollUpdate, { passive: true });
+    updateFromScroll();
   }
 
-  if (availableDetails.length >= 2) {
-    gallery.setAttribute('role', 'listbox');
-    availableDetails.forEach((item, index) => {
-      const button = document.createElement('button');
-      const image = document.createElement('img');
-      button.type = 'button';
-      button.className = 'wbg901-product__detail';
-      button.setAttribute('role', 'option');
-      button.setAttribute('aria-selected', 'false');
-      button.setAttribute('aria-label', `نمایش ${item.label} در تصویر اصلی`);
-      image.src = item.src;
-      image.alt = '';
-      image.loading = 'lazy';
-      image.decoding = 'async';
-      const label = document.createElement('span');
-      label.textContent = item.label;
-      button.append(image, label);
-      button.addEventListener('click', () => {
-        mainImage.src = item.src;
-        mainImage.alt = item.alt;
-        mainImage.hidden = false;
-        section.classList.add('has-main-media');
-        gallery.querySelectorAll('[role="option"]').forEach((option) => option.setAttribute('aria-selected', String(option === button)));
-      });
-      button.addEventListener('keydown', (event) => {
-        const options = [...gallery.querySelectorAll('[role="option"]')];
-        const current = options.indexOf(button);
-        const next = event.key === 'ArrowLeft' ? (current + 1) % options.length
-          : event.key === 'ArrowRight' ? (current - 1 + options.length) % options.length
-            : event.key === 'Home' ? 0 : event.key === 'End' ? options.length - 1 : -1;
-        if (next >= 0) {
-          event.preventDefault();
-          options[next].focus();
-          options[next].click();
-        }
-      });
-      if (index === 0 && mainImage.hidden) {
-        mainImage.src = item.src;
-        mainImage.alt = item.alt;
-        mainImage.hidden = false;
-        fallback.hidden = true;
-        section.classList.add('has-main-media');
-        button.setAttribute('aria-selected', 'true');
-      }
-      gallery.append(button);
-    });
-    gallery.hidden = false;
-    section.classList.add('has-gallery');
-  }
-
-  const videoSrc = 'assets/videos/wbg901-intro.mp4';
-  if (await assetExists(videoSrc, 'video')) {
-    video.src = videoSrc;
-    videoPanel.hidden = false;
-    section.classList.add('has-video');
-    playButton.addEventListener('click', async () => {
-      video.hidden = false;
-      playButton.hidden = true;
-      try { await video.play(); } catch { playButton.hidden = false; }
-    });
-  }
-
-  // Populate only with verified specs; absent data intentionally hides the component.
-  if (verifiedSpecs.length) {
-    verifiedSpecs.forEach(({ label: termText, value }) => {
-      const row = document.createElement('div');
-      const term = document.createElement('dt');
-      const description = document.createElement('dd');
-      term.textContent = termText;
-      description.textContent = value;
-      row.append(term, description);
-      specsPanel.append(row);
-    });
-    specsPanel.hidden = false;
-    section.classList.add('has-specs');
-  }
+  // Warm adjacent views first; load the rest in small idle-time batches.
+  [9, 11, 8, 12].forEach(loadFrame);
+  const remainingFrames = Array.from({ length: frameCount }, (_, index) => index)
+    .filter((index) => ![initialFrame, 9, 11, 8, 12].includes(index));
+  const preloadBatch = (deadline) => {
+    let loaded = 0;
+    while (remainingFrames.length && loaded < 4 && (deadline.didTimeout || deadline.timeRemaining() > 4)) {
+      loadFrame(remainingFrames.shift());
+      loaded += 1;
+    }
+    if (remainingFrames.length) scheduleIdlePreload();
+  };
+  const scheduleIdlePreload = () => {
+    if ('requestIdleCallback' in window) window.requestIdleCallback(preloadBatch, { timeout: 1200 });
+    else window.setTimeout(() => preloadBatch({ didTimeout: true, timeRemaining: () => 0 }), 120);
+  };
+  scheduleIdlePreload();
 
   if (window.gsap && window.ScrollTrigger && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     window.gsap.registerPlugin(window.ScrollTrigger);

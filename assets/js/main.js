@@ -3,6 +3,7 @@ const mobileMenu = document.querySelector("#mobile-menu");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const menuLinks = [...(mobileMenu?.querySelectorAll("a[href^='#']") ?? [])];
 const focusableMenuItems = () => [menuButton, ...menuLinks].filter((item) => item && !item.hidden);
+let savedScrollX = 0;
 let savedScrollY = 0;
 
 const setMenuOpen = (open) => {
@@ -15,6 +16,7 @@ const setMenuOpen = (open) => {
   mobileMenu.classList.toggle("is-open", open);
 
   if (open) {
+    savedScrollX = window.scrollX;
     savedScrollY = window.scrollY;
     document.body.style.position = "fixed";
     document.body.style.insetBlockStart = `-${savedScrollY}px`;
@@ -28,13 +30,13 @@ const setMenuOpen = (open) => {
   document.body.style.removeProperty("position");
   document.body.style.removeProperty("inset-block-start");
   document.body.style.removeProperty("inline-size");
-  window.scrollTo(0, savedScrollY);
+  window.scrollTo(savedScrollX, savedScrollY);
 };
 
 const closeMenu = () => {
   if (menuButton?.getAttribute("aria-expanded") !== "true") return;
   setMenuOpen(false);
-  menuButton.focus();
+  menuButton.focus({ preventScroll: true });
 };
 
 menuButton?.addEventListener("click", () => {
@@ -105,25 +107,4 @@ document.querySelectorAll("[data-media-slot]").forEach((frame) => {
   } else if (source) {
     video.play().catch(() => {});
   }
-});
-
-const heroVideo = document.querySelector("#top .media-video");
-const videoButton = document.querySelector("[data-video-placeholder]");
-const videoStatus = document.querySelector("#hero-video-status");
-
-videoButton?.addEventListener("click", () => {
-  if (!heroVideo || !videoStatus) return;
-  videoStatus.hidden = false;
-
-  if (reducedMotion) {
-    videoStatus.textContent = "پیش‌نمایش ثابت محصول به‌دلیل تنظیم کاهش حرکت نمایش داده می‌شود.";
-    return;
-  }
-
-  heroVideo.currentTime = 0;
-  heroVideo.play().then(() => {
-    videoStatus.textContent = "ویدئوی معرفی WBG905 در حال پخش است.";
-  }).catch(() => {
-    videoStatus.textContent = "پخش ویدئو در این مرورگر در دسترس نیست.";
-  });
 });

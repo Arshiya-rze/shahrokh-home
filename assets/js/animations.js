@@ -1,11 +1,32 @@
 (() => {
   const hero = document.querySelector("[data-hero]");
-  const { gsap, ScrollTrigger, Observer } = window;
+  const { gsap, ScrollTrigger } = window;
 
   if (!hero || !gsap || !ScrollTrigger) return;
 
   gsap.registerPlugin(ScrollTrigger);
-  if (Observer) gsap.registerPlugin(Observer);
+
+  // The WBG901 Hero is controlled by wbg901-hero-sequence.js. Keep only the
+  // unrelated section reveals here; never attach a second Hero scroll driver.
+  if (window.__wbg901HeroSequenceActive) {
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      initSectionReveals();
+    } else {
+      document.documentElement.classList.add("reduced-motion");
+    }
+
+    const header = document.querySelector("[data-header]");
+    if (header) {
+      const updateHeroHeader = () => {
+        header.classList.toggle("is-sticky-context", window.scrollY >= hero.offsetHeight - 2);
+      };
+      window.addEventListener("scroll", updateHeroHeader, { passive: true });
+      updateHeroHeader();
+    }
+
+    window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
+    return;
+  }
 
   const capabilitiesSection = document.querySelector(".capabilities-section");
   if (capabilitiesSection && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
