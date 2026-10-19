@@ -432,8 +432,23 @@
   border-radius: 22px;
   filter: drop-shadow(0 16px 26px rgba(23, 23, 23, .16));
 }
+.product-range__category-card > picture img {
+  mix-blend-mode: normal;
+  object-fit: cover;
+  filter: saturate(.96);
+}
+
+@media (max-width: 1279px) {
+  .product-range__overview .product-range__all-link { display: none; }
+}
 
 @media (max-width: 767px) {
+  .product-range__stage { min-height: clamp(410px, calc(96vw + 90px), 510px); }
+  .product-range__visual {
+    inset-block-start: 90px;
+    height: auto;
+  }
+  .product-range__showcase { object-position: center bottom; }
   .product-range__all-link {
     width: min(16rem, 100%);
     min-height: 52px;
@@ -444,5 +459,85 @@
   }
   .product-range__showcase {
     filter: drop-shadow(0 18px 24px rgba(23, 23, 23, .2));
+  }
+  .product-range__category-grid {
+    grid-auto-rows: auto;
+    gap: 12px;
+  }
+  .product-range__category-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 102px auto;
+    min-height: 0;
+  }
+  .product-range__category-card > picture,
+  .product-range__category-copy {
+    grid-column: 1;
+  }
+  .product-range__category-card > picture { grid-row: 1; }
+  .product-range__category-copy {
+    grid-row: 2;
+    align-content: center;
+  }
+  .product-range__category-icon {
+    top: 10px;
+    right: 10px;
+    left: auto;
+    inset-block-start: 10px;
+    width: 38px;
+    height: 38px;
+  }
+  .product-range__category-copy {
+    gap: 3px;
+    padding: 8px 10px 10px;
+  }
+  .product-range__category-copy strong {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .product-range__category-copy small {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .product-range__category-card > .product-range__arrow {
+    top: 56px;
+    right: auto;
+    bottom: auto;
+    left: 10px;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (min-width: 768px) {
+  .product-range__category-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 128px minmax(96px, auto);
+    min-height: 224px;
+  }
+  .product-range__category-card > picture,
+  .product-range__category-copy {
+    grid-column: 1;
+  }
+  .product-range__category-card > picture { grid-row: 1; }
+  .product-range__category-copy {
+    grid-row: 2;
+    align-content: center;
+    padding: 12px 16px;
+  }
+  .product-range__category-icon {
+    top: 10px;
+    right: 12px;
+    left: auto;
+    inset-block-start: 10px;
+    width: 38px;
+    height: 38px;
+  }
+  .product-range__category-card > .product-range__arrow {
+    top: 80px;
+    right: auto;
+    bottom: auto;
+    left: 12px;
+    width: 36px;
+    height: 36px;
   }
 }
