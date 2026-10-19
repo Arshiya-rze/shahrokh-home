@@ -126,7 +126,24 @@
   .menu-toggle { display: none; }
 }
 @media (max-width: 699px) {
-  .brand-lockup { order: 1; inline-size: clamp(74px, 20vw, 96px); }
+  .site-header {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    block-size: 4.5rem;
+    min-block-size: 4.5rem;
+  }
+
+  .brand-lockup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: 1;
+    inline-size: clamp(74px, 20vw, 96px);
+    block-size: 44px;
+  }
+
+  .site-header .brand-logo { display: block; max-block-size: 32px; }
   .header-search { order: 2; }
   .header-cta {
     display: none;
@@ -150,9 +167,8 @@
     stroke-width: 1.7;
   }
   .site-header {
-    justify-content: space-between;
     gap: .75rem;
-    min-height: 4.5rem;
+    justify-content: space-between;
     padding-inline: 1.15rem;
   }
 }
@@ -167,7 +183,12 @@
     padding: 0;
     display: grid;
     place-items: center;
+    align-self: center;
+    flex: 0 0 44px;
+    margin-block: 0;
   }
+
+  .site-header .brand-lockup { align-self: center; }
 
   .site-header .menu-toggle {
     position: relative;
