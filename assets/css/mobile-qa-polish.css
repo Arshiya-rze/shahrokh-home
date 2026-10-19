@@ -75,14 +75,16 @@ body { overflow-x: visible; }
 
 @media (max-width: 374px) {
   #top .hero__title { font-size: 2.125rem; }
-  #top .hero-actions { flex-direction: column; align-items: stretch; }
+  #top .hero-actions { flex-direction: row; align-items: center; justify-content: flex-start; }
   #top .hero-actions .button--red,
-  #top .video-button { width: 100%; flex: 0 0 auto; justify-content: space-between; }
+  #top .video-button { width: fit-content; max-width: 100%; flex: 0 1 auto; justify-content: space-between; }
 }
 
 @media (min-width: 375px) and (max-width: 699px) {
   #top .hero-actions .button--red {
-    flex: 1.4 1 0;
+    width: fit-content;
+    max-width: 100%;
+    flex: 0 1 auto;
     gap: 6px;
     padding-inline: 8px;
     font-size: .8125rem;
