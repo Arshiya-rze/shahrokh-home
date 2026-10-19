@@ -191,3 +191,91 @@
 @media (prefers-reduced-motion: reduce) {
   .capabilities-section *, .capabilities-section *::before, .capabilities-section *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Match the product-details carousel interaction and controls on mobile. */
+.capabilities-section__carousel { order: 4; min-width: 0; }
+.capabilities-section__cards { order: unset; }
+.capabilities-section__slider-controls { display: none; }
+.capabilities-section__slider-controls[hidden] { display: none !important; }
+
+@media (max-width: 767px) {
+  .capabilities-section__cards {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 2px 4px;
+    direction: rtl;
+    scroll-snap-type: inline mandatory;
+    scroll-padding-inline: 2px;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .capabilities-section__cards::-webkit-scrollbar { display: none; }
+  .capabilities-section__card {
+    flex: 0 0 88%;
+    min-height: 210px;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    grid-template-rows: 1fr;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+  .capabilities-section__card > img { grid-column: 2; grid-row: 1; min-height: 0; }
+  .capabilities-section__card-icon { top: 12px; right: auto; left: 12px; width: 38px; height: 38px; }
+  .capabilities-section__card > div { grid-column: 1; grid-row: 1; justify-content: center; padding: 16px 14px 52px; }
+  .capabilities-section__card h3 { font-size: 17px; }
+  .capabilities-section__card p { margin-block-start: 4px; font-size: 14px; line-height: 1.7; }
+  .capabilities-section__card > a { top: auto; right: auto; bottom: 10px; left: 12px; width: 40px; height: 40px; }
+  .capabilities-section__slider-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-block-start: 10px;
+    direction: ltr;
+  }
+  .capabilities-section__slider-controls button {
+    display: inline-grid;
+    min-width: 38px;
+    min-height: 38px;
+    place-items: center;
+    padding: 0 10px;
+    border: 1px solid var(--cap-line);
+    border-radius: 999px;
+    background: rgba(255,255,255,.72);
+    color: var(--cap-ink);
+    font: inherit;
+    cursor: pointer;
+  }
+  .capabilities-section__slider-controls button:focus-visible { outline: 2px solid var(--cap-red); outline-offset: 2px; }
+  .capabilities-section__slider-controls [data-capabilities-position] { min-width: 3.2rem; color: var(--cap-muted); font-size: .8rem; text-align: center; }
+}
+
+@media (min-width: 1024px) {
+  .capabilities-section { padding-block-end: 48px; }
+  .capabilities-section__main { grid-template-rows: auto auto; row-gap: 20px; }
+  .capabilities-section__visual { grid-row: 1 / 3; min-height: 0; height: clamp(440px, 40vw, 540px); }
+  .capabilities-section__worker { height: 91%; }
+  .capabilities-section__intro { align-self: end; padding-block-start: 12px; }
+  .capabilities-section__intro h2 { font-size: clamp(42px, 3.5vw, 58px); }
+  .capabilities-section__intro > p:last-child { margin-block-start: 14px; font-size: 15px; line-height: 1.8; }
+  .capabilities-section__carousel { grid-column: 2; grid-row: 2; align-self: start; }
+  .capabilities-section__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .capabilities-section__card { min-height: 0; grid-template-columns: minmax(0, 1fr) 38%; grid-template-rows: 1fr; border-radius: 16px; }
+  .capabilities-section__card > img { grid-column: 2; grid-row: 1; min-height: 0; }
+  .capabilities-section__card-icon { top: 10px; right: auto; left: 10px; width: 36px; height: 36px; }
+  .capabilities-section__card > div { grid-column: 1; grid-row: 1; justify-content: center; padding: 16px 13px 48px; }
+  .capabilities-section__card h3 { font-size: 16px; }
+  .capabilities-section__card p { font-size: 12px; line-height: 1.65; }
+  .capabilities-section__card > a { top: auto; right: auto; bottom: 9px; left: 10px; width: 36px; height: 36px; }
+  .capabilities-section__journey { margin-block-start: 28px; }
+}
+
+@media (min-width: 1200px) {
+  .capabilities-section__visual { height: clamp(460px, 36vw, 560px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capabilities-section__cards { scroll-behavior: auto !important; }
+}
