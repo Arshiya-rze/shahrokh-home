@@ -396,6 +396,78 @@
   .wbg905-product-story__benefit p { font-size: .76rem; }
 }
 
+/* Mobile-only feature carousel; desktop keeps the complete static feature grid. */
+.wbg905-product-story__feature-carousel { min-width: 0; }
+.wbg905-product-story__feature-controls { display: none; }
+.wbg905-product-story__feature-controls[hidden] { display: none !important; }
+
+@media (max-width: 767px) {
+  .wbg905-product-story__features {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scroll-padding-inline: 2px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .wbg905-product-story__features::-webkit-scrollbar { display: none; }
+  .wbg905-product-story__feature {
+    flex: 0 0 88%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+  .wbg905-product-story__feature-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-block-start: 14px;
+    direction: ltr;
+  }
+  .wbg905-product-story__feature-controls button {
+    display: inline-grid;
+    min-width: 38px;
+    min-height: 38px;
+    place-items: center;
+    padding: 0 10px;
+    border: 1px solid var(--product-border);
+    border-radius: 999px;
+    background: rgba(255,255,255,.72);
+    color: var(--color-text, #171717);
+    font: inherit;
+    cursor: pointer;
+  }
+  .wbg905-product-story__feature-controls button:focus-visible {
+    outline: 2px solid var(--color-brand-red, #ed3237);
+    outline-offset: 2px;
+  }
+  .wbg905-product-story__feature-controls [data-feature-position] {
+    min-width: 3.2rem;
+    color: var(--color-text-muted, #666);
+    font-size: .8rem;
+    text-align: center;
+    direction: rtl;
+  }
+  .wbg905-product-story__final > img {
+    border-radius: 12px;
+    object-fit: cover;
+    mix-blend-mode: normal;
+  }
+  .wbg905-product-story__final .wbg905-product-story__button {
+    width: min(15rem, 100%);
+    min-width: 0;
+    justify-self: start;
+    padding-inline: 16px;
+    font-size: .82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wbg905-product-story__features { scroll-behavior: auto !important; }
+}
+
 @media (min-width: 1200px) and (max-width: 1599px) {
   .wbg905-product-story__callout { max-width: 10rem; }
   .wbg905-product-story__callout--panel { inset-inline-start: 1%; inset-block-start: 14%; }
