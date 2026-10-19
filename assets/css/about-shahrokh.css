@@ -89,14 +89,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.35rem;
-  min-height: 3.2rem;
-  padding: .3rem .45rem .3rem 1.15rem;
-  border: 1px solid rgba(23, 23, 23, .62);
+  gap: 1rem;
+  min-height: 3.55rem;
+  padding: .35rem .45rem .35rem 1.35rem;
+  border: 1px solid #df272f;
   border-radius: 999px;
-  color: #171717;
-  font-size: .88rem;
-  transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+  background: linear-gradient(135deg, #f33a40, #df272f);
+  box-shadow: 0 8px 20px rgba(223, 39, 47, .2), inset 0 1px 0 rgba(255, 255, 255, .24);
+  color: #fff;
+  font-size: .9rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: transform .22s ease, background-color .22s ease, border-color .22s ease, box-shadow .22s ease;
 }
 
 .about-shahrokh__cta-icon {
@@ -105,24 +109,33 @@
   width: 2.35rem;
   aspect-ratio: 1;
   place-items: center;
-  border: 1px solid rgba(23, 23, 23, .45);
+  border: 1px solid rgba(255, 255, 255, .62);
   border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
   direction: ltr;
   font: 1.2rem/1 Arial, sans-serif;
-  transition: transform .25s ease, border-color .25s ease;
+  transition: transform .22s ease, background-color .22s ease, border-color .22s ease;
 }
 
 .about-shahrokh__cta:hover,
 .about-shahrokh__cta:focus-visible {
-  border-color: rgba(23, 23, 23, .8);
-  background: rgba(0, 0, 0, .045);
-  color: #171717;
+  transform: translateY(-2px);
+  border-color: #c91e26;
+  background: linear-gradient(135deg, #ed3037, #c91e26);
+  box-shadow: 0 12px 26px rgba(223, 39, 47, .28), inset 0 1px 0 rgba(255, 255, 255, .2);
+  color: #fff;
+}
+
+.about-shahrokh__cta:focus-visible {
+  outline: 3px solid rgba(223, 39, 47, .3);
+  outline-offset: 4px;
 }
 
 .about-shahrokh__cta:hover .about-shahrokh__cta-icon,
 .about-shahrokh__cta:focus-visible .about-shahrokh__cta-icon {
   transform: translateX(-4px);
-  border-color: rgba(23, 23, 23, .72);
+  border-color: rgba(255, 255, 255, .9);
+  background: rgba(255, 255, 255, .22);
 }
 
 .about-shahrokh__media {
@@ -133,7 +146,10 @@
   margin-inline: -1.15rem;
   margin-block: 0;
   aspect-ratio: 1 / 1;
-  background: #fff;
+  border: 1px solid rgba(255, 255, 255, .82);
+  border-radius: 1.25rem;
+  background: #e8eaec;
+  box-shadow: 0 24px 58px rgba(18, 30, 43, .16), 0 7px 18px rgba(18, 30, 43, .09);
 }
 
 .about-shahrokh__media::after { display: none; }
