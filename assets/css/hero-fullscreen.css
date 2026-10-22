@@ -157,7 +157,7 @@
   height: 100%;
   background: #fff;
   object-fit: contain;
-  opacity: 0;
+  opacity: 1;
 }
 #top [data-video-failed="true"] .media-video { opacity: 0; }
 #top [data-video-failed="true"] .hero-product-fallback { opacity: 1; }

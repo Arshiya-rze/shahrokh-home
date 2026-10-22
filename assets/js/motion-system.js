@@ -1,12 +1,15 @@
 (() => {
   if (window.__shahrokhMotionSystemInitialized) return;
-  window.__shahrokhMotionSystemInitialized = true;
 
   const gsap = window.gsap;
   const ScrollTrigger = window.ScrollTrigger;
   if (!gsap || !ScrollTrigger || typeof gsap.matchMedia !== 'function') return;
+  window.__shahrokhMotionSystemInitialized = true;
 
   gsap.registerPlugin(ScrollTrigger);
+  // Let GSAP handle viewport changes with its built-in debounce, but avoid a
+  // separate late `load` refresh after these scenes have already been measured.
+  ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,resize' });
 
   const stickyOffset = () => Math.ceil(document.querySelector('[data-header]')?.getBoundingClientRect().height || 76) + 24;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -113,17 +116,21 @@
   };
 
   const formatStoryStep = new Intl.NumberFormat('fa-IR', { minimumIntegerDigits: 2, useGrouping: false });
-  const updateStoryProgress = (section, name, active, progress) => {
-    const count = section.querySelector(`[data-${name}-count]`);
-    const fill = section.querySelector(`[data-${name}-fill]`);
-    if (count) {
+  const createStoryProgress = (section, name) => ({
+    count: section.querySelector(`[data-${name}-count]`),
+    fill: section.querySelector(`[data-${name}-fill]`),
+    active: -1,
+  });
+  const updateStoryProgress = (ui, active, progress) => {
+    if (ui.count && ui.active !== active) {
       const current = `${formatStoryStep.format(active + 1)} / ${formatStoryStep.format(3)}`;
-      if (count.textContent !== current) count.textContent = current;
+      if (ui.count.textContent !== current) ui.count.textContent = current;
+      ui.active = active;
     }
-    if (fill) fill.style.transform = `scaleX(${Math.max(0, Math.min(1, progress))})`;
+    if (ui.fill) ui.fill.style.transform = `scaleX(${Math.max(0, Math.min(1, progress))})`;
   };
 
-  const buildWbg905Scene = (profile, useStickyTrack) => {
+  const buildWbg905Scene = (profile, useStickyTrack, stickyTop) => {
     const section = document.querySelector('[data-motion-section="wbg905-story"]');
     const stage = section?.querySelector('.wbg905-product-story__stage');
     const product = stage?.querySelector('.wbg905-product-story__image');
@@ -131,29 +138,124 @@
     const benefits = [...(section?.querySelectorAll('.wbg905-product-story__benefit') || [])];
     const overview = section?.querySelector('.wbg905-product-story__overview');
     const track = section?.querySelector('[data-product-track]');
+    const chapters = [...(section?.querySelectorAll('[data-product-chapter]') || [])];
+
+    chapters.forEach((chapter, index) => {
+      chapter.hidden = index !== 0;
+      chapter.setAttribute('aria-hidden', String(index !== 0));
+      chapter.classList.toggle('is-active', index === 0);
+    });
+    gsap.set(chapters, { clearProps: 'opacity,visibility,transform' });
 
     if (section) delete section.dataset.motionReady;
     if (section && overview && stage && product && track && useStickyTrack) {
       section.dataset.motionReady = 'true';
-      section.style.setProperty('--wbg905-sticky-top', `${stickyOffset()}px`);
+      section.style.setProperty('--wbg905-sticky-top', `${stickyTop}px`);
+      const storyProgress = createStoryProgress(section, 'product-story');
+      let currentChapter = 0;
+      let chapterTimeline;
+      const productPoses = [
+        { at: 0, x: 0, y: 0, scale: 1.07 },
+        { at: 0.28, x: -20, y: -8, scale: 1.15 },
+        { at: 0.56, x: 17, y: 7, scale: 1.125 },
+        { at: 0.82, x: -14, y: -7, scale: 1.155 },
+        { at: 1, x: 0, y: 0, scale: 1.07 },
+      ];
+      let lastBenefit = -1;
+      let lastCallout = -1;
+      let storyHasEnteredViewport = false;
+      const turnToChapter = (nextIndex) => {
+        if (!chapters[nextIndex]) return;
+        chapterTimeline?.kill();
+        chapters.forEach((chapter, index) => {
+          chapter.hidden = index !== currentChapter;
+          chapter.setAttribute('aria-hidden', String(index !== currentChapter));
+          chapter.classList.toggle('is-active', index === currentChapter);
+        });
+        gsap.set(chapters, { clearProps: 'opacity,visibility,transform' });
+        if (nextIndex === currentChapter) return;
+
+        const outgoing = chapters[currentChapter];
+        const incoming = chapters[nextIndex];
+        const direction = nextIndex > currentChapter ? -1 : 1;
+        chapterTimeline = gsap.timeline({
+          onComplete: () => {
+            currentChapter = nextIndex;
+            chapterTimeline = null;
+          },
+        });
+        chapterTimeline
+          .to(outgoing, { autoAlpha: 0, x: direction * 22, rotationY: direction * 8, duration: 0.18, ease: 'power1.in' })
+          .add(() => {
+            outgoing.hidden = true;
+            outgoing.setAttribute('aria-hidden', 'true');
+            outgoing.classList.remove('is-active');
+            incoming.hidden = false;
+            incoming.setAttribute('aria-hidden', 'false');
+            incoming.classList.add('is-active');
+            gsap.set(incoming, { autoAlpha: 0, x: direction * -22, rotationY: direction * -8 });
+          })
+          .to(incoming, { autoAlpha: 1, x: 0, rotationY: 0, duration: 0.34, ease: 'power2.out' });
+      };
+      const update = (progress) => {
+        const poseIndex = productPoses.findIndex((pose) => progress <= pose.at);
+        const from = productPoses[Math.max(0, poseIndex - 1)];
+        const to = productPoses[poseIndex < 0 ? productPoses.length - 1 : poseIndex];
+        const segmentProgress = to.at === from.at ? 1 : Math.max(0, Math.min(1, (progress - from.at) / (to.at - from.at)));
+        const easedProgress = segmentProgress * segmentProgress * (3 - 2 * segmentProgress);
+        const pose = {
+          x: from.x + (to.x - from.x) * easedProgress,
+          y: from.y + (to.y - from.y) * easedProgress,
+          scale: from.scale + (to.scale - from.scale) * easedProgress,
+        };
+        section.style.setProperty('--wbg905-product-x', `${pose.x.toFixed(2)}px`);
+        section.style.setProperty('--wbg905-product-y', `${pose.y.toFixed(2)}px`);
+        section.style.setProperty('--wbg905-product-scale', pose.scale.toFixed(4));
+
+        const active = progress < 0.28 ? 0 : progress < 0.56 ? 1 : 2;
+        const calloutIndex = progress < 0.28 ? 0 : progress < 0.56 ? 1 : progress < 0.82 ? 2 : 3;
+        if (active !== lastBenefit) {
+          setActiveItem(benefits, active);
+          turnToChapter(active);
+          lastBenefit = active;
+        }
+        if (calloutIndex !== lastCallout) {
+          callouts.forEach((item, index) => item.classList.toggle('is-active', index === calloutIndex));
+          lastCallout = calloutIndex;
+        }
+        updateStoryProgress(storyProgress, active, progress);
+      };
       // Observe the CSS sticky track only; this scene intentionally has no GSAP pin.
-      ScrollTrigger.create({
+      const story = ScrollTrigger.create({
+        id: 'wbg905-story',
         trigger: track,
-        start: () => `top ${stickyOffset()}px`,
-        end: () => `bottom ${stickyOffset() + overview.offsetHeight}px`,
+        start: `top ${stickyTop}px`,
+        end: () => `bottom ${stickyTop + overview.offsetHeight}px`,
         invalidateOnRefresh: true,
         onLeave: () => section.classList.add('is-story-released'),
-        onEnterBack: () => section.classList.remove('is-story-released'),
-        onLeaveBack: () => section.classList.remove('is-story-released'),
+        onEnter: (self) => {
+          storyHasEnteredViewport = true;
+          update(self.progress);
+        },
+        onEnterBack: (self) => {
+          storyHasEnteredViewport = true;
+          section.classList.remove('is-story-released');
+          update(self.progress);
+        },
+        onLeaveBack: (self) => {
+          if (storyHasEnteredViewport) update(self.progress);
+          storyHasEnteredViewport = false;
+          section.classList.remove('is-story-released');
+        },
         onUpdate: (self) => {
-          const progress = self.progress;
-          const active = progress < 0.28 ? 0 : progress < 0.56 ? 1 : 2;
-          const calloutIndex = progress < 0.28 ? 0 : progress < 0.56 ? 1 : progress < 0.88 ? 2 : 3;
-          setActiveItem(benefits, active);
-          callouts.forEach((item, index) => item.classList.toggle('is-active', index === calloutIndex));
-          updateStoryProgress(section, 'product-story', active, progress);
+          if (storyHasEnteredViewport) update(self.progress);
         },
       });
+      const trackBounds = track.getBoundingClientRect();
+      if (trackBounds.top < window.innerHeight && trackBounds.bottom > 0) {
+        storyHasEnteredViewport = true;
+        update(story.progress);
+      }
     } else if (section && stage) {
       revealMediaOnce(stage, stage, product, profile, { start: 'top 78%', fromScale: 0.98 });
       const intro = overview?.querySelector('.wbg905-product-story__intro');
@@ -180,77 +282,102 @@
     enterOnce(final, { start: 'top 82%', y: 12, duration: profile.reveal });
   };
 
-  const buildCapabilitiesScene = (profile, canPin) => {
+  const buildCapabilitiesScene = (profile, canSticky, stickyTop) => {
     const section = document.querySelector('[data-motion-section="capabilities"]');
     const visual = section?.querySelector('.capabilities-section__visual');
     const overlays = [...(section?.querySelectorAll('.capabilities-section__benefits li') || [])];
     const sceneRoot = section?.querySelector('.capabilities-section__scene');
+    const track = section?.querySelector('[data-workspace-track]');
     const intro = section?.querySelector('.capabilities-section__intro');
 
     if (section) delete section.dataset.motionReady;
-    if (sceneRoot && visual && canPin) {
+    if (section && track && sceneRoot && visual && canSticky) {
       section.dataset.motionReady = 'true';
-      const scene = gsap.timeline({
-        scrollTrigger: {
-          trigger: sceneRoot,
-          start: () => `top ${stickyOffset()}px`,
-          end: () => `+=${Math.round(window.innerHeight * 1.4)}`,
-          pin: sceneRoot,
-          pinSpacing: true,
-          scrub: profile.scrub,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-        onUpdate: (self) => {
-          const active = overlays.length ? Math.min(overlays.length - 1, Math.floor(self.progress * overlays.length)) : -1;
+      section.style.setProperty('--workspace-sticky-top', `${stickyTop}px`);
+      const storyProgress = createStoryProgress(section, 'capabilities-story');
+      let lastActive = -1;
+      const update = (progress) => {
+        const active = overlays.length ? Math.min(overlays.length - 1, Math.floor(progress * overlays.length)) : -1;
+        if (active !== lastActive) {
           setActiveItem(overlays, active);
-          updateStoryProgress(section, 'capabilities-story', active, self.progress);
-          if (self.progress > 0.07) section.classList.add('is-story-started');
-        },
+          lastActive = active;
+        }
+        updateStoryProgress(storyProgress, active, progress);
+        section.classList.toggle('is-story-started', progress > 0.07);
+      };
+      const story = ScrollTrigger.create({
+        id: 'workspace-story',
+        trigger: track,
+        start: `top ${stickyTop}px`,
+        end: () => `bottom ${stickyTop + sceneRoot.offsetHeight}px`,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => update(self.progress),
       });
-      scene.fromTo(visual,
-        { scale: 1 },
-        { scale: 1.02, ease: 'none', duration: 1 },
-        0,
-      );
+      update(story.progress);
     } else if (visual) {
       enterOnce(visual, { start: 'top 78%', y: 8, duration: profile.reveal });
       const benefits = section.querySelector('.capabilities-section__benefits');
       revealGroup(benefits, overlays, profile, { start: 'top 82%', y: 8 });
     }
 
-    if (section && !canPin) {
+    if (section && !canSticky) {
       revealSequence(intro, [
         { element: intro?.querySelector('.capabilities-section__eyebrow'), y: 10, duration: 0.4, at: 0 },
         { element: intro?.querySelector('h2'), y: profile.y, duration: profile.reveal, at: 0.08 },
         { element: intro?.querySelector(':scope > p:last-child'), y: 12, duration: profile.reveal, at: 0.2 },
       ], profile, 'top 74%');
-      const cards = section.querySelector('.capabilities-section__cards');
-      staggerOnOwnViewport(cards, [...(cards?.querySelectorAll('.capabilities-section__card') || [])], profile, { start: 'top 78%', imageSelector: 'img', batchMax: 2 });
-      const process = section.querySelector('.capabilities-section__process ol');
-      revealGroup(process, [...(process?.querySelectorAll(':scope > li') || [])], profile, { start: 'top 82%', y: 10 });
     }
+
+    const cards = section?.querySelector('.capabilities-section__cards');
+    staggerOnOwnViewport(cards, [...(cards?.querySelectorAll('.capabilities-section__card') || [])], profile, { start: 'top 78%', imageSelector: 'img', batchMax: 2 });
+    const process = section?.querySelector('.capabilities-section__process ol');
+    revealGroup(process, [...(process?.querySelectorAll(':scope > li') || [])], profile, { start: 'top 82%', y: 10 });
   };
 
-  const buildWbg901Progression = (profile) => {
+  const buildWbg901Progression = (profile, stickyTop) => {
     const section = document.querySelector('[data-motion-section="wbg901"]');
+    const track = section?.querySelector('[data-wbg901-track]');
+    const scene = section?.querySelector('[data-wbg901-scene]');
     const stage = section?.querySelector('.wbg901-product__stage');
     const image = stage?.querySelector('.wbg901-product__main-image');
     const features = [...(section?.querySelectorAll('.wbg901-product__features > li') || [])];
     if (!section || !stage) return;
+    setActiveItem(features, 0);
 
-    if (window.innerWidth >= 1024 && features.length) {
+    if (window.innerWidth >= 1024 && track && scene && features.length) {
+      section.style.setProperty('--wbg901-sticky-top', `${stickyTop}px`);
       enterOnce(stage, { start: 'top 82%', y: 8, duration: profile.reveal });
-      ScrollTrigger.create({
-        trigger: section.querySelector('.wbg901-product__features'),
-        start: () => `top ${stickyOffset()}px`,
-        end: () => `+=${Math.round(window.innerHeight * 1.05)}`,
+      let storyHasEnteredViewport = false;
+      const update = (progress) => {
+        const active = Math.min(features.length - 1, Math.floor(Math.min(0.999999, Math.max(0, progress)) * features.length));
+        setActiveItem(features, active);
+      };
+      const story = ScrollTrigger.create({
+        id: 'wbg901-product-story',
+        trigger: track,
+        start: `top ${stickyTop}px`,
+        end: () => `bottom ${stickyTop + scene.offsetHeight}px`,
         invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const active = Math.min(features.length - 1, Math.floor(self.progress * features.length));
-          setActiveItem(features, active);
+        onEnter: (self) => {
+          storyHasEnteredViewport = true;
+          update(self.progress);
         },
+        onEnterBack: (self) => {
+          storyHasEnteredViewport = true;
+          update(self.progress);
+        },
+        onLeave: () => { storyHasEnteredViewport = false; },
+        onLeaveBack: (self) => {
+          if (storyHasEnteredViewport) update(self.progress);
+          storyHasEnteredViewport = false;
+        },
+        onUpdate: (self) => { if (storyHasEnteredViewport) update(self.progress); },
       });
+      const trackBounds = track.getBoundingClientRect();
+      if (trackBounds.top < window.innerHeight && trackBounds.bottom > 0) {
+        storyHasEnteredViewport = true;
+        update(story.progress);
+      }
     } else {
       revealMediaOnce(stage, stage, image, profile, { start: 'top 78%', fromScale: 1.025 });
       revealGroup(section.querySelector('.wbg901-product__features'), features, profile, { start: 'top 78%', y: 10 });
@@ -259,7 +386,7 @@
     enterOnce(section.querySelector('.wbg901-product__actions'), { start: 'top 82%', y: 12, duration: profile.reveal });
   };
 
-  const buildProfile = (profile, { desktop = false, wideDesktop = false } = {}) => {
+  const buildProfile = (profile, { desktop = false, wideDesktop = false, stickyTop } = {}) => {
     const about = document.querySelector('[data-motion-section="about"]');
     if (about) {
       const content = about.querySelector('.about-shahrokh__content');
@@ -275,7 +402,7 @@
       revealGroup(about.querySelector('.about-shahrokh__features'), benefits, profile, { start: 'top 82%', y: 12 });
     }
 
-    buildWbg905Scene(profile, wideDesktop);
+    buildWbg905Scene(profile, wideDesktop, stickyTop);
 
     const solutions = document.querySelector('[data-motion-section="solutions"]');
     if (solutions) {
@@ -301,7 +428,7 @@
       revealGroup(solutions.querySelector('.product-range__values'), values, profile, { start: 'top 82%' });
     }
 
-    buildCapabilitiesScene(profile, desktop);
+    buildCapabilitiesScene(profile, desktop, stickyTop);
 
     const applications = document.querySelector('[data-motion-section="applications"]');
     if (applications) {
@@ -341,7 +468,7 @@
       revealGroup(lower, [...(lower?.querySelectorAll('.industry-applications__benefit-list > li') || [])], profile, { start: 'top 82%', y: 10 });
     }
 
-    buildWbg901Progression(profile);
+    buildWbg901Progression(profile, stickyTop);
 
     const brand = document.querySelector('[data-motion-section="brand"]');
     if (brand) {
@@ -366,71 +493,95 @@
     }
   };
 
-  const matchMedia = gsap.matchMedia();
-  motionProfiles.forEach((profile) => {
-    matchMedia.add(profile.query, () => {
-      const width = window.innerWidth;
-      buildProfile(profile, { desktop: width >= 1024, wideDesktop: width >= 1200 });
-      return () => {
-        document.querySelectorAll('[data-motion-section][data-motion-ready="true"]').forEach((section) => {
-          delete section.dataset.motionReady;
-        });
-        document.querySelectorAll('[data-motion-section="wbg905-story"] .is-active, [data-motion-section="capabilities"] .is-active, [data-motion-section="wbg901"] .is-active').forEach((item) => {
-          item.classList.remove('is-active');
-        });
-        document.querySelector('[data-motion-section="wbg905-story"]')?.classList.remove('is-story-released');
-      };
+  const initializeMotion = () => {
+    const matchMedia = gsap.matchMedia();
+    motionProfiles.forEach((profile) => {
+      matchMedia.add(profile.query, () => {
+        const width = window.innerWidth;
+        const stickyTop = stickyOffset();
+        buildProfile(profile, { desktop: width >= 1024, wideDesktop: width >= 1200, stickyTop });
+        return () => {
+          document.querySelectorAll('[data-motion-section][data-motion-ready="true"]').forEach((section) => {
+            delete section.dataset.motionReady;
+          });
+          document.querySelectorAll('[data-motion-section="wbg905-story"] .is-active, [data-motion-section="capabilities"] .is-active, [data-motion-section="wbg901"] .is-active').forEach((item) => {
+            item.classList.remove('is-active');
+          });
+          const wbg905 = document.querySelector('[data-motion-section="wbg905-story"]');
+          wbg905?.classList.remove('is-story-released');
+          const productChapters = [...(wbg905?.querySelectorAll('[data-product-chapter]') || [])];
+          productChapters.forEach((chapter, index) => {
+            chapter.hidden = index !== 0;
+            chapter.setAttribute('aria-hidden', String(index !== 0));
+            chapter.classList.toggle('is-active', index === 0);
+          });
+          gsap.set(productChapters, { clearProps: 'opacity,visibility,transform' });
+          wbg905?.style.removeProperty('--wbg905-sticky-top');
+          wbg905?.style.removeProperty('--wbg905-product-x');
+          wbg905?.style.removeProperty('--wbg905-product-y');
+          wbg905?.style.removeProperty('--wbg905-product-scale');
+          const capabilities = document.querySelector('[data-motion-section="capabilities"]');
+          capabilities?.classList.remove('is-story-started');
+          capabilities?.style.removeProperty('--workspace-sticky-top');
+          const wbg901 = document.querySelector('[data-motion-section="wbg901"]');
+          const wbg901Features = [...(wbg901?.querySelectorAll('.wbg901-product__features > li') || [])];
+          setActiveItem(wbg901Features, 0);
+          wbg901?.style.removeProperty('--wbg901-sticky-top');
+        };
+      });
     });
-  });
-
-  const refreshAfterLayout = () => ScrollTrigger.refresh();
-  window.addEventListener('load', refreshAfterLayout, { once: true });
-  if (document.fonts?.ready) document.fonts.ready.then(refreshAfterLayout).catch(() => {});
+    // All image boxes have intrinsic dimensions and font metrics are now ready.
+    // Refresh only at scene initialization, never from load/font callbacks mid-scroll.
+    ScrollTrigger.refresh();
 
   // Loading may begin near the viewport; playback is governed by a separate
   // zero-margin observer so no visible motion starts while media is offscreen.
-  if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
-  const videoHosts = [...document.querySelectorAll('[data-motion-video][data-video-src]')];
-  if (!videoHosts.length) return;
+    if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
+    const videoHosts = [...document.querySelectorAll('[data-motion-video][data-video-src]')];
+    if (!videoHosts.length) return;
 
-  const playbackObserver = new IntersectionObserver((entries) => {
-    entries.forEach(({ target: host, isIntersecting, intersectionRatio }) => {
-      const video = host.__motionVideo;
-      if (!video) return;
-      const active = isIntersecting && intersectionRatio >= 0.55;
-      host.dataset.videoActive = String(active);
-      if (active) video.play().then(() => host.classList.add('has-motion-video')).catch(() => {});
-      else video.pause();
-    });
-  }, { rootMargin: '0px', threshold: [0, 0.1, 0.55, 0.75] });
+    const playbackObserver = new IntersectionObserver((entries) => {
+      entries.forEach(({ target: host, isIntersecting, intersectionRatio }) => {
+        const video = host.__motionVideo;
+        if (!video) return;
+        const active = isIntersecting && intersectionRatio >= 0.55;
+        host.dataset.videoActive = String(active);
+        if (active) video.play().then(() => host.classList.add('has-motion-video')).catch(() => {});
+        else video.pause();
+      });
+    }, { rootMargin: '0px', threshold: [0, 0.1, 0.55, 0.75] });
 
-  const preloadObserver = new IntersectionObserver((entries) => {
-    entries.forEach(({ target: host, isIntersecting }) => {
-      const source = host.dataset.videoSrc?.trim();
-      if (!isIntersecting || !source || host.__motionVideo || host.dataset.videoFailed === 'true') return;
-      const video = document.createElement('video');
-      video.className = 'motion-video';
-      video.setAttribute('aria-hidden', 'true');
-      video.setAttribute('playsinline', '');
-      video.muted = true;
-      video.autoplay = false;
-      video.preload = 'metadata';
-      video.loop = host.dataset.videoLoop === 'true';
-      const poster = host.dataset.videoPoster || host.querySelector('img')?.currentSrc || host.querySelector('img')?.src;
-      if (poster) video.poster = poster;
-      video.addEventListener('error', () => {
-        host.classList.remove('has-motion-video');
-        host.dataset.videoFailed = 'true';
-        host.__motionVideo = null;
-        video.remove();
-      }, { once: true });
-      host.__motionVideo = video;
-      host.append(video);
-      video.src = source;
-      video.load();
-      playbackObserver.observe(host);
-    });
-  }, { rootMargin: '400px 0px', threshold: 0 });
+    const preloadObserver = new IntersectionObserver((entries) => {
+      entries.forEach(({ target: host, isIntersecting }) => {
+        const source = host.dataset.videoSrc?.trim();
+        if (!isIntersecting || !source || host.__motionVideo || host.dataset.videoFailed === 'true') return;
+        const video = document.createElement('video');
+        video.className = 'motion-video';
+        video.setAttribute('aria-hidden', 'true');
+        video.setAttribute('playsinline', '');
+        video.muted = true;
+        video.autoplay = false;
+        video.preload = 'metadata';
+        video.loop = host.dataset.videoLoop === 'true';
+        const poster = host.dataset.videoPoster || host.querySelector('img')?.currentSrc || host.querySelector('img')?.src;
+        if (poster) video.poster = poster;
+        video.addEventListener('error', () => {
+          host.classList.remove('has-motion-video');
+          host.dataset.videoFailed = 'true';
+          host.__motionVideo = null;
+          video.remove();
+        }, { once: true });
+        host.__motionVideo = video;
+        host.append(video);
+        video.src = source;
+        video.load();
+        playbackObserver.observe(host);
+      });
+    }, { rootMargin: '400px 0px', threshold: 0 });
 
-  videoHosts.forEach((host) => preloadObserver.observe(host));
+    videoHosts.forEach((host) => preloadObserver.observe(host));
+  };
+
+  if (document.fonts?.ready) document.fonts.ready.then(initializeMotion, initializeMotion);
+  else initializeMotion();
 })();
