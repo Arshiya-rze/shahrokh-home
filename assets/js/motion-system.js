@@ -13,6 +13,20 @@
 
   const stickyOffset = () => Math.ceil(document.querySelector('[data-header]')?.getBoundingClientRect().height || 76) + 24;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let motionMatchMedia;
+  let preloadObserver;
+  let playbackObserver;
+  const transientAnimations = new Set();
+  const trackTransientAnimation = (animation) => {
+    if (!animation) return animation;
+    transientAnimations.add(animation);
+    animation.eventCallback('onComplete', () => transientAnimations.delete(animation));
+    return animation;
+  };
+  const killTransientAnimations = () => {
+    transientAnimations.forEach((animation) => animation.kill());
+    transientAnimations.clear();
+  };
   const motionProfiles = [
     { query: '(max-width: 767px) and (prefers-reduced-motion: no-preference)', y: 10, reveal: 0.44, stagger: 0.075, scrub: 0.45, imageScale: 1.02 },
     { query: '(min-width: 768px) and (max-width: 1023px) and (prefers-reduced-motion: no-preference)', y: 14, reveal: 0.5, stagger: 0.08, scrub: 0.5, imageScale: 1.03 },
@@ -77,7 +91,7 @@
       batchMax,
       onEnter: (batch) => {
         const images = imageSelector ? batch.map((card) => card.querySelector(imageSelector)).filter(Boolean) : [];
-        const sequence = gsap.timeline();
+        const sequence = trackTransientAnimation(gsap.timeline());
         sequence.fromTo(batch,
           { autoAlpha: 0, y },
           { autoAlpha: 1, y: 0, duration: profile.reveal, stagger: profile.stagger, ease: 'power2.out', clearProps: 'opacity,visibility,transform' },
@@ -100,14 +114,14 @@
       trigger: container,
       start,
       once: true,
-      onEnter: () => gsap.to(items, {
+      onEnter: () => trackTransientAnimation(gsap.to(items, {
         autoAlpha: 1,
         y: 0,
         duration: profile.reveal,
         stagger: profile.stagger,
         ease: 'power2.out',
         clearProps: 'opacity,visibility,transform',
-      }),
+      })),
     });
   };
 
@@ -159,6 +173,7 @@
         { at: 0.28, x: -20, y: -8, scale: 1.15 },
         { at: 0.56, x: 17, y: 7, scale: 1.125 },
         { at: 0.82, x: -14, y: -7, scale: 1.155 },
+        { at: 0.88, x: 0, y: 0, scale: 1.07 },
         { at: 1, x: 0, y: 0, scale: 1.07 },
       ];
       let lastBenefit = -1;
@@ -166,7 +181,10 @@
       let storyHasEnteredViewport = false;
       const turnToChapter = (nextIndex) => {
         if (!chapters[nextIndex]) return;
-        chapterTimeline?.kill();
+        if (chapterTimeline) {
+          chapterTimeline.kill();
+          transientAnimations.delete(chapterTimeline);
+        }
         chapters.forEach((chapter, index) => {
           chapter.hidden = index !== currentChapter;
           chapter.setAttribute('aria-hidden', String(index !== currentChapter));
@@ -181,9 +199,11 @@
         chapterTimeline = gsap.timeline({
           onComplete: () => {
             currentChapter = nextIndex;
+            transientAnimations.delete(chapterTimeline);
             chapterTimeline = null;
           },
         });
+        transientAnimations.add(chapterTimeline);
         chapterTimeline
           .to(outgoing, { autoAlpha: 0, x: direction * 22, rotationY: direction * 8, duration: 0.18, ease: 'power1.in' })
           .add(() => {
@@ -213,7 +233,7 @@
         section.style.setProperty('--wbg905-product-scale', pose.scale.toFixed(4));
 
         const active = progress < 0.28 ? 0 : progress < 0.56 ? 1 : 2;
-        const calloutIndex = progress < 0.28 ? 0 : progress < 0.56 ? 1 : progress < 0.82 ? 2 : 3;
+        const calloutIndex = progress < 0.28 ? 0 : progress < 0.56 ? 1 : progress < 0.72 ? 2 : 3;
         if (active !== lastBenefit) {
           setActiveItem(benefits, active);
           turnToChapter(active);
@@ -277,8 +297,8 @@
     const featureGrid = section.querySelector('.wbg905-product-story__features');
     const features = [...(featureGrid?.querySelectorAll('.wbg905-product-story__feature') || [])];
     const final = section.querySelector('.wbg905-product-story__final');
-    enterOnce(heading, { start: 'top 76%', y: profile.y, duration: profile.reveal });
-    staggerOnOwnViewport(featureGrid, features, profile, { start: 'top 78%', imageSelector: 'img', batchMax: 2 });
+    enterOnce(heading, { start: useStickyTrack ? 'top 14%' : 'top 76%', y: profile.y, duration: profile.reveal });
+    staggerOnOwnViewport(featureGrid, features, profile, { start: useStickyTrack ? 'top 20%' : 'top 78%', imageSelector: 'img', batchMax: 2 });
     enterOnce(final, { start: 'top 82%', y: 12, duration: profile.reveal });
   };
 
@@ -295,15 +315,23 @@
       section.dataset.motionReady = 'true';
       section.style.setProperty('--workspace-sticky-top', `${stickyTop}px`);
       const storyProgress = createStoryProgress(section, 'capabilities-story');
+      let hintDismissed = section.dataset.workspaceHintDismissed === 'true';
+      if (hintDismissed) section.classList.add('is-story-started');
       let lastActive = -1;
       const update = (progress) => {
-        const active = overlays.length ? Math.min(overlays.length - 1, Math.floor(progress * overlays.length)) : -1;
+        const active = overlays.length
+          ? (progress < 0.28 ? 0 : progress < 0.58 ? Math.min(1, overlays.length - 1) : overlays.length - 1)
+          : -1;
         if (active !== lastActive) {
           setActiveItem(overlays, active);
           lastActive = active;
         }
         updateStoryProgress(storyProgress, active, progress);
-        section.classList.toggle('is-story-started', progress > 0.07);
+        if (!hintDismissed && progress > 0.07) {
+          hintDismissed = true;
+          section.dataset.workspaceHintDismissed = 'true';
+          section.classList.add('is-story-started');
+        }
       };
       const story = ScrollTrigger.create({
         id: 'workspace-story',
@@ -329,7 +357,7 @@
     }
 
     const cards = section?.querySelector('.capabilities-section__cards');
-    staggerOnOwnViewport(cards, [...(cards?.querySelectorAll('.capabilities-section__card') || [])], profile, { start: 'top 78%', imageSelector: 'img', batchMax: 2 });
+    staggerOnOwnViewport(cards, [...(cards?.querySelectorAll('.capabilities-section__card') || [])], profile, { start: canSticky ? 'top 14%' : 'top 78%', imageSelector: 'img', batchMax: 2 });
     const process = section?.querySelector('.capabilities-section__process ol');
     revealGroup(process, [...(process?.querySelectorAll(':scope > li') || [])], profile, { start: 'top 82%', y: 10 });
   };
@@ -346,7 +374,6 @@
 
     if (window.innerWidth >= 1024 && track && scene && features.length) {
       section.style.setProperty('--wbg901-sticky-top', `${stickyTop}px`);
-      enterOnce(stage, { start: 'top 82%', y: 8, duration: profile.reveal });
       let storyHasEnteredViewport = false;
       const update = (progress) => {
         const active = Math.min(features.length - 1, Math.floor(Math.min(0.999999, Math.max(0, progress)) * features.length));
@@ -494,13 +521,14 @@
   };
 
   const initializeMotion = () => {
-    const matchMedia = gsap.matchMedia();
+    motionMatchMedia = gsap.matchMedia();
     motionProfiles.forEach((profile) => {
-      matchMedia.add(profile.query, () => {
+      motionMatchMedia.add(profile.query, () => {
         const width = window.innerWidth;
         const stickyTop = stickyOffset();
         buildProfile(profile, { desktop: width >= 1024, wideDesktop: width >= 1200, stickyTop });
         return () => {
+          killTransientAnimations();
           document.querySelectorAll('[data-motion-section][data-motion-ready="true"]').forEach((section) => {
             delete section.dataset.motionReady;
           });
@@ -521,7 +549,7 @@
           wbg905?.style.removeProperty('--wbg905-product-y');
           wbg905?.style.removeProperty('--wbg905-product-scale');
           const capabilities = document.querySelector('[data-motion-section="capabilities"]');
-          capabilities?.classList.remove('is-story-started');
+          capabilities?.classList.toggle('is-story-started', capabilities?.dataset.workspaceHintDismissed === 'true');
           capabilities?.style.removeProperty('--workspace-sticky-top');
           const wbg901 = document.querySelector('[data-motion-section="wbg901"]');
           const wbg901Features = [...(wbg901?.querySelectorAll('.wbg901-product__features > li') || [])];
@@ -534,13 +562,21 @@
     // Refresh only at scene initialization, never from load/font callbacks mid-scroll.
     ScrollTrigger.refresh();
 
+    window.addEventListener('pagehide', (event) => {
+      if (event.persisted) return;
+      motionMatchMedia?.revert();
+      killTransientAnimations();
+      preloadObserver?.disconnect();
+      playbackObserver?.disconnect();
+    });
+
   // Loading may begin near the viewport; playback is governed by a separate
   // zero-margin observer so no visible motion starts while media is offscreen.
     if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
     const videoHosts = [...document.querySelectorAll('[data-motion-video][data-video-src]')];
     if (!videoHosts.length) return;
 
-    const playbackObserver = new IntersectionObserver((entries) => {
+    playbackObserver = new IntersectionObserver((entries) => {
       entries.forEach(({ target: host, isIntersecting, intersectionRatio }) => {
         const video = host.__motionVideo;
         if (!video) return;
@@ -551,7 +587,7 @@
       });
     }, { rootMargin: '0px', threshold: [0, 0.1, 0.55, 0.75] });
 
-    const preloadObserver = new IntersectionObserver((entries) => {
+    preloadObserver = new IntersectionObserver((entries) => {
       entries.forEach(({ target: host, isIntersecting }) => {
         const source = host.dataset.videoSrc?.trim();
         if (!isIntersecting || !source || host.__motionVideo || host.dataset.videoFailed === 'true') return;

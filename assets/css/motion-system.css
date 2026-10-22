@@ -45,11 +45,11 @@ body { overflow-x: clip; }
     position: relative;
     display: block;
     flex: 1;
-    height: 2.5px;
     overflow: hidden;
     border-radius: 99px;
-    background: rgba(23, 23, 23, .22);
   }
+  .wbg905-product-story__story-track { height: 2.5px; background: rgba(23, 23, 23, .22); }
+  .capabilities-section__story-track { height: 2.75px; background: rgba(23, 23, 23, .28); }
   .wbg905-product-story__story-track i,
   .capabilities-section__story-track i {
     position: absolute;
@@ -122,7 +122,8 @@ body { overflow-x: clip; }
     gap: 8px 14px;
     min-height: 42px;
     color: var(--cap-muted, #707174);
-    font-size: 12px;
+    font-size: 12.5px;
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
   .capabilities-section__story-progress > span:first-child { grid-area: count; }
@@ -131,10 +132,10 @@ body { overflow-x: clip; }
     position: relative;
     display: block;
     min-width: 0;
-    height: 2.5px;
+    height: 2.75px;
     overflow: hidden;
     border-radius: 99px;
-    background: rgba(23, 23, 23, .22);
+    background: rgba(23, 23, 23, .28);
   }
   .capabilities-section__story-track i {
     position: absolute;
@@ -151,7 +152,8 @@ body { overflow-x: clip; }
     align-items: center;
     gap: 7px;
     color: var(--cap-muted, #707174);
-    font-size: 12px;
+    font-size: 12.5px;
+    font-weight: 600;
     opacity: 1;
     transition: opacity .28s ease;
   }
@@ -301,7 +303,7 @@ body { overflow-x: clip; }
     align-items: center;
     gap: 14px;
     color: var(--cap-muted, #707174);
-    font-size: 12px;
+    font-size: 12.5px;
     font-variant-numeric: tabular-nums;
   }
   .capabilities-section__cards-heading { margin-block-start: 34px; }
@@ -323,7 +325,7 @@ body { overflow-x: clip; }
     position: relative;
     grid-column: 1 / -1;
     grid-row: 1;
-    height: calc(var(--wbg901-scene-height) + 140svh);
+    height: calc(var(--wbg901-scene-height) + 112svh);
   }
   [data-motion-section="wbg901"] .wbg901-product__scene {
     position: sticky;
