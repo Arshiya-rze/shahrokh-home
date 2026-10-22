@@ -44,7 +44,7 @@
   display: block;
   width: 2.8rem;
   height: 1px;
-  transform: scaleX(0);
+  transform: scaleX(1);
   transform-origin: right center;
   background: var(--red);
 }

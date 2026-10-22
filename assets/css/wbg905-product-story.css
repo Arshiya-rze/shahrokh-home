@@ -158,7 +158,6 @@
   object-position: center;
   object-fit: contain;
   filter: drop-shadow(0 14px 15px rgba(23, 23, 23, .1));
-  will-change: transform;
 }
 
 .wbg905-product-story__callout { display: none; }
@@ -519,7 +518,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wbg905-product-story__button { transition: none; }
-  .wbg905-product-story__image { will-change: auto; }
 }
 
 /* Production refinement overrides: compact mobile rhythm and a stable desktop grid. */
@@ -648,10 +646,6 @@
 
 @media (min-width: 1600px) {
   .wbg905-product-story__callout { max-width: 190px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .wbg905-product-story__image { will-change: auto; }
 }
 
 @media (min-width: 1200px) {

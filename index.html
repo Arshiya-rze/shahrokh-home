@@ -37,6 +37,7 @@
     <link rel="stylesheet" href="assets/css/mobile-qa-polish.css" />
     <link rel="stylesheet" href="assets/css/desktop-qa-polish.css" />
     <link rel="stylesheet" href="assets/css/hero-wbg901-scrollytelling.css" />
+    <link rel="stylesheet" href="assets/css/motion-system.css" />
   </head>
   <body>
     <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
@@ -146,6 +147,7 @@
       <section
         class="about-shahrokh"
         id="about"
+        data-motion-section="about"
         data-about-section
         aria-labelledby="about-title"
       >
@@ -242,12 +244,14 @@
       <section
         class="wbg905-product-story scene-light"
         id="wbg905-product-story"
+        data-motion-section="wbg905-story"
         aria-labelledby="wbg905-product-title"
       >
         <span class="wbg905-product-story__legacy-anchor" id="wbg-story" aria-hidden="true"></span>
         <span class="wbg905-product-story__ghost" aria-hidden="true">WBG905</span>
 
-        <div class="wbg905-product-story__overview page-shell">
+        <div class="wbg905-product-story__track page-shell" data-product-track>
+        <div class="wbg905-product-story__overview" data-wbg905-scene>
           <div class="wbg905-product-story__intro">
             <p class="wbg905-product-story__meta" data-product-meta>
               <span>۰۳ / محصول شاخص</span><i aria-hidden="true"></i>
@@ -318,7 +322,12 @@
               <h4>کاربری حرفه‌ای</h4>
               <p>مناسب محیط‌های صنعتی مختلف</p>
             </article>
+            <div class="wbg905-product-story__story-progress" role="group" aria-label="پیشرفت روایت محصول">
+              <span data-product-story-count>۰۱ / ۰۳</span>
+              <span class="wbg905-product-story__story-track" aria-hidden="true"><i data-product-story-fill></i></span>
+            </div>
           </aside>
+        </div>
         </div>
 
         <div class="wbg905-product-story__details page-shell" id="wbg905-product-details">
@@ -361,7 +370,7 @@
           <a class="wbg905-product-story__button wbg905-product-story__button--primary" href="#products">مشاهده محصول WBG905 <span aria-hidden="true">←</span></a>
         </div>
       </section>
-      <section class="product-range scene-light" id="products" aria-labelledby="product-range-title">
+      <section class="product-range scene-light" id="products" data-motion-section="solutions" aria-labelledby="product-range-title">
         <div class="page-shell">
           <div class="product-range__overview">
             <div class="product-range__stage" id="product-range-stage" data-product-range-stage>
@@ -465,25 +474,36 @@
           </ul>
         </div>
       </section>
-      <section class="capabilities-section scene-light" id="capabilities" aria-labelledby="capabilities-title" dir="rtl">
+      <section class="capabilities-section scene-light" id="capabilities" data-motion-section="capabilities" aria-labelledby="capabilities-title" dir="rtl">
         <div class="capabilities-section__main page-shell">
-          <header class="capabilities-section__intro">
-            <p class="capabilities-section__eyebrow"><i aria-hidden="true"></i> ۰۵ / توانمندی‌ها</p>
-            <h2 id="capabilities-title">فراتر از یک محصول،<br /><em>ارزش برای فضای کار شما</em></h2>
-            <p>شاهرخ با ترکیب تجربه، طراحی مهندسی و شناخت دقیق نیازهای صنعت، راهکارهایی ارائه می‌دهد که فراتر از یک محصول ساده، به بهبود عملکرد، نظم و ایمنی در محیط‌های کاری کمک می‌کند.</p>
-          </header>
-          <figure class="capabilities-section__visual">
-            <picture class="capabilities-section__workshop-picture">
-              <source media="(max-width: 599px)" srcset="assets/images/capabilities/workshop-mobile.webp 566w" sizes="calc(100vw - 32px)" />
-              <img class="capabilities-section__workshop" src="assets/images/posters/wbg905-hero-poster.webp" srcset="assets/images/posters/wbg905-hero-poster.webp 1280w" sizes="(min-width: 1600px) 54vw, (min-width: 1024px) 52vw, 100vw" alt="میز کار صنعتی واقعی شاهرخ WBG905 در فضای کارگاهی" width="1280" height="704" fetchpriority="high" decoding="async" />
-            </picture>
-            <img class="capabilities-section__worker" src="assets/images/capabilities/workshop-worker-active.webp" srcset="assets/images/capabilities/workshop-worker-mobile.webp 554w, assets/images/capabilities/workshop-worker-active.webp 950w" sizes="(max-width: 599px) 84vw, (max-width: 1023px) 65vw, 34vw" alt="کارشناس در حال مرتب‌کردن ابزارهای دستی در فضای کار" width="950" height="1440" decoding="async" />
-            <ul class="capabilities-section__benefits" aria-label="مزایای راهکارهای شاهرخ">
-              <li><span class="capabilities-section__benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 3 19 6l4-.2 1.2 3.7 3.4 2-1.2 3.8 1.2 3.8-3.4 2L23 28l-4-.2-3 3-3-3-4 .2-1.2-3.7-3.4-2 1.2-3.8-1.2-3.8 3.4-2L9 6l4 .2z"/><circle cx="16" cy="16" r="4"/></svg></span><span><strong>افزایش بهره‌وری</strong><small>سازماندهی بهتر فضای کار</small></span></li>
-              <li><span class="capabilities-section__benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m16 3 12 7v12l-12 7L4 22V10z"/><path d="m4 10 12 7 12-7M16 17v12"/></svg></span><span><strong>محیط کاری ایمن</strong><small>دسترسی سریع و منظم</small></span></li>
-              <li><span class="capabilities-section__benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 27h22M8 24V16h5v8m3 0V10h5v14m3 0V5h5v19"/></svg></span><span><strong>صرفه‌جویی در زمان</strong><small>تمرکز بیشتر بر کار اصلی</small></span></li>
-            </ul>
-          </figure>
+          <div class="capabilities-section__scene" data-capabilities-scene>
+            <figure class="capabilities-section__visual">
+              <div class="capabilities-section__media" data-motion="media" data-motion-video>
+                <picture class="capabilities-section__workshop-picture">
+                  <source media="(max-width: 599px)" srcset="assets/images/capabilities/workshop-mobile.webp 566w" sizes="calc(100vw - 32px)" />
+                  <img class="capabilities-section__workshop" src="assets/images/posters/wbg905-hero-poster.webp" srcset="assets/images/posters/wbg905-hero-poster.webp 1280w" sizes="(min-width: 1600px) 54vw, (min-width: 1024px) 52vw, 100vw" alt="میز کار صنعتی واقعی شاهرخ WBG905 در فضای کارگاهی" width="1280" height="704" fetchpriority="high" decoding="async" />
+                </picture>
+              </div>
+              <img class="capabilities-section__worker" src="assets/images/capabilities/workshop-worker-active.webp" srcset="assets/images/capabilities/workshop-worker-mobile.webp 554w, assets/images/capabilities/workshop-worker-active.webp 950w" sizes="(max-width: 599px) 84vw, (max-width: 1023px) 65vw, 34vw" alt="کارشناس در حال مرتب‌کردن ابزارهای دستی در فضای کار" width="950" height="1440" decoding="async" />
+            </figure>
+            <aside class="capabilities-section__story" aria-label="روایت توانمندی‌های شاهرخ">
+              <header class="capabilities-section__intro">
+                <p class="capabilities-section__eyebrow"><i aria-hidden="true"></i> ۰۵ / توانمندی‌ها</p>
+                <h2 id="capabilities-title">فراتر از یک محصول،<br /><em>ارزش برای فضای کار شما</em></h2>
+                <p>شاهرخ با ترکیب تجربه، طراحی مهندسی و شناخت دقیق نیازهای صنعت، راهکارهایی ارائه می‌دهد که فراتر از یک محصول ساده، به بهبود عملکرد، نظم و ایمنی در محیط‌های کاری کمک می‌کند.</p>
+              </header>
+              <div class="capabilities-section__story-progress" role="group" aria-label="پیشرفت روایت توانمندی‌ها">
+                <span data-capabilities-story-count>۰۱ / ۰۳</span>
+                <span class="capabilities-section__story-track" aria-hidden="true"><i data-capabilities-story-fill></i></span>
+                <span class="capabilities-section__scroll-hint" data-capabilities-scroll-hint><i aria-hidden="true">↓</i> برای ادامه اسکرول کنید</span>
+              </div>
+              <ol class="capabilities-section__benefits" aria-label="مزایای راهکارهای شاهرخ">
+                <li><span class="capabilities-section__benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 3 19 6l4-.2 1.2 3.7 3.4 2-1.2 3.8 1.2 3.8-3.4 2L23 28l-4-.2-3 3-3-3-4 .2-1.2-3.7-3.4-2 1.2-3.8-1.2-3.8 3.4-2L9 6l4 .2z"/><circle cx="16" cy="16" r="4"/></svg></span><span><strong>افزایش بهره‌وری</strong><small>سازماندهی بهتر فضای کار</small></span></li>
+                <li><span class="capabilities-section__benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m16 3 12 7v12l-12 7L4 22V10z"/><path d="m4 10 12 7 12-7M16 17v12"/></svg></span><span><strong>محیط کاری ایمن</strong><small>دسترسی سریع و منظم</small></span></li>
+                <li><span class="capabilities-section__benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 27h22M8 24V16h5v8m3 0V10h5v14m3 0V5h5v19"/></svg></span><span><strong>صرفه‌جویی در زمان</strong><small>تمرکز بیشتر بر کار اصلی</small></span></li>
+              </ol>
+            </aside>
+          </div>
           <div class="capabilities-section__cards-heading"><h3>توانمندی‌های ما</h3><a href="#capabilities-journey">مشاهده همه <span aria-hidden="true">←</span></a></div>
           <div class="capabilities-section__carousel" role="region" aria-label="توانمندی‌های شاهرخ" aria-roledescription="اسلایدر">
           <div class="capabilities-section__cards">
@@ -514,7 +534,7 @@
           <div class="capabilities-section__final-cta"><i aria-hidden="true"></i><h3>از تحلیل نیاز<br />تا اجرای نهایی،</h3><p>همراه شما در مسیر ساخت<br />فضای کاری بهتر</p><a href="#products">مشاهده محصولات <span aria-hidden="true">←</span></a></div>
         </div>
       </section>
-      <section class="industry-applications scene-light" id="applications" aria-labelledby="applications-title" dir="rtl">
+      <section class="industry-applications scene-light" id="applications" data-motion-section="applications" aria-labelledby="applications-title" dir="rtl">
         <div class="industry-applications__top page-shell">
           <header class="industry-applications__intro">
             <p class="industry-applications__eyebrow"><i aria-hidden="true"></i> ۰۶ / کاربردها</p>
@@ -577,7 +597,7 @@
           </ul>
         </div>
       </section>
-      <section class="wbg901-product scene-light has-main-media" id="wbg901" aria-labelledby="wbg901-title" dir="rtl">
+      <section class="wbg901-product scene-light has-main-media" id="wbg901" data-motion-section="wbg901" aria-labelledby="wbg901-title" dir="rtl">
         <div class="wbg901-product__shell">
           <header class="wbg901-product__intro" data-wbg901-reveal>
             <p class="wbg901-product__eyebrow"><i aria-hidden="true"></i> ۰۷ / محصول شاخص</p>
@@ -614,7 +634,7 @@
           </div>
         </div>
       </section>
-      <section class="brand-trust-about scene-light" id="brand-trust-about" aria-labelledby="brand-trust-about-title" dir="rtl">
+      <section class="brand-trust-about scene-light" id="brand-trust-about" data-motion-section="brand" aria-labelledby="brand-trust-about-title" dir="rtl">
         <div class="brand-trust-about__shell">
           <div class="brand-trust-about__hero">
             <div class="brand-trust-about__content">
@@ -669,7 +689,7 @@
         </div>
       </section>
     </main>
-    <footer class="site-footer scene-light" dir="rtl" aria-label="پاورقی سایت">
+    <footer class="site-footer scene-light" data-motion-section="footer" dir="rtl" aria-label="پاورقی سایت">
       <div class="site-footer__inner">
         <section class="site-footer__mobile-brand" aria-label="معرفی شاهرخ">
           <img class="brand-logo" src="assets/images/brand/shahrokh-logo.png" alt="نشان تجاری شاهرخ" width="504" height="155" loading="lazy" decoding="async" />
@@ -724,11 +744,11 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
       <script src="assets/js/wbg901-hero-sequence.js"></script>
     <script src="assets/js/animations.js"></script>
-    <script src="assets/js/industry-applications.js"></script>
     <script src="assets/js/brand-trust-about.js"></script>
     <script src="assets/js/site-footer.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/wbg905-mobile-feature-slider.js"></script>
     <script src="assets/js/capabilities-slider.js"></script>
+    <script src="assets/js/motion-system.js"></script>
   </body>
 </html>
