@@ -21,6 +21,15 @@
       onload="this.media='all'"
     />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
+    <noscript>
+      <style>
+        @media (max-width: 767px) {
+          .wbg905-product-story__chapters { display: grid; gap: 12px; }
+          .wbg905-product-story__chapter { grid-area: auto; }
+          .wbg905-product-story__chapter[hidden] { display: block !important; }
+        }
+      </style>
+    </noscript>
     <link rel="stylesheet" href="assets/css/reset.css" />
     <link rel="stylesheet" href="assets/css/variables.css" />
     <link rel="stylesheet" href="assets/css/base.css" />
@@ -254,8 +263,8 @@
         <span class="wbg905-product-story__legacy-anchor" id="wbg-story" aria-hidden="true"></span>
         <span class="wbg905-product-story__ghost" aria-hidden="true">WBG905</span>
 
-        <div class="wbg905-product-story__track page-shell" data-product-track>
-        <div class="wbg905-product-story__overview" data-wbg905-scene>
+        <div class="wbg905-product-story__track wbg905-mobile-story-track page-shell" data-product-track>
+        <div class="wbg905-product-story__overview wbg905-mobile-sticky-stage" data-wbg905-scene>
           <div class="wbg905-product-story__intro">
             <p class="wbg905-product-story__meta" data-product-meta>
               <span>۰۳ / محصول شاخص</span><i aria-hidden="true"></i>
@@ -338,6 +347,7 @@
             <div class="wbg905-product-story__story-progress" role="group" aria-label="پیشرفت روایت محصول">
               <span data-product-story-count>۰۱ / ۰۳</span>
               <span class="wbg905-product-story__story-track" aria-hidden="true"><i data-product-story-fill></i></span>
+              <span class="wbg905-product-story__scroll-hint" data-product-story-hint>برای ادامه اسکرول کنید</span>
             </div>
           </aside>
         </div>
@@ -489,8 +499,8 @@
       </section>
       <section class="capabilities-section scene-light" id="capabilities" data-motion-section="capabilities" aria-labelledby="capabilities-title" dir="rtl">
         <div class="capabilities-section__main page-shell">
-          <div class="capabilities-section__track" data-workspace-track>
-            <div class="capabilities-section__scene" data-capabilities-scene>
+          <div class="capabilities-section__track workspace-mobile-story-track" data-workspace-track>
+            <div class="capabilities-section__scene workspace-mobile-sticky-stage" data-capabilities-scene>
               <figure class="capabilities-section__visual">
                 <div class="capabilities-section__media" data-motion="media" data-motion-video>
                   <picture class="capabilities-section__workshop-picture">
