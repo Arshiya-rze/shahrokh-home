@@ -16,6 +16,10 @@
   let motionMatchMedia;
   let preloadObserver;
   let playbackObserver;
+  const mobileRevealObservers = new Map();
+  const mobileStateWatchers = new Set();
+  let mobileStateFrame = 0;
+  let mobileRevealFrame = 0;
   const transientAnimations = new Set();
   const trackTransientAnimation = (animation) => {
     if (!animation) return animation;
@@ -26,6 +30,15 @@
   const killTransientAnimations = () => {
     transientAnimations.forEach((animation) => animation.kill());
     transientAnimations.clear();
+  };
+  const disconnectMobileObservers = () => {
+    mobileRevealObservers.forEach(({ observer }) => observer.disconnect());
+    mobileRevealObservers.clear();
+    mobileStateWatchers.clear();
+    if (mobileStateFrame) window.cancelAnimationFrame(mobileStateFrame);
+    if (mobileRevealFrame) window.cancelAnimationFrame(mobileRevealFrame);
+    mobileStateFrame = 0;
+    mobileRevealFrame = 0;
   };
   const motionProfiles = [
     { query: '(max-width: 767px) and (prefers-reduced-motion: no-preference)', y: 10, reveal: 0.44, stagger: 0.075, scrub: 0.45, imageScale: 1.02 },
@@ -125,6 +138,176 @@
     });
   };
 
+  const observeMobileEnter = (element, callback, visibleRatio = 0.18) => {
+    if (!element) return;
+    if (!('IntersectionObserver' in window)) {
+      ScrollTrigger.create({ trigger: element, start: `top ${(1 - visibleRatio) * 100}%`, once: true, onEnter: callback });
+      return;
+    }
+    const key = Math.round(visibleRatio * 100);
+    let observerState = mobileRevealObservers.get(key);
+    if (!observerState) {
+      const targets = new Map();
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const enter = targets.get(entry.target);
+          if (!enter) return;
+          targets.delete(entry.target);
+          observer.unobserve(entry.target);
+          enter();
+        });
+      }, { rootMargin: `0px 0px -${Math.round(window.innerHeight * (1 - visibleRatio))}px 0px`, threshold: 0 });
+      observerState = { observer, targets, visibleRatio };
+      mobileRevealObservers.set(key, observerState);
+    }
+    observerState.targets.set(element, callback);
+    observerState.observer.observe(element);
+  };
+
+  const flushPassedMobileReveals = () => {
+    mobileRevealFrame = 0;
+    mobileRevealObservers.forEach(({ observer, targets, visibleRatio }) => {
+      const revealLine = window.innerHeight * visibleRatio;
+      targets.forEach((callback, element) => {
+        if (element.getBoundingClientRect().top > revealLine) return;
+        targets.delete(element);
+        observer.unobserve(element);
+        callback();
+      });
+    });
+  };
+
+  const flushMobileStateWatchers = () => {
+    mobileStateFrame = 0;
+    mobileStateWatchers.forEach((update) => update());
+  };
+
+  window.addEventListener('scroll', () => {
+    if (mobileRevealObservers.size && !mobileRevealFrame) {
+      mobileRevealFrame = window.requestAnimationFrame(flushPassedMobileReveals);
+    }
+    if (mobileStateWatchers.size && !mobileStateFrame) {
+      mobileStateFrame = window.requestAnimationFrame(flushMobileStateWatchers);
+    }
+  }, { passive: true });
+  window.addEventListener('resize', () => {
+    if (mobileStateWatchers.size && !mobileStateFrame) {
+      mobileStateFrame = window.requestAnimationFrame(flushMobileStateWatchers);
+    }
+  }, { passive: true });
+
+  const mobileRevealSequence = (trigger, items, profile, start = 'top 82%') => {
+    const sequence = items.filter(({ element }) => Boolean(element));
+    if (!trigger || !sequence.length) return;
+    const visibleRatio = Number.parseFloat(start.match(/[\d.]+(?=%)/)?.[0] || '82') / 100;
+    observeMobileEnter(trigger, () => {
+      const timeline = trackTransientAnimation(gsap.timeline());
+      sequence.forEach(({ element, y = 16, duration = Math.max(profile.reveal, 0.5), at }) => {
+        timeline.fromTo(element,
+          { autoAlpha: 0, y },
+          { autoAlpha: 1, y: 0, duration, ease: 'power2.out', clearProps: 'opacity,visibility,transform' },
+          at,
+        );
+      });
+    });
+  };
+
+  const mobileRevealMedia = (trigger, frame, image, { start = 'top 82%', end = 'top 48%', fromScale = 1.035 } = {}) => {
+    if (!trigger || !frame) return;
+    const animatedImage = image || frame.querySelector('img, video');
+    let reachedEnd = false;
+    const timeline = gsap.timeline({
+      scrollTrigger: {
+        trigger,
+        start,
+        end,
+        scrub: 0.45,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => { if (self.progress >= 1) reachedEnd = true; },
+        onLeaveBack: (self) => {
+          if (!reachedEnd) return;
+          self.animation?.progress(1).pause();
+          self.kill();
+        },
+      },
+    });
+    timeline.fromTo(frame,
+      { clipPath: 'inset(0 0 100% 0)' },
+      { clipPath: 'inset(0 0 0% 0)', ease: 'none', duration: 1 },
+      0,
+    );
+    if (animatedImage) timeline.fromTo(animatedImage,
+      { scale: fromScale },
+      { scale: 1, ease: 'none', duration: 1 },
+      0,
+    );
+    return timeline;
+  };
+
+  const mobileStagger = (container, items, profile, { start = 'top 84%', y = 14, imageSelector = null, batchMax = 2 } = {}) => {
+    if (!container || !items?.length) return;
+    const rows = [];
+    items.forEach((item) => {
+      const top = item.getBoundingClientRect().top;
+      let row = rows.find((candidate) => Math.abs(candidate.top - top) < 6);
+      if (!row) {
+        row = { top, items: [] };
+        rows.push(row);
+      }
+      row.items.push(item);
+    });
+    gsap.set(items, { autoAlpha: 0, y });
+    const visibleRatio = Number.parseFloat(start.match(/[\d.]+(?=%)/)?.[0] || '84') / 100;
+    rows.forEach(({ items: rowItems }) => {
+      observeMobileEnter(rowItems[0], () => {
+        const images = imageSelector ? rowItems.map((item) => item.querySelector(imageSelector)).filter(Boolean) : [];
+        const sequence = trackTransientAnimation(gsap.timeline());
+        sequence.fromTo(rowItems,
+          { autoAlpha: 0, y },
+          { autoAlpha: 1, y: 0, duration: Math.max(profile.reveal, 0.5), stagger: 0.08, ease: 'power2.out', clearProps: 'opacity,visibility,transform' },
+        );
+        if (images.length) sequence.fromTo(images,
+          { scale: 1.02 },
+          { scale: 1, duration: Math.max(profile.reveal, 0.5), stagger: 0.08, ease: 'power2.out', clearProps: 'transform' },
+          0,
+        );
+      }, visibleRatio);
+    });
+  };
+
+  const mobileActivateOnCenter = (items, { start = 'center 58%', onActive = null } = {}) => {
+    if (!items?.length) return;
+    const activate = (index) => {
+      setActiveItem(items, index);
+      items.forEach((item, itemIndex) => {
+        if (itemIndex === index) item.setAttribute('aria-current', 'step');
+        else item.removeAttribute('aria-current');
+      });
+      onActive?.(index);
+    };
+    const crossingRatio = Number.parseFloat(start.match(/[\d.]+(?=%)/)?.[0] || '58') / 100;
+    const update = () => {
+      const bounds = items[0]?.parentElement?.getBoundingClientRect();
+      if (!bounds || bounds.bottom < -window.innerHeight * 0.2 || bounds.top > window.innerHeight * 1.2) return;
+      const crossing = window.innerHeight * crossingRatio;
+      let nearest = 0;
+      let nearestDistance = Infinity;
+      items.forEach((item, index) => {
+        const rect = item.getBoundingClientRect();
+        const distance = Math.abs(rect.top + rect.height / 2 - crossing);
+        if (distance < nearestDistance) {
+          nearest = index;
+          nearestDistance = distance;
+        }
+      });
+      activate(nearest);
+    };
+    mobileStateWatchers.add(update);
+    update();
+    return activate;
+  };
+
   const setActiveItem = (items, active) => {
     items.forEach((item, index) => item.classList.toggle('is-active', index === active));
   };
@@ -144,12 +327,62 @@
     if (ui.fill) ui.fill.style.transform = `scaleX(${Math.max(0, Math.min(1, progress))})`;
   };
 
+  const mobileStoryHeaderOffset = () => Math.ceil(document.querySelector('[data-header]')?.getBoundingClientRect().height || 64) + 10;
+  const buildMobileStickyStory = ({ section, track, stage, states, progressUi, id, hint, onEnter }) => {
+    if (!section || !track || !stage || !states.length) return;
+    const headerOffset = mobileStoryHeaderOffset();
+    section.style.setProperty('--mobile-story-top', `${headerOffset}px`);
+    states.forEach((item, index) => {
+      item.hidden = false;
+      item.setAttribute('aria-hidden', String(index !== 0));
+      item.classList.toggle('is-active', index === 0);
+    });
+    gsap.set(states, { autoAlpha: 0, y: 8 });
+    gsap.set(states[0], { autoAlpha: 1, y: 0 });
+    let activeIndex = 0;
+    let stateTween;
+    let entered = false;
+    const setProgress = (progress) => {
+      const active = progress < 0.3 ? 0 : progress < 0.62 ? Math.min(1, states.length - 1) : states.length - 1;
+      if (active !== activeIndex) {
+        const outgoing = states[activeIndex];
+        const incoming = states[active];
+        stateTween?.kill();
+        states.forEach((item, index) => {
+          item.setAttribute('aria-hidden', String(index !== active));
+          item.classList.toggle('is-active', index === active);
+        });
+        stateTween = gsap.timeline();
+        stateTween.to(outgoing, { autoAlpha: 0, y: -6, duration: 0.2, ease: 'power2.out' }, 0)
+          .fromTo(incoming, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.26, ease: 'power2.out' }, 0.05);
+        activeIndex = active;
+      }
+      updateStoryProgress(progressUi, active, progress);
+      if (hint) hint.style.opacity = String(Math.max(0, 1 - progress / 0.075));
+    };
+    const story = ScrollTrigger.create({
+      id,
+      trigger: track,
+      start: () => `top ${mobileStoryHeaderOffset()}px`,
+      end: () => `+=${Math.max(1, track.offsetHeight - stage.offsetHeight)}`,
+      invalidateOnRefresh: true,
+      onEnter: (self) => { entered = true; onEnter?.(); setProgress(self.progress); },
+      onEnterBack: (self) => { entered = true; setProgress(self.progress); },
+      onLeaveBack: (self) => { entered = false; setProgress(self.progress); },
+      onUpdate: (self) => { if (entered) setProgress(self.progress); },
+    });
+    const bounds = track.getBoundingClientRect();
+    if (bounds.top <= window.innerHeight && bounds.bottom >= 0) {
+      entered = true;
+      setProgress(story.progress);
+    }
+  };
+
   const buildWbg905Scene = (profile, useStickyTrack, stickyTop) => {
     const section = document.querySelector('[data-motion-section="wbg905-story"]');
     const stage = section?.querySelector('.wbg905-product-story__stage');
     const product = stage?.querySelector('.wbg905-product-story__image');
     const callouts = [...(stage?.querySelectorAll('.wbg905-product-story__callout') || [])];
-    const benefits = [...(section?.querySelectorAll('.wbg905-product-story__benefit') || [])];
     const overview = section?.querySelector('.wbg905-product-story__overview');
     const track = section?.querySelector('[data-product-track]');
     const chapters = [...(section?.querySelectorAll('[data-product-chapter]') || [])];
@@ -413,7 +646,197 @@
     enterOnce(section.querySelector('.wbg901-product__actions'), { start: 'top 82%', y: 12, duration: profile.reveal });
   };
 
+  const buildMobileWbg905Story = (profile) => {
+    const section = document.querySelector('[data-motion-section="wbg905-story"]');
+    const overview = section?.querySelector('.wbg905-product-story__overview');
+    const intro = overview?.querySelector('.wbg905-product-story__intro');
+    const stage = overview?.querySelector('.wbg905-product-story__stage');
+    const chapters = [...(section?.querySelectorAll('[data-product-chapter]') || [])];
+    const benefits = [...(section?.querySelectorAll('.wbg905-product-story__benefit') || [])];
+    const storyProgress = section ? createStoryProgress(section, 'product-story') : null;
+    const track = section?.querySelector('[data-product-track]');
+
+    if (!section || !overview || !stage || !chapters.length) return;
+    section.dataset.mobileMotionReady = 'true';
+    chapters.forEach((chapter) => {
+      chapter.hidden = false;
+      chapter.setAttribute('aria-hidden', 'false');
+    });
+
+    buildMobileStickyStory({
+      section,
+      track,
+      stage: overview,
+      states: chapters,
+      progressUi: storyProgress,
+      id: 'wbg905-mobile-story',
+      hint: section.querySelector('[data-product-story-hint]'),
+    });
+
+    const heading = section.querySelector('.wbg905-product-story__details-heading');
+    mobileRevealSequence(heading?.querySelector('.wbg905-product-story__eyebrow'), [
+      { element: heading?.querySelector('.wbg905-product-story__eyebrow'), y: 8, duration: 0.4, at: 0 },
+      { element: heading?.querySelector('h3'), y: 18, at: 0.08 },
+      { element: heading?.querySelector(':scope > p:last-child'), y: 12, at: 0.2 },
+    ], profile);
+    const featureGrid = section.querySelector('.wbg905-product-story__features');
+    mobileStagger(featureGrid, [...(featureGrid?.querySelectorAll('.wbg905-product-story__feature') || [])], profile, { start: 'top 84%', y: 14, imageSelector: 'img', batchMax: 2 });
+    const final = section.querySelector('.wbg905-product-story__final');
+    mobileRevealSequence(final, [{ element: final, y: 14, duration: 0.48, at: 0 }], profile, 'top 84%');
+  };
+
+  const buildMobileProfile = (profile) => {
+    const about = document.querySelector('[data-motion-section="about"]');
+    if (about) {
+      const content = about.querySelector('.about-shahrokh__content');
+      mobileRevealSequence(content.querySelector('.about-shahrokh__meta'), [
+        { element: content.querySelector('.about-shahrokh__meta'), y: 8, duration: 0.4, at: 0 },
+        { element: content.querySelector('.about-shahrokh__title'), y: 18, at: 0.08 },
+        { element: content.querySelector('.about-shahrokh__description'), y: 12, at: 0.2 },
+        { element: content.querySelector('.about-shahrokh__cta'), y: 8, duration: 0.44, at: 0.32 },
+      ], profile);
+      const media = about.querySelector('.about-shahrokh__media');
+      mobileRevealMedia(media, media, media?.querySelector('img'));
+      const features = [...about.querySelectorAll('.about-shahrokh__features > li')];
+      mobileStagger(about.querySelector('.about-shahrokh__features'), features, profile, { y: 14, batchMax: 2 });
+    }
+
+    buildMobileWbg905Story(profile);
+
+    const solutions = document.querySelector('[data-motion-section="solutions"]');
+    if (solutions) {
+      const eyebrow = solutions.querySelector('.product-range__eyebrow');
+      const intro = solutions.querySelector('.product-range__intro');
+      mobileRevealSequence(eyebrow, [
+        { element: eyebrow, y: 8, duration: 0.4, at: 0 },
+        { element: intro?.querySelector('h2'), y: 18, at: 0.08 },
+        { element: intro?.querySelector('.product-range__lead'), y: 12, at: 0.2 },
+        { element: intro?.querySelector('.product-range__all-link'), y: 8, duration: 0.44, at: 0.32 },
+      ], profile);
+      const stage = solutions.querySelector('.product-range__stage');
+      const picture = stage?.querySelector('picture');
+      mobileRevealMedia(stage, picture, stage?.querySelector('.product-range__showcase'));
+      const product = solutions.querySelector('.product-range__product-card');
+      mobileStagger(product?.parentElement, product ? [product] : [], profile, { start: 'top 84%', y: 14, imageSelector: 'img', batchMax: 1 });
+
+      const categoryHeading = solutions.querySelector('.product-range__category-heading');
+      mobileRevealSequence(categoryHeading, [
+        { element: categoryHeading?.querySelector('.product-range__eyebrow'), y: 8, duration: 0.4, at: 0 },
+        { element: categoryHeading?.querySelector('h3'), y: 18, at: 0.08 },
+        { element: categoryHeading?.querySelector(':scope > p:last-child'), y: 12, at: 0.2 },
+      ], profile);
+      const categories = [...solutions.querySelectorAll('.product-range__category-card')];
+      mobileStagger(solutions.querySelector('.product-range__category-grid'), categories, profile, { y: 14, imageSelector: 'picture img', batchMax: 2 });
+      const values = [...solutions.querySelectorAll('.product-range__values > li')];
+      mobileStagger(solutions.querySelector('.product-range__values'), values, profile, { y: 12, batchMax: 2 });
+    }
+
+    const capabilities = document.querySelector('[data-motion-section="capabilities"]');
+    if (capabilities) {
+      capabilities.dataset.mobileMotionReady = 'true';
+      const track = capabilities.querySelector('[data-workspace-track]');
+      const scene = capabilities.querySelector('[data-capabilities-scene]');
+      const overlays = [...capabilities.querySelectorAll('.capabilities-section__benefits li')];
+      const progress = createStoryProgress(capabilities, 'capabilities-story');
+      buildMobileStickyStory({
+        section: capabilities,
+        track,
+        stage: scene,
+        states: overlays,
+        progressUi: progress,
+        id: 'workspace-mobile-story',
+        hint: capabilities.querySelector('[data-capabilities-scroll-hint]'),
+        onEnter: () => {
+          if (capabilities.dataset.mobileIntroRevealed === 'true') return;
+          capabilities.dataset.mobileIntroRevealed = 'true';
+          const intro = capabilities.querySelector('.capabilities-section__intro');
+          gsap.fromTo(intro, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.38, ease: 'power2.out', clearProps: 'opacity,visibility,transform' });
+        },
+      });
+
+      const cardsHeading = capabilities.querySelector('.capabilities-section__cards-heading');
+      mobileRevealSequence(cardsHeading, [{ element: cardsHeading, y: 12, duration: 0.46, at: 0 }], profile);
+      const cards = [...capabilities.querySelectorAll('.capabilities-section__card')];
+      mobileStagger(capabilities.querySelector('.capabilities-section__cards'), cards, profile, { y: 14, imageSelector: 'img', batchMax: 2 });
+      const promo = capabilities.querySelector('.capabilities-section__mobile-promo');
+      mobileRevealSequence(promo, [{ element: promo, y: 12, duration: 0.46, at: 0 }], profile, 'top 84%');
+      const process = capabilities.querySelector('.capabilities-section__process ol');
+      mobileStagger(process, [...(process?.querySelectorAll(':scope > li') || [])], profile, { y: 12, batchMax: 2 });
+    }
+
+    const applications = document.querySelector('[data-motion-section="applications"]');
+    if (applications) {
+      const intro = applications.querySelector('.industry-applications__intro');
+      const eyebrow = intro?.querySelector('.industry-applications__eyebrow');
+      mobileRevealSequence(eyebrow, [
+        { element: eyebrow, y: 8, duration: 0.4, at: 0 },
+        { element: intro?.querySelector('h2'), y: 18, at: 0.08 },
+        { element: intro?.querySelector(':scope > p'), y: 12, at: 0.2 },
+      ], profile);
+      const hero = applications.querySelector('.industry-applications__hero');
+      mobileRevealMedia(hero, hero, hero?.querySelector('img'));
+      const cards = [...applications.querySelectorAll('.industry-applications__card')];
+      mobileStagger(applications.querySelector('.industry-applications__cards'), cards, profile, { y: 14, imageSelector: 'img', batchMax: 2 });
+      const benefits = applications.querySelector('.industry-applications__benefits');
+      const benefitIntro = benefits?.querySelector('.industry-applications__benefit-intro');
+      mobileRevealSequence(benefitIntro, [{ element: benefitIntro, y: 12, at: 0 }], profile);
+      const benefitItems = [...(benefits?.querySelectorAll('.industry-applications__benefit-list > li') || [])];
+      mobileStagger(benefits?.querySelector('.industry-applications__benefit-list'), benefitItems, profile, { y: 12, batchMax: 2 });
+    }
+
+    const wbg901 = document.querySelector('[data-motion-section="wbg901"]');
+    if (wbg901) {
+      wbg901.dataset.mobileMotionReady = 'true';
+      const intro = wbg901.querySelector('.wbg901-product__intro');
+      const eyebrow = intro?.querySelector('.wbg901-product__eyebrow');
+      mobileRevealSequence(eyebrow, [
+        { element: eyebrow, y: 8, duration: 0.4, at: 0 },
+        { element: intro?.querySelector('h2'), y: 18, at: 0.08 },
+        { element: intro?.querySelector('.wbg901-product__lead'), y: 12, at: 0.2 },
+      ], profile);
+      const stage = wbg901.querySelector('.wbg901-product__stage');
+      mobileRevealMedia(stage, stage, stage?.querySelector('.wbg901-product__main-image'), { fromScale: 0.97 });
+      const features = [...wbg901.querySelectorAll('.wbg901-product__features > li')];
+      mobileActivateOnCenter(features, { start: 'center 60%' });
+      const actions = wbg901.querySelector('.wbg901-product__actions');
+      mobileRevealSequence(actions, [{ element: actions, y: 10, duration: 0.46, at: 0 }], profile);
+      const details = wbg901.querySelector('[data-wbg901-gallery]');
+      if (details && !details.hidden) mobileStagger(details, [...details.children], profile, { y: 12, batchMax: 2 });
+      const specs = wbg901.querySelector('[data-wbg901-specs]');
+      if (specs && !specs.hidden) mobileStagger(specs, [...specs.children], profile, { y: 10, batchMax: 2 });
+    }
+
+    const brand = document.querySelector('[data-motion-section="brand"]');
+    if (brand) {
+      const intro = brand.querySelector('.brand-trust-about__intro');
+      const eyebrow = intro?.querySelector('.brand-trust-about__eyebrow');
+      mobileRevealSequence(eyebrow, [
+        { element: eyebrow, y: 8, duration: 0.4, at: 0 },
+        { element: intro?.querySelector('h2'), y: 18, at: 0.08 },
+        { element: intro?.querySelector('.brand-trust-about__description'), y: 12, at: 0.2 },
+      ], profile);
+      const actions = brand.querySelector('.brand-trust-about__actions');
+      mobileRevealSequence(actions, [{ element: actions, y: 10, duration: 0.44, at: 0 }], profile);
+      const media = brand.querySelector('.brand-trust-about__media');
+      mobileRevealMedia(media, media, media?.querySelector('img'));
+      const values = [...brand.querySelectorAll('.brand-trust-about__values > li')];
+      mobileStagger(brand.querySelector('.brand-trust-about__values'), values, profile, { y: 14, batchMax: 2 });
+    }
+
+    const footer = document.querySelector('[data-motion-section="footer"]');
+    if (footer) {
+      const banner = footer.querySelector('.site-footer__banner');
+      mobileRevealSequence(banner, [{ element: banner, y: 14, duration: 0.48, at: 0 }], profile, 'top 84%');
+      const columns = [...footer.querySelectorAll('.site-footer__columns > .site-footer__column')];
+      mobileStagger(footer.querySelector('.site-footer__columns'), columns, profile, { start: 'top 86%', y: 10, batchMax: 2 });
+    }
+  };
+
   const buildProfile = (profile, { desktop = false, wideDesktop = false, stickyTop } = {}) => {
+    if (window.innerWidth <= 767) {
+      buildMobileProfile(profile);
+      return;
+    }
     const about = document.querySelector('[data-motion-section="about"]');
     if (about) {
       const content = about.querySelector('.about-shahrokh__content');
@@ -529,14 +952,20 @@
         buildProfile(profile, { desktop: width >= 1024, wideDesktop: width >= 1200, stickyTop });
         return () => {
           killTransientAnimations();
+          disconnectMobileObservers();
           document.querySelectorAll('[data-motion-section][data-motion-ready="true"]').forEach((section) => {
             delete section.dataset.motionReady;
+          });
+          document.querySelectorAll('[data-motion-section][data-mobile-motion-ready="true"]').forEach((section) => {
+            delete section.dataset.mobileMotionReady;
           });
           document.querySelectorAll('[data-motion-section="wbg905-story"] .is-active, [data-motion-section="capabilities"] .is-active, [data-motion-section="wbg901"] .is-active').forEach((item) => {
             item.classList.remove('is-active');
           });
           const wbg905 = document.querySelector('[data-motion-section="wbg905-story"]');
           wbg905?.classList.remove('is-story-released');
+          wbg905?.style.removeProperty('--mobile-story-top');
+          wbg905?.querySelector('[data-product-story-hint]')?.style.removeProperty('opacity');
           const productChapters = [...(wbg905?.querySelectorAll('[data-product-chapter]') || [])];
           productChapters.forEach((chapter, index) => {
             chapter.hidden = index !== 0;
@@ -551,6 +980,12 @@
           const capabilities = document.querySelector('[data-motion-section="capabilities"]');
           capabilities?.classList.toggle('is-story-started', capabilities?.dataset.workspaceHintDismissed === 'true');
           capabilities?.style.removeProperty('--workspace-sticky-top');
+          capabilities?.style.removeProperty('--mobile-story-top');
+          capabilities?.querySelector('[data-capabilities-scroll-hint]')?.style.removeProperty('opacity');
+          delete capabilities?.dataset.mobileIntroRevealed;
+          const workspaceStates = [...(capabilities?.querySelectorAll('.capabilities-section__benefits li') || [])];
+          workspaceStates.forEach((item) => item.setAttribute('aria-hidden', 'false'));
+          gsap.set(workspaceStates, { clearProps: 'opacity,visibility,transform' });
           const wbg901 = document.querySelector('[data-motion-section="wbg901"]');
           const wbg901Features = [...(wbg901?.querySelectorAll('.wbg901-product__features > li') || [])];
           setActiveItem(wbg901Features, 0);
@@ -558,6 +993,23 @@
         };
       });
     });
+    motionMatchMedia.add('(max-width: 767px) and (prefers-reduced-motion: reduce)', () => {
+      const section = document.querySelector('[data-motion-section="wbg905-story"]');
+      const chapters = [...(section?.querySelectorAll('[data-product-chapter]') || [])];
+      if (section) section.dataset.mobileMotionReady = 'true';
+      chapters.forEach((chapter) => {
+        chapter.hidden = false;
+        chapter.setAttribute('aria-hidden', 'false');
+      });
+      return () => {
+        if (section) delete section.dataset.mobileMotionReady;
+        chapters.forEach((chapter, index) => {
+          chapter.hidden = index !== 0;
+          chapter.setAttribute('aria-hidden', String(index !== 0));
+        });
+      };
+    });
+
     // All image boxes have intrinsic dimensions and font metrics are now ready.
     // Refresh only at scene initialization, never from load/font callbacks mid-scroll.
     ScrollTrigger.refresh();
@@ -566,6 +1018,7 @@
       if (event.persisted) return;
       motionMatchMedia?.revert();
       killTransientAnimations();
+      disconnectMobileObservers();
       preloadObserver?.disconnect();
       playbackObserver?.disconnect();
     });
@@ -618,6 +1071,13 @@
     videoHosts.forEach((host) => preloadObserver.observe(host));
   };
 
-  if (document.fonts?.ready) document.fonts.ready.then(initializeMotion, initializeMotion);
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    initializeMotion();
+    if (document.fonts?.status === 'loading') {
+      document.fonts.ready.then(() => {
+        if (window.scrollY <= 1) ScrollTrigger.refresh();
+      });
+    }
+  } else if (document.fonts?.ready) document.fonts.ready.then(initializeMotion, initializeMotion);
   else initializeMotion();
 })();
