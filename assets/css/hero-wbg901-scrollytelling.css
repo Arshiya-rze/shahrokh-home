@@ -50,11 +50,17 @@
   grid-area: 1 / 1;
   align-self: center;
   min-width: 0;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition: opacity 260ms ease, transform 260ms ease, visibility 0s linear 260ms;
+}
+#top .hero-story-panel:not(.is-active) {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transform: translateY(8px);
-  transition: opacity 260ms ease, transform 260ms ease, visibility 0s linear 260ms;
 }
 #top .hero-story-panel.is-active {
   opacity: 1;

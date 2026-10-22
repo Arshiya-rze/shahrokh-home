@@ -460,13 +460,22 @@
     }, 180);
   }
 
-  const openingLoad = prefersReducedMotion
-    ? loadFrame(frameOrder[0])
-    : loadRange(frameTargets[0], frameTargets[1]);
-  const initialRangeReady = openingLoad.then(() => {
-    if (!prefersReducedMotion && stageIndex === 3) return loadRange(frameTargets[1], frameTargets[3]);
-    return undefined;
-  }).then(() => {
+  // Decode the first real frame before requesting any transition frames. The
+  // matching eager <img> remains visible underneath until the canvas is ready.
+  const firstFrameReady = loadFrame(frameOrder[0]).then(() => {
+    if (stageIndex === 0) scheduleDraw(frameTargets[0]);
+    setStage(stageIndex);
+  });
+  const initialRangeReady = firstFrameReady.then(async () => {
+    if (!prefersReducedMotion) {
+      // Prioritize the first user-facing transition, then any later stage
+      // needed to restore a page opened below the Hero.
+      await loadRange(frameTargets[0], frameTargets[1]);
+      if (stageIndex === 3) {
+        await loadRange(frameTargets[1], frameTargets[2]);
+        await loadRange(frameTargets[2], frameTargets[3]);
+      }
+    }
     sequenceReady = true;
     currentOrderIndex = frameTargets[stageIndex];
     scheduleDraw(currentOrderIndex);
