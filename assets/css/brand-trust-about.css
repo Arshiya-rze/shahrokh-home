@@ -28,11 +28,6 @@
 .brand-trust-about__stat-value { font-size: clamp(18px,5.8vw,26px); font-weight: 800; line-height: 1.25; }
 .brand-trust-about__stat-label { color: var(--brand-about-muted); font-size: 11px; line-height: 1.65; }
 .brand-trust-about__actions { order: 3; display: flex; align-items: center; justify-content: space-between; gap: 12px; direction: ltr; }
-.brand-trust-about__video-action { display: inline-flex; min-width: 44px; min-height: 58px; align-items: center; gap: 10px; padding: 0; border: 0; background: transparent; color: var(--brand-about-ink); font: inherit; direction: rtl; text-align: right; cursor: pointer; }
-.brand-trust-about__play { display: grid; width: 58px; height: 58px; flex: 0 0 58px; place-items: center; border: 1px solid var(--brand-about-line); border-inline-start-color: var(--brand-about-red); border-radius: 50%; background: #fff; font: 17px/1 Arial,sans-serif; }
-.brand-trust-about__video-action > span:last-child { display: grid; gap: 4px; }
-.brand-trust-about__video-action strong { font-size: 15px; font-weight: 800; }
-.brand-trust-about__video-action small { color: var(--brand-about-muted); font-size: 11px; }
 .brand-trust-about__cta { display: flex; min-width: 0; min-height: 56px; flex: 1; align-items: center; justify-content: space-between; gap: 10px; padding: 0 18px; border-radius: 17px; background: var(--brand-about-red); color: #fff; direction: rtl; font-size: 15px; font-weight: 800; text-decoration: none; white-space: nowrap; }
 .brand-trust-about__cta span { font: 22px/1 Arial,sans-serif; }
 .brand-trust-about__values { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; direction: ltr; }
@@ -42,12 +37,6 @@
 .brand-trust-about__values h3 { margin: 13px 0 0; font-size: 17px; font-weight: 800; line-height: 1.55; }
 .brand-trust-about__values p { margin: 7px 0 0; color: var(--brand-about-muted); font-size: 13px; line-height: 1.8; }
 .brand-trust-about__intro { order: 1; }
-.brand-trust-about__dialog { width: min(900px,calc(100% - 32px)); max-width: none; padding: 18px; border: 1px solid var(--brand-about-line); border-radius: 18px; background: #f6f6f3; color: var(--brand-about-ink); }
-.brand-trust-about__dialog::backdrop { background: rgba(14,18,20,.76); }
-.brand-trust-about__dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.brand-trust-about__dialog-head h3 { margin: 0; font-size: 18px; }
-.brand-trust-about__dialog-head button { width: 44px; height: 44px; border: 1px solid var(--brand-about-line); border-radius: 50%; background: #fff; color: var(--brand-about-ink); font-size: 26px; cursor: pointer; }
-.brand-trust-about__dialog video { display: block; width: 100%; max-height: 75vh; margin-block-start: 14px; border-radius: 12px; background: #111; }
 .brand-trust-about :is(a,button):focus-visible { outline: 2px solid var(--brand-about-red); outline-offset: 4px; }
 .brand-trust-about [hidden] { display: none !important; }
 
@@ -57,10 +46,6 @@
   .brand-trust-about__stat:nth-child(odd) { border-inline-start: 0; }
   .brand-trust-about__stat:nth-child(n+3) { padding-block-start: 12px; border-block-start: 1px solid var(--brand-about-line); }
   .brand-trust-about__actions { gap: 8px; }
-  .brand-trust-about__play { width: 50px; height: 50px; flex-basis: 50px; }
-  .brand-trust-about__video-action { gap: 6px; }
-  .brand-trust-about__video-action strong { font-size: 13px; }
-  .brand-trust-about__video-action small { font-size: 10px; }
   .brand-trust-about__cta { min-height: 54px; padding-inline: 12px; font-size: 13px; }
   .brand-trust-about__values { gap: 10px; }
   .brand-trust-about__values li { min-height: 208px; padding-inline: 11px; }
@@ -98,7 +83,6 @@
   .brand-trust-about__stat-label { font-size: 11px; }
   .brand-trust-about__actions { justify-content: flex-start; gap: 14px; direction: rtl; }
   .brand-trust-about__cta { flex: 0 0 240px; min-height: 54px; padding-inline: 20px; }
-  .brand-trust-about__video-action { flex: 0 0 auto; }
   .brand-trust-about__values { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
   .brand-trust-about__values li { min-height: 188px; padding: 22px 16px; }
 }
