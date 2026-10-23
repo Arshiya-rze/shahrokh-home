@@ -528,15 +528,20 @@ body { overflow-x: clip; }
   [data-motion-section="capabilities"][data-mobile-motion-ready="true"] .capabilities-section__benefits li.is-active strong { color: var(--cap-red, #ed3237); }
 
   [data-motion-section="wbg901"][data-mobile-motion-ready="true"] .wbg901-product__features > li {
-    opacity: .56 !important;
+    opacity: .72 !important;
     transform: none !important;
-    transition: opacity .2s ease, transform .2s ease, color .2s ease;
+    transition: opacity .2s ease, color .2s ease, background-color .2s ease, box-shadow .2s ease;
   }
   [data-motion-section="wbg901"][data-mobile-motion-ready="true"] .wbg901-product__features > li.is-active {
     opacity: 1 !important;
-    transform: translateX(-4px) !important;
+    box-shadow: inset 3px 0 0 var(--wbg901-red, #ed3237);
+    background-color: rgba(237, 50, 55, .045);
   }
-  [data-motion-section="wbg901"][data-mobile-motion-ready="true"] .wbg901-product__features > li.is-active strong { color: var(--wbg901-red, #ed3237); }
+  [data-motion-section="wbg901"][data-mobile-motion-ready="true"] .wbg901-product__features > li > span { color: #666b6d; font-weight: 600; transition: color .2s ease, font-weight .2s ease; }
+  [data-motion-section="wbg901"][data-mobile-motion-ready="true"] .wbg901-product__features > li.is-active > span { color: var(--wbg901-red, #ed3237); font-weight: 800; }
+  [data-motion-section="wbg901"][data-mobile-motion-ready="true"] .wbg901-product__features > li strong { color: #45494b; transition: color .2s ease; }
+  [data-motion-section="wbg901"][data-mobile-motion-ready="true"] .wbg901-product__features > li.is-active strong { color: #17191b; }
+  [data-motion-section="wbg901"][data-mobile-motion-ready="true"] .wbg901-product__features > li small { opacity: .88; }
 }
 
 @media (max-width: 767px) {
@@ -695,7 +700,7 @@ body { overflow-x: clip; }
     position: absolute;
     z-index: 5;
     right: 12px;
-    bottom: 48px;
+    bottom: calc(62px + env(safe-area-inset-bottom, 0px));
     left: 12px;
     display: block;
     height: 74px;
@@ -712,7 +717,9 @@ body { overflow-x: clip; }
     padding: 10px 12px;
     border: 1px solid rgba(255,255,255,.3);
     border-radius: 13px;
-    background: rgba(15,18,20,.78);
+    background: rgba(15,18,20,.68);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     color: #fff;
     transition: color .2s ease;
   }
@@ -730,6 +737,40 @@ body { overflow-x: clip; }
   [data-motion-section="capabilities"][data-mobile-motion-ready="true"] .capabilities-section__story-progress > span:first-child { grid-area: count; }
   [data-motion-section="capabilities"][data-mobile-motion-ready="true"] .capabilities-section__story-track { grid-area: rail; }
   [data-motion-section="capabilities"][data-mobile-motion-ready="true"] .capabilities-section__scroll-hint { display: block; grid-area: hint; font-size: 10px; transition: opacity .15s linear; }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"] .wbg905-product-story__actions .wbg905-product-story__button--primary {
+    opacity: .84;
+    border-color: rgba(237, 50, 55, .3);
+    transition: opacity .2s ease, box-shadow .2s ease;
+  }
+  [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"].is-final-state .wbg905-product-story__actions .wbg905-product-story__button--primary {
+    opacity: 1;
+    box-shadow: 0 8px 20px rgba(237, 50, 55, .2);
+  }
+  [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"] .wbg905-product-story__scroll-hint,
+  [data-motion-section="capabilities"][data-mobile-motion-ready="true"] .capabilities-section__scroll-hint {
+    transition: opacity .28s ease;
+  }
+  [data-motion-section="capabilities"][data-mobile-motion-ready="true"] .capabilities-section__story-progress {
+    grid-template-areas: "count rail" "hint hint";
+    gap: 5px 10px;
+  }
+  [data-motion-section="capabilities"][data-mobile-motion-ready="true"] .capabilities-section__scroll-hint {
+    display: block;
+    grid-area: hint;
+    font-size: 10px;
+  }
+  [data-motion-section="capabilities"][data-mobile-motion-ready="true"].is-story-started .capabilities-section__scroll-hint {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 375px) and (prefers-reduced-motion: no-preference) {
+  [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"] .wbg905-product-story__image {
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
