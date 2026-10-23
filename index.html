@@ -38,19 +38,48 @@
     <link rel="stylesheet" href="assets/css/responsive.css" />
     <link rel="stylesheet" href="assets/css/header-refinement.css" />
     <link rel="stylesheet" href="assets/css/hero-fullscreen.css" />
-    <link rel="stylesheet" href="assets/css/about-shahrokh.css" />
-    <link rel="stylesheet" href="assets/css/light-theme.css" />
-    <link rel="stylesheet" href="assets/css/wbg905-product-story.css" />
-    <link rel="stylesheet" href="assets/css/product-range.css" />
-    <link rel="stylesheet" href="assets/css/capabilities-section.css" />
-    <link rel="stylesheet" href="assets/css/industry-applications.css" />
-    <link rel="stylesheet" href="assets/css/wbg901-product-highlight.css" />
-    <link rel="stylesheet" href="assets/css/brand-trust-about.css" />
-    <link rel="stylesheet" href="assets/css/site-footer.css" />
-    <link rel="stylesheet" href="assets/css/mobile-qa-polish.css" />
-    <link rel="stylesheet" href="assets/css/desktop-qa-polish.css" />
     <link rel="stylesheet" href="assets/css/hero-wbg901-scrollytelling.css" />
-    <link rel="stylesheet" href="assets/css/motion-system.css" />
+    <!-- Keep lower-page styles render-blocking on desktop, but let mobile paint its critical Hero first. -->
+    <link rel="stylesheet" href="assets/css/mobile-qa-polish.css" />
+    <script>
+      window.__shahrokhDeferredStyles = (() => {
+        let pending = 11;
+        let resolveReady;
+        const ready = new Promise((resolve) => { resolveReady = resolve; });
+        return {
+          ready,
+          finish() {
+            pending -= 1;
+            if (pending === 0) resolveReady();
+          },
+        };
+      })();
+    </script>
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/about-shahrokh.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/light-theme.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/wbg905-product-story.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/product-range.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/capabilities-section.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/industry-applications.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/wbg901-product-highlight.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/brand-trust-about.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/site-footer.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/desktop-qa-polish.css" />
+    <link rel="stylesheet" media="(min-width: 768px)" onload="if (matchMedia('(max-width: 767px)').matches) this.media = 'all'; window.__shahrokhDeferredStyles.finish()" href="assets/css/motion-system.css" />
+    <noscript>
+      <link rel="stylesheet" href="assets/css/about-shahrokh.css" />
+      <link rel="stylesheet" href="assets/css/light-theme.css" />
+      <link rel="stylesheet" href="assets/css/wbg905-product-story.css" />
+      <link rel="stylesheet" href="assets/css/product-range.css" />
+      <link rel="stylesheet" href="assets/css/capabilities-section.css" />
+      <link rel="stylesheet" href="assets/css/industry-applications.css" />
+      <link rel="stylesheet" href="assets/css/wbg901-product-highlight.css" />
+      <link rel="stylesheet" href="assets/css/brand-trust-about.css" />
+      <link rel="stylesheet" href="assets/css/site-footer.css" />
+      <link rel="stylesheet" href="assets/css/mobile-qa-polish.css" />
+      <link rel="stylesheet" href="assets/css/desktop-qa-polish.css" />
+      <link rel="stylesheet" href="assets/css/motion-system.css" />
+    </noscript>
   </head>
   <body>
     <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
@@ -134,7 +163,7 @@
               height="720"
               loading="eager"
               fetchpriority="high"
-              decoding="async"
+              decoding="sync"
             />
             <canvas class="hero-sequence-canvas" data-hero-canvas role="img" aria-label="نمایش چرخشی ایستگاه کاری WBG901"></canvas>
           </div>
@@ -408,7 +437,7 @@
                   alt="میز کار صنعتی واقعی شاهرخ مدل WBG905"
                   width="1280"
                   height="704"
-                  fetchpriority="high"
+                  loading="lazy"
                   decoding="async"
                 />
               </picture>
@@ -505,10 +534,10 @@
                 <div class="capabilities-section__media" data-motion="media" data-motion-video>
                   <picture class="capabilities-section__workshop-picture">
                     <source media="(max-width: 599px)" srcset="assets/images/capabilities/workshop-mobile.webp 566w" sizes="calc(100vw - 32px)" />
-                    <img class="capabilities-section__workshop" src="assets/images/posters/wbg905-hero-poster.webp" srcset="assets/images/posters/wbg905-hero-poster.webp 1280w" sizes="(min-width: 1600px) 54vw, (min-width: 1024px) 52vw, 100vw" alt="میز کار صنعتی واقعی شاهرخ WBG905 در فضای کارگاهی" width="1280" height="704" fetchpriority="high" decoding="async" />
+                    <img class="capabilities-section__workshop" src="assets/images/posters/wbg905-hero-poster.webp" srcset="assets/images/posters/wbg905-hero-poster.webp 1280w" sizes="(min-width: 1600px) 54vw, (min-width: 1024px) 52vw, 100vw" alt="میز کار صنعتی واقعی شاهرخ WBG905 در فضای کارگاهی" width="1280" height="704" loading="lazy" decoding="async" />
                   </picture>
                 </div>
-                <img class="capabilities-section__worker" src="assets/images/capabilities/workshop-worker-active.webp" srcset="assets/images/capabilities/workshop-worker-mobile.webp 554w, assets/images/capabilities/workshop-worker-active.webp 950w" sizes="(max-width: 599px) 84vw, (max-width: 1023px) 65vw, 34vw" alt="کارشناس در حال مرتب‌کردن ابزارهای دستی در فضای کار" width="950" height="1440" decoding="async" />
+                <img class="capabilities-section__worker" src="assets/images/capabilities/workshop-worker-active.webp" srcset="assets/images/capabilities/workshop-worker-mobile.webp 554w, assets/images/capabilities/workshop-worker-active.webp 950w" sizes="(max-width: 599px) 84vw, (max-width: 1023px) 65vw, 34vw" alt="کارشناس در حال مرتب‌کردن ابزارهای دستی در فضای کار" width="950" height="1440" loading="lazy" decoding="async" />
               </figure>
               <aside class="capabilities-section__story" aria-label="روایت توانمندی‌های شاهرخ">
                 <header class="capabilities-section__intro">
@@ -569,7 +598,7 @@
           <figure class="industry-applications__hero">
             <picture>
               <source media="(max-width: 699px)" srcset="assets/images/applications/applications-workshop-mobile.webp 960w" sizes="calc(100vw - 40px)" />
-              <img src="assets/images/applications/applications-workshop.webp" srcset="assets/images/applications/applications-workshop.webp 1800w" sizes="(min-width: 1280px) 58vw, 55vw" alt="فضای کار صنعتی منظم مجهز به میزهای کار و پنل‌های ابزار" width="1800" height="1013" fetchpriority="high" decoding="async" />
+              <img src="assets/images/applications/applications-workshop.webp" srcset="assets/images/applications/applications-workshop.webp 1800w" sizes="(min-width: 1280px) 58vw, 55vw" alt="فضای کار صنعتی منظم مجهز به میزهای کار و پنل‌های ابزار" width="1800" height="1013" loading="lazy" decoding="async" />
             </picture>
           </figure>
         </div>
@@ -633,7 +662,7 @@
               </header>
 
               <figure class="wbg901-product__stage" aria-label="نمای روبه‌روی ایستگاه کاری WBG901" data-wbg901-reveal>
-                <img class="wbg901-product__main-image" data-wbg901-main-media src="assets/images/products/wbg901/0_10.webp" alt="ایستگاه کاری صنعتی WBG901 شاهرخ، نمای روبه‌رو" width="1268" height="792" fetchpriority="high" decoding="async" />
+                <img class="wbg901-product__main-image" data-wbg901-main-media src="assets/images/products/wbg901/0_10.webp" alt="ایستگاه کاری صنعتی WBG901 شاهرخ، نمای روبه‌رو" width="1268" height="792" loading="lazy" decoding="async" />
                 <span class="wbg901-product__watermark" aria-hidden="true">WBG901</span>
                 <span class="wbg901-product__accent" aria-hidden="true"></span>
               </figure>
