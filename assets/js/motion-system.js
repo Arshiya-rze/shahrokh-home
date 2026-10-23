@@ -7,9 +7,9 @@
   window.__shahrokhMotionSystemInitialized = true;
 
   gsap.registerPlugin(ScrollTrigger);
-  // Let GSAP handle viewport changes with its built-in debounce, but avoid a
-  // separate late `load` refresh after these scenes have already been measured.
-  ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,resize' });
+  // Refresh only after meaningful viewport changes; mobile browser chrome
+  // changes are handled by stable svh sizing and do not restart story geometry.
+  ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange' });
 
   const stickyOffset = () => Math.ceil(document.querySelector('[data-header]')?.getBoundingClientRect().height || 76) + 24;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -20,6 +20,9 @@
   const mobileStateWatchers = new Set();
   let mobileStateFrame = 0;
   let mobileRevealFrame = 0;
+  let resizeRefreshTimer = 0;
+  let lastMeasuredWidth = window.innerWidth;
+  let lastMeasuredHeight = window.innerHeight;
   const transientAnimations = new Set();
   const trackTransientAnimation = (animation) => {
     if (!animation) return animation;
@@ -192,9 +195,21 @@
     }
   }, { passive: true });
   window.addEventListener('resize', () => {
-    if (mobileStateWatchers.size && !mobileStateFrame) {
-      mobileStateFrame = window.requestAnimationFrame(flushMobileStateWatchers);
-    }
+    if (resizeRefreshTimer) window.clearTimeout(resizeRefreshTimer);
+    resizeRefreshTimer = window.setTimeout(() => {
+      resizeRefreshTimer = 0;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const widthChangedMeaningfully = Math.abs(width - lastMeasuredWidth) >= 24;
+      const heightChangedMeaningfully = Math.abs(height - lastMeasuredHeight) >= 96;
+      if (!widthChangedMeaningfully && !heightChangedMeaningfully) return;
+      lastMeasuredWidth = width;
+      lastMeasuredHeight = height;
+      ScrollTrigger.refresh();
+      if (mobileStateWatchers.size && !mobileStateFrame) {
+        mobileStateFrame = window.requestAnimationFrame(flushMobileStateWatchers);
+      }
+    }, 200);
   }, { passive: true });
 
   const mobileRevealSequence = (trigger, items, profile, start = 'top 82%') => {
@@ -328,7 +343,7 @@
   };
 
   const mobileStoryHeaderOffset = () => Math.ceil(document.querySelector('[data-header]')?.getBoundingClientRect().height || 64) + 10;
-  const buildMobileStickyStory = ({ section, track, stage, states, progressUi, id, hint, onEnter }) => {
+  const buildMobileStickyStory = ({ section, track, stage, states, progressUi, id, hint, onEnter, finalStateClass }) => {
     if (!section || !track || !stage || !states.length) return;
     const headerOffset = mobileStoryHeaderOffset();
     section.style.setProperty('--mobile-story-top', `${headerOffset}px`);
@@ -342,23 +357,35 @@
     let activeIndex = 0;
     let stateTween;
     let entered = false;
+    let hintDismissed = false;
     const setProgress = (progress) => {
       const active = progress < 0.3 ? 0 : progress < 0.62 ? Math.min(1, states.length - 1) : states.length - 1;
       if (active !== activeIndex) {
         const outgoing = states[activeIndex];
         const incoming = states[active];
         stateTween?.kill();
+        if (stateTween) transientAnimations.delete(stateTween);
         states.forEach((item, index) => {
           item.setAttribute('aria-hidden', String(index !== active));
           item.classList.toggle('is-active', index === active);
         });
-        stateTween = gsap.timeline();
+        stateTween = gsap.timeline({
+          onComplete: () => {
+            transientAnimations.delete(stateTween);
+            stateTween = null;
+          },
+        });
+        transientAnimations.add(stateTween);
         stateTween.to(outgoing, { autoAlpha: 0, y: -6, duration: 0.2, ease: 'power2.out' }, 0)
           .fromTo(incoming, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.26, ease: 'power2.out' }, 0.05);
         activeIndex = active;
       }
+      if (finalStateClass) section.classList.toggle(finalStateClass, active === states.length - 1);
       updateStoryProgress(progressUi, active, progress);
-      if (hint) hint.style.opacity = String(Math.max(0, 1 - progress / 0.075));
+      if (!hintDismissed && progress >= 0.06) {
+        hintDismissed = true;
+        if (hint) hint.style.opacity = '0';
+      }
     };
     const story = ScrollTrigger.create({
       id,
@@ -368,7 +395,13 @@
       invalidateOnRefresh: true,
       onEnter: (self) => { entered = true; onEnter?.(); setProgress(self.progress); },
       onEnterBack: (self) => { entered = true; setProgress(self.progress); },
-      onLeaveBack: (self) => { entered = false; setProgress(self.progress); },
+      onLeaveBack: (self) => {
+        entered = false;
+        hintDismissed = false;
+        if (hint) hint.style.opacity = '';
+        if (finalStateClass) section.classList.remove(finalStateClass);
+        setProgress(self.progress);
+      },
       onUpdate: (self) => { if (entered) setProgress(self.progress); },
     });
     const bounds = track.getBoundingClientRect();
@@ -671,6 +704,7 @@
       progressUi: storyProgress,
       id: 'wbg905-mobile-story',
       hint: section.querySelector('[data-product-story-hint]'),
+      finalStateClass: 'is-final-state',
     });
 
     const heading = section.querySelector('.wbg905-product-story__details-heading');
@@ -746,6 +780,7 @@
         progressUi: progress,
         id: 'workspace-mobile-story',
         hint: capabilities.querySelector('[data-capabilities-scroll-hint]'),
+        finalStateClass: 'is-final-state',
         onEnter: () => {
           if (capabilities.dataset.mobileIntroRevealed === 'true') return;
           capabilities.dataset.mobileIntroRevealed = 'true';
@@ -966,6 +1001,7 @@
           wbg905?.classList.remove('is-story-released');
           wbg905?.style.removeProperty('--mobile-story-top');
           wbg905?.querySelector('[data-product-story-hint]')?.style.removeProperty('opacity');
+          wbg905?.classList.remove('is-final-state');
           const productChapters = [...(wbg905?.querySelectorAll('[data-product-chapter]') || [])];
           productChapters.forEach((chapter, index) => {
             chapter.hidden = index !== 0;
@@ -982,6 +1018,7 @@
           capabilities?.style.removeProperty('--workspace-sticky-top');
           capabilities?.style.removeProperty('--mobile-story-top');
           capabilities?.querySelector('[data-capabilities-scroll-hint]')?.style.removeProperty('opacity');
+          capabilities?.classList.remove('is-final-state');
           delete capabilities?.dataset.mobileIntroRevealed;
           const workspaceStates = [...(capabilities?.querySelectorAll('.capabilities-section__benefits li') || [])];
           workspaceStates.forEach((item) => item.setAttribute('aria-hidden', 'false'));
@@ -1016,6 +1053,7 @@
 
     window.addEventListener('pagehide', (event) => {
       if (event.persisted) return;
+      if (resizeRefreshTimer) window.clearTimeout(resizeRefreshTimer);
       motionMatchMedia?.revert();
       killTransientAnimations();
       disconnectMobileObservers();
@@ -1072,12 +1110,15 @@
   };
 
   if (window.matchMedia('(max-width: 767px)').matches) {
-    initializeMotion();
-    if (document.fonts?.status === 'loading') {
-      document.fonts.ready.then(() => {
-        if (window.scrollY <= 1) ScrollTrigger.refresh();
-      });
-    }
+    const initializeMobileAfterStyles = () => {
+      initializeMotion();
+      if (document.fonts?.status === 'loading') {
+        document.fonts.ready.then(() => {
+          if (window.scrollY <= 1) ScrollTrigger.refresh();
+        });
+      }
+    };
+    (window.__shahrokhDeferredStyles?.ready || Promise.resolve()).then(initializeMobileAfterStyles);
   } else if (document.fonts?.ready) document.fonts.ready.then(initializeMotion, initializeMotion);
   else initializeMotion();
 })();
