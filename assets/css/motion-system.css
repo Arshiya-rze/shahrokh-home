@@ -173,6 +173,33 @@ body { overflow-x: clip; }
   opacity: 1;
 }
 
+.wbg905-product-story__video-toggle {
+  position: absolute;
+  z-index: 5;
+  inset-block-start: 10px;
+  inset-inline-end: 10px;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(23, 23, 23, .16);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .9);
+  color: #171717;
+  box-shadow: 0 3px 12px rgba(23, 23, 23, .12);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.wbg905-product-story__video-toggle[hidden] { display: none !important; }
+.wbg905-product-story__video-toggle svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.wbg905-product-story__video-toggle svg[hidden] { display: none !important; }
+.wbg905-product-story__video-toggle:focus-visible { outline: 2px solid var(--color-brand-red, #ed3237); outline-offset: 3px; }
+
+@media (max-width: 767px) {
+  .wbg905-product-story__video-toggle { width: 38px; height: 38px; }
+}
+
 /* Scroll-driven scenes only receive active-state styling when their desktop
    sticky story is initialized; without JS, content stays fully readable. */
 [data-motion-section="wbg905-story"][data-motion-ready="true"] .wbg905-product-story__benefit,

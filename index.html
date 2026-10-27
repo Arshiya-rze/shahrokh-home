@@ -336,7 +336,15 @@
             </div>
           </div>
 
-          <div class="wbg905-product-story__stage" data-product-stage>
+          <div
+            class="wbg905-product-story__stage"
+            data-product-stage
+            data-motion-video
+            data-video-src="assets/videos/wbg905-hero.webm"
+            data-video-fallback-src="assets/videos/wbg905-hero.mp4"
+            data-video-poster="assets/images/posters/wbg905-hero-poster.webp"
+            data-video-loop="true"
+          >
             <img
               class="wbg905-product-story__image"
               src="assets/images/products/wbg905/wbg905-cutout.webp"
@@ -346,6 +354,10 @@
               loading="lazy"
               decoding="async"
             />
+            <button class="wbg905-product-story__video-toggle" type="button" data-video-toggle aria-label="توقف پویانمایی محصول" aria-pressed="true" hidden>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" data-video-icon-pause><path d="M8 5v14M16 5v14" /></svg>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" data-video-icon-play hidden><path d="m9 6 10 6-10 6V6Z" /></svg>
+            </button>
             <div class="wbg905-product-story__callout wbg905-product-story__callout--panel" data-product-callout>
               <span class="wbg905-product-story__callout-line" aria-hidden="true"></span>
               <span class="wbg905-product-story__callout-dot" aria-hidden="true"></span>
@@ -542,7 +554,7 @@
           <div class="capabilities-section__track workspace-mobile-story-track" data-workspace-track>
             <div class="capabilities-section__scene workspace-mobile-sticky-stage" data-capabilities-scene>
               <figure class="capabilities-section__visual">
-                <div class="capabilities-section__media" data-motion="media" data-motion-video>
+                <div class="capabilities-section__media" data-motion="media">
                   <picture class="capabilities-section__workshop-picture">
                     <source media="(max-width: 599px)" srcset="assets/images/capabilities/workshop-mobile.webp 566w" sizes="calc(100vw - 32px)" />
                     <img class="capabilities-section__workshop" src="assets/images/posters/wbg905-hero-poster.webp" srcset="assets/images/posters/wbg905-hero-poster.webp 1280w" sizes="(min-width: 1600px) 54vw, (min-width: 1024px) 52vw, 100vw" alt="میز کار صنعتی واقعی شاهرخ WBG905 در فضای کارگاهی" width="1280" height="704" loading="lazy" decoding="async" />

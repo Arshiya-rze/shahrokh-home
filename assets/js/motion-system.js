@@ -1048,7 +1048,7 @@
 
   // Loading may begin near the viewport; playback is governed by a separate
   // zero-margin observer so no visible motion starts while media is offscreen.
-    if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
+    if (!('IntersectionObserver' in window)) return;
     const videoHosts = [...document.querySelectorAll('[data-motion-video][data-video-src]')];
     if (!videoHosts.length) return;
 
@@ -1058,10 +1058,58 @@
         if (!video) return;
         const active = isIntersecting && intersectionRatio >= 0.55;
         host.dataset.videoActive = String(active);
-        if (active) video.play().then(() => host.classList.add('has-motion-video')).catch(() => {});
-        else video.pause();
+        if (active && host.dataset.videoUserPaused !== 'true' && !reducedMotion.matches) {
+          video.play().then(() => {
+            if (video.paused || host.dataset.videoActive !== 'true' || reducedMotion.matches) {
+              updateVideoToggle(host, false);
+              return;
+            }
+            host.classList.add('has-motion-video');
+            updateVideoToggle(host, true);
+          }).catch(() => {});
+        } else {
+          video.pause();
+          updateVideoToggle(host, false);
+        }
       });
     }, { rootMargin: '0px', threshold: [0, 0.1, 0.55, 0.75] });
+
+    const updateVideoToggle = (host, isPlaying) => {
+      const button = host.querySelector('[data-video-toggle]');
+      if (!button) return;
+      button.hidden = !host.classList.contains('has-motion-video');
+      button.setAttribute('aria-pressed', String(isPlaying));
+      button.setAttribute('aria-label', isPlaying ? 'توقف پویانمایی محصول' : 'پخش پویانمایی محصول');
+      const pauseIcon = button.querySelector('[data-video-icon-pause]');
+      const playIcon = button.querySelector('[data-video-icon-play]');
+      if (pauseIcon) pauseIcon.hidden = !isPlaying;
+      if (playIcon) playIcon.hidden = isPlaying;
+    };
+
+    videoHosts.forEach((host) => {
+      const button = host.querySelector('[data-video-toggle]');
+      if (!button) return;
+      button.addEventListener('click', () => {
+        const video = host.__motionVideo;
+        if (!video) return;
+        if (!video.paused) {
+          host.dataset.videoUserPaused = 'true';
+          video.pause();
+          updateVideoToggle(host, false);
+          return;
+        }
+        host.dataset.videoUserPaused = 'false';
+        if (reducedMotion.matches) return;
+        video.play().then(() => {
+          if (video.paused || reducedMotion.matches || host.dataset.videoUserPaused === 'true') {
+            updateVideoToggle(host, false);
+            return;
+          }
+          host.classList.add('has-motion-video');
+          updateVideoToggle(host, true);
+        }).catch(() => updateVideoToggle(host, false));
+      });
+    });
 
     preloadObserver = new IntersectionObserver((entries) => {
       entries.forEach(({ target: host, isIntersecting }) => {
@@ -1081,17 +1129,42 @@
           host.classList.remove('has-motion-video');
           host.dataset.videoFailed = 'true';
           host.__motionVideo = null;
+          updateVideoToggle(host, false);
           video.remove();
         }, { once: true });
         host.__motionVideo = video;
         host.append(video);
-        video.src = source;
+        [source, host.dataset.videoFallbackSrc].filter(Boolean).forEach((url) => {
+          const videoSource = document.createElement('source');
+          videoSource.src = url;
+          videoSource.type = /\.webm(?:$|\?)/i.test(url) ? 'video/webm' : 'video/mp4';
+          video.append(videoSource);
+        });
         video.load();
         playbackObserver.observe(host);
       });
     }, { rootMargin: '400px 0px', threshold: 0 });
 
-    videoHosts.forEach((host) => preloadObserver.observe(host));
+    reducedMotionChangeHandler = () => {
+      if (reducedMotion.matches) {
+        playbackObserver.disconnect();
+        preloadObserver.disconnect();
+        videoHosts.forEach((host) => {
+          host.__motionVideo?.pause();
+          host.classList.remove('has-motion-video');
+          host.dataset.videoActive = 'false';
+          updateVideoToggle(host, false);
+        });
+        return;
+      }
+      videoHosts.forEach((host) => {
+        host.dataset.videoUserPaused = 'false';
+        if (host.__motionVideo) playbackObserver.observe(host);
+        else preloadObserver.observe(host);
+      });
+    };
+    reducedMotion.addEventListener('change', reducedMotionChangeHandler);
+    if (!reducedMotion.matches) videoHosts.forEach((host) => preloadObserver.observe(host));
   };
 
   if (window.matchMedia('(max-width: 767px)').matches) {
