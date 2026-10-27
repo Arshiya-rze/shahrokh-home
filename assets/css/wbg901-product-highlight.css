@@ -97,6 +97,15 @@
 @media (max-width: 375px) {
   .wbg901-product__shell { width: calc(100% - 32px); }
 }
+@media (max-width: 1023px) {
+  .wbg901-product__main-image {
+    inset: 0;
+    width: 100%;
+    max-width: 100%;
+    transform: none;
+    object-position: center;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .wbg901-product *, .wbg901-product *::before, .wbg901-product *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
