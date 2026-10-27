@@ -45,7 +45,6 @@
 .wbg901-product__cta { display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 12px; padding: 0 20px; border-radius: 13px; background: var(--wbg901-red); color: white; font-size: 15px; font-weight: 800; text-decoration: none; }
 .wbg901-product__cta span { font: 22px/1 Arial,sans-serif; }
 .wbg901-product :is(a,button):focus-visible { outline: 2px solid var(--wbg901-red); outline-offset: 4px; }
-.wbg901-product [data-wbg901-reveal] { opacity: 1; transform: none; }
 
 @media (min-width: 600px) {
   .wbg901-product { padding-block: 64px 80px; }
