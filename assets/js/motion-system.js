@@ -344,7 +344,7 @@
   };
 
   const mobileStoryHeaderOffset = () => Math.ceil(document.querySelector('[data-header]')?.getBoundingClientRect().height || 64) + 10;
-  const buildMobileStickyStory = ({ section, track, stage, states, progressUi, id, hint, onEnter, finalStateClass }) => {
+  const buildMobileStickyStory = ({ section, track, stage, states, progressUi, id, hint, onEnter, finalStateClass, sequentialTransitions = false, onProgress }) => {
     if (!section || !track || !stage || !states.length) return;
     const headerOffset = mobileStoryHeaderOffset();
     section.style.setProperty('--mobile-story-top', `${headerOffset}px`);
@@ -369,7 +369,14 @@
         states.forEach((item, index) => {
           item.setAttribute('aria-hidden', String(index !== active));
           item.classList.toggle('is-active', index === active);
+          if (sequentialTransitions && item !== outgoing && item !== incoming) {
+            gsap.set(item, { autoAlpha: 0, y: 8 });
+          }
         });
+        if (sequentialTransitions) {
+          gsap.set(outgoing, { autoAlpha: 1, y: 0 });
+          gsap.set(incoming, { autoAlpha: 0, y: 8 });
+        }
         stateTween = gsap.timeline({
           onComplete: () => {
             transientAnimations.delete(stateTween);
@@ -377,13 +384,19 @@
           },
         });
         transientAnimations.add(stateTween);
-        stateTween.to(outgoing, { autoAlpha: 0, y: -6, duration: 0.2, ease: 'power2.out' }, 0)
-          .fromTo(incoming, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.26, ease: 'power2.out' }, 0.05);
+        if (sequentialTransitions) {
+          stateTween.to(outgoing, { autoAlpha: 0, y: -5, duration: 0.12, ease: 'power1.out' })
+            .fromTo(incoming, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.24, ease: 'power2.out' }, '>');
+        } else {
+          stateTween.to(outgoing, { autoAlpha: 0, y: -6, duration: 0.2, ease: 'power2.out' }, 0)
+            .fromTo(incoming, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.26, ease: 'power2.out' }, 0.05);
+        }
         activeIndex = active;
       }
       section.dataset.storyState = String(active + 1);
       stage.dataset.storyState = String(active + 1);
       if (finalStateClass) section.classList.toggle(finalStateClass, active === states.length - 1);
+      onProgress?.(progress, active);
       updateStoryProgress(progressUi, active, progress);
       if (!hintDismissed && progress >= 0.06) {
         hintDismissed = true;
@@ -445,7 +458,7 @@
         { at: 0.34, x: -16, y: -6, scale: 1.13 },
         { at: 0.67, x: 13, y: 5, scale: 1.12 },
         { at: 0.8, x: -7, y: -3, scale: 1.14 },
-        { at: 0.84, x: 0, y: 0, scale: 1.07 },
+        { at: 0.9, x: 0, y: 0, scale: 1.07 },
         { at: 1, x: 0, y: 0, scale: 1.07 },
       ];
       let lastBenefit = -1;
@@ -459,7 +472,6 @@
         }
         const outgoing = chapters[currentChapter];
         const incoming = chapters[nextIndex];
-        const direction = nextIndex > currentChapter ? -1 : 1;
         currentChapter = nextIndex;
         chapters.forEach((chapter) => {
           const isTransitionParticipant = chapter === outgoing || chapter === incoming;
@@ -468,8 +480,8 @@
           chapter.classList.toggle('is-active', chapter === incoming);
           if (!isTransitionParticipant) gsap.set(chapter, { clearProps: 'opacity,visibility,transform' });
         });
-        gsap.set(outgoing, { autoAlpha: 1, x: 0, rotationY: 0 });
-        gsap.set(incoming, { autoAlpha: 0, x: direction * -22, rotationY: direction * -8 });
+        gsap.set(outgoing, { autoAlpha: 1, y: 0 });
+        gsap.set(incoming, { autoAlpha: 0, y: 6 });
         chapterTimeline = gsap.timeline({
           onComplete: () => {
             outgoing.hidden = true;
@@ -481,12 +493,12 @@
         });
         transientAnimations.add(chapterTimeline);
         chapterTimeline
-          .to(outgoing, { autoAlpha: 0, x: direction * 22, rotationY: direction * 8, duration: 0.18, ease: 'power1.in' })
+          .to(outgoing, { autoAlpha: 0, y: -5, duration: 0.14, ease: 'power1.out' })
           .add(() => {
             outgoing.hidden = true;
             gsap.set(outgoing, { clearProps: 'opacity,visibility,transform' });
           })
-          .to(incoming, { autoAlpha: 1, x: 0, rotationY: 0, duration: 0.34, ease: 'power2.out' });
+          .to(incoming, { autoAlpha: 1, y: 0, duration: 0.24, ease: 'power2.out' });
       };
       const update = (progress) => {
         const poseIndex = productPoses.findIndex((pose) => progress <= pose.at);
@@ -532,20 +544,17 @@
         start: `top ${stickyTop}px`,
         end: () => `bottom ${stickyTop + overview.offsetHeight}px`,
         invalidateOnRefresh: true,
-        onLeave: () => section.classList.add('is-story-released'),
         onEnter: (self) => {
           storyHasEnteredViewport = true;
           update(self.progress);
         },
         onEnterBack: (self) => {
           storyHasEnteredViewport = true;
-          section.classList.remove('is-story-released');
           update(self.progress);
         },
         onLeaveBack: (self) => {
           if (storyHasEnteredViewport) update(self.progress);
           storyHasEnteredViewport = false;
-          section.classList.remove('is-story-released');
         },
         onUpdate: (self) => {
           if (storyHasEnteredViewport) update(self.progress);
@@ -672,6 +681,13 @@
 
     if (!section || !overview || !stage || !chapters.length) return;
     section.dataset.mobileMotionReady = 'true';
+    const mediaPoses = [
+      { at: 0, x: 0, y: 0, scale: 1 },
+      { at: 0.34, x: -3, y: -1, scale: 1.01 },
+      { at: 0.67, x: 3, y: 1, scale: 1.018 },
+      { at: 0.9, x: -2, y: 0, scale: 1.015 },
+      { at: 1, x: -2, y: 0, scale: 1.015 },
+    ];
     chapters.forEach((chapter) => {
       chapter.hidden = false;
       chapter.setAttribute('aria-hidden', 'false');
@@ -686,6 +702,20 @@
       id: 'wbg905-mobile-story',
       hint: section.querySelector('[data-product-story-hint]'),
       finalStateClass: 'is-final-state',
+      sequentialTransitions: true,
+      onProgress: (progress) => {
+        const poseIndex = mediaPoses.findIndex((pose) => progress <= pose.at);
+        const from = mediaPoses[Math.max(0, poseIndex - 1)];
+        const to = mediaPoses[poseIndex < 0 ? mediaPoses.length - 1 : poseIndex];
+        const segmentProgress = to.at === from.at ? 1 : Math.max(0, Math.min(1, (progress - from.at) / (to.at - from.at)));
+        const easedProgress = segmentProgress * segmentProgress * (3 - 2 * segmentProgress);
+        const x = from.x + (to.x - from.x) * easedProgress;
+        const y = from.y + (to.y - from.y) * easedProgress;
+        const scale = from.scale + (to.scale - from.scale) * easedProgress;
+        section.style.setProperty('--wbg905-mobile-media-x', `${x.toFixed(2)}px`);
+        section.style.setProperty('--wbg905-mobile-media-y', `${y.toFixed(2)}px`);
+        section.style.setProperty('--wbg905-mobile-media-scale', scale.toFixed(4));
+      },
     });
 
     const heading = section.querySelector('.wbg905-product-story__details-heading');
@@ -979,7 +1009,6 @@
             item.classList.remove('is-active');
           });
           const wbg905 = document.querySelector('[data-motion-section="wbg905-story"]');
-          wbg905?.classList.remove('is-story-released');
           wbg905?.style.removeProperty('--mobile-story-top');
           wbg905?.querySelector('[data-product-story-hint]')?.style.removeProperty('opacity');
           wbg905?.classList.remove('is-final-state');
@@ -995,6 +1024,9 @@
           wbg905?.style.removeProperty('--wbg905-product-x');
           wbg905?.style.removeProperty('--wbg905-product-y');
           wbg905?.style.removeProperty('--wbg905-product-scale');
+          wbg905?.style.removeProperty('--wbg905-mobile-media-x');
+          wbg905?.style.removeProperty('--wbg905-mobile-media-y');
+          wbg905?.style.removeProperty('--wbg905-mobile-media-scale');
           const capabilities = document.querySelector('[data-motion-section="capabilities"]');
           capabilities?.classList.toggle('is-story-started', capabilities?.dataset.workspaceHintDismissed === 'true');
           capabilities?.style.removeProperty('--workspace-sticky-top');

@@ -456,7 +456,9 @@
     color: var(--color-text-muted, #666);
     font-size: .8rem;
     text-align: center;
-    direction: rtl;
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
   }
   .wbg905-product-story__final > img {
     border-radius: 12px;

@@ -30,6 +30,13 @@ body { overflow-x: clip; }
 .wbg905-product-story__story-progress,
 .capabilities-section__story-progress { display: none; }
 
+[data-product-story-count],
+[data-capabilities-story-count] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
 @media (min-width: 1200px) and (prefers-reduced-motion: no-preference) {
   .wbg905-product-story__story-progress {
     display: flex;
@@ -68,7 +75,7 @@ body { overflow-x: clip; }
   [data-motion-section="wbg905-story"] .wbg905-product-story__track {
     --wbg905-stage-height: min(680px, calc(100svh - var(--wbg905-sticky-top, 100px) - 24px));
     position: relative;
-    height: calc(var(--wbg905-stage-height) + 96svh);
+    height: calc(var(--wbg905-stage-height) + 86svh);
   }
   [data-motion-section="wbg905-story"] .wbg905-product-story__overview {
     position: sticky;
@@ -227,8 +234,6 @@ body { overflow-x: clip; }
   opacity: 0;
   transition: opacity .28s ease;
 }
-
-[data-motion-section="wbg905-story"][data-motion-ready="true"].is-story-released .wbg905-product-story__ghost { opacity: 1; }
 
 [data-motion-section="capabilities"][data-motion-ready="true"] .capabilities-section__benefits li {
   opacity: .58;
@@ -564,7 +569,7 @@ body { overflow-x: clip; }
   }
   [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"] .wbg905-mobile-story-track {
     position: relative;
-    height: calc(var(--mobile-story-height) + 118svh);
+    height: calc(var(--mobile-story-height) + 82svh);
     padding-block: 0;
   }
   [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"] .wbg905-mobile-sticky-stage {
@@ -595,6 +600,10 @@ body { overflow-x: clip; }
     overflow: hidden;
   }
   [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"] .wbg905-product-story__image { width: 100%; height: 100%; }
+  [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"] .wbg905-product-story__stage :is(.wbg905-product-story__image, .motion-video) {
+    translate: var(--wbg905-mobile-media-x, 0px) var(--wbg905-mobile-media-y, 0px);
+    scale: var(--wbg905-mobile-media-scale, 1);
+  }
   [data-motion-section="wbg905-story"][data-mobile-motion-ready="true"] .wbg905-product-story__chapters {
     grid-area: chapters;
     display: grid;
