@@ -46,11 +46,22 @@
         let pending = 11;
         let resolveReady;
         const ready = new Promise((resolve) => { resolveReady = resolve; });
+        const mobileViewport = window.matchMedia("(max-width: 767px)");
+        const activateMobileStyles = () => {
+          if (!mobileViewport.matches) return;
+          document.querySelectorAll('link[rel="stylesheet"][media][href^="assets/css/"]').forEach((link) => {
+            if (link.media === "(min-width: 768px)") link.media = "all";
+          });
+        };
+        mobileViewport.addEventListener("change", activateMobileStyles);
         return {
           ready,
           finish() {
             pending -= 1;
-            if (pending === 0) resolveReady();
+            if (pending === 0) {
+              activateMobileStyles();
+              resolveReady();
+            }
           },
         };
       })();

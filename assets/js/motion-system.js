@@ -16,9 +16,10 @@
   let motionMatchMedia;
   let preloadObserver;
   let playbackObserver;
+  let reducedMotionChangeHandler;
   const mobileRevealObservers = new Map();
-  const mobileStateWatchers = new Set();
-  let mobileStateFrame = 0;
+  const viewportStateWatchers = new Set();
+  let viewportStateFrame = 0;
   let mobileRevealFrame = 0;
   let resizeRefreshTimer = 0;
   let lastMeasuredWidth = window.innerWidth;
@@ -37,10 +38,10 @@
   const disconnectMobileObservers = () => {
     mobileRevealObservers.forEach(({ observer }) => observer.disconnect());
     mobileRevealObservers.clear();
-    mobileStateWatchers.clear();
-    if (mobileStateFrame) window.cancelAnimationFrame(mobileStateFrame);
+    viewportStateWatchers.clear();
+    if (viewportStateFrame) window.cancelAnimationFrame(viewportStateFrame);
     if (mobileRevealFrame) window.cancelAnimationFrame(mobileRevealFrame);
-    mobileStateFrame = 0;
+    viewportStateFrame = 0;
     mobileRevealFrame = 0;
   };
   const motionProfiles = [
@@ -181,17 +182,17 @@
     });
   };
 
-  const flushMobileStateWatchers = () => {
-    mobileStateFrame = 0;
-    mobileStateWatchers.forEach((update) => update());
+  const flushViewportStateWatchers = () => {
+    viewportStateFrame = 0;
+    viewportStateWatchers.forEach((update) => update());
   };
 
   window.addEventListener('scroll', () => {
     if (mobileRevealObservers.size && !mobileRevealFrame) {
       mobileRevealFrame = window.requestAnimationFrame(flushPassedMobileReveals);
     }
-    if (mobileStateWatchers.size && !mobileStateFrame) {
-      mobileStateFrame = window.requestAnimationFrame(flushMobileStateWatchers);
+    if (viewportStateWatchers.size && !viewportStateFrame) {
+      viewportStateFrame = window.requestAnimationFrame(flushViewportStateWatchers);
     }
   }, { passive: true });
   window.addEventListener('resize', () => {
@@ -206,8 +207,8 @@
       lastMeasuredWidth = width;
       lastMeasuredHeight = height;
       ScrollTrigger.refresh();
-      if (mobileStateWatchers.size && !mobileStateFrame) {
-        mobileStateFrame = window.requestAnimationFrame(flushMobileStateWatchers);
+      if (viewportStateWatchers.size && !viewportStateFrame) {
+        viewportStateFrame = window.requestAnimationFrame(flushViewportStateWatchers);
       }
     }, 200);
   }, { passive: true });
@@ -291,7 +292,7 @@
     });
   };
 
-  const mobileActivateOnCenter = (items, { start = 'center 58%', onActive = null } = {}) => {
+  const activateOnViewportCenter = (items, { start = 'center 58%', onActive = null } = {}) => {
     if (!items?.length) return;
     const activate = (index) => {
       setActiveItem(items, index);
@@ -318,7 +319,7 @@
       });
       activate(nearest);
     };
-    mobileStateWatchers.add(update);
+    viewportStateWatchers.add(update);
     update();
     return activate;
   };
@@ -359,7 +360,7 @@
     let entered = false;
     let hintDismissed = false;
     const setProgress = (progress) => {
-      const active = progress < 0.3 ? 0 : progress < 0.62 ? Math.min(1, states.length - 1) : states.length - 1;
+      const active = progress < 0.34 ? 0 : progress < 0.68 ? Math.min(1, states.length - 1) : states.length - 1;
       if (active !== activeIndex) {
         const outgoing = states[activeIndex];
         const incoming = states[active];
@@ -380,6 +381,8 @@
           .fromTo(incoming, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.26, ease: 'power2.out' }, 0.05);
         activeIndex = active;
       }
+      section.dataset.storyState = String(active + 1);
+      stage.dataset.storyState = String(active + 1);
       if (finalStateClass) section.classList.toggle(finalStateClass, active === states.length - 1);
       updateStoryProgress(progressUi, active, progress);
       if (!hintDismissed && progress >= 0.06) {
@@ -399,6 +402,8 @@
         entered = false;
         hintDismissed = false;
         if (hint) hint.style.opacity = '';
+        section.dataset.storyState = '1';
+        stage.dataset.storyState = '1';
         if (finalStateClass) section.classList.remove(finalStateClass);
         setProgress(self.progress);
       },
@@ -416,6 +421,7 @@
     const stage = section?.querySelector('.wbg905-product-story__stage');
     const product = stage?.querySelector('.wbg905-product-story__image');
     const callouts = [...(stage?.querySelectorAll('.wbg905-product-story__callout') || [])];
+    const benefits = [...(section?.querySelectorAll('.wbg905-product-story__benefit') || [])];
     const overview = section?.querySelector('.wbg905-product-story__overview');
     const track = section?.querySelector('[data-product-track]');
     const chapters = [...(section?.querySelectorAll('[data-product-chapter]') || [])];
@@ -436,35 +442,39 @@
       let chapterTimeline;
       const productPoses = [
         { at: 0, x: 0, y: 0, scale: 1.07 },
-        { at: 0.28, x: -20, y: -8, scale: 1.15 },
-        { at: 0.56, x: 17, y: 7, scale: 1.125 },
-        { at: 0.82, x: -14, y: -7, scale: 1.155 },
-        { at: 0.88, x: 0, y: 0, scale: 1.07 },
+        { at: 0.34, x: -16, y: -6, scale: 1.13 },
+        { at: 0.67, x: 13, y: 5, scale: 1.12 },
+        { at: 0.8, x: -7, y: -3, scale: 1.14 },
+        { at: 0.84, x: 0, y: 0, scale: 1.07 },
         { at: 1, x: 0, y: 0, scale: 1.07 },
       ];
       let lastBenefit = -1;
-      let lastCallout = -1;
+      let lastCalloutGroup = '';
       let storyHasEnteredViewport = false;
       const turnToChapter = (nextIndex) => {
-        if (!chapters[nextIndex]) return;
+        if (!chapters[nextIndex] || nextIndex === currentChapter) return;
         if (chapterTimeline) {
           chapterTimeline.kill();
           transientAnimations.delete(chapterTimeline);
         }
-        chapters.forEach((chapter, index) => {
-          chapter.hidden = index !== currentChapter;
-          chapter.setAttribute('aria-hidden', String(index !== currentChapter));
-          chapter.classList.toggle('is-active', index === currentChapter);
-        });
-        gsap.set(chapters, { clearProps: 'opacity,visibility,transform' });
-        if (nextIndex === currentChapter) return;
-
         const outgoing = chapters[currentChapter];
         const incoming = chapters[nextIndex];
         const direction = nextIndex > currentChapter ? -1 : 1;
+        currentChapter = nextIndex;
+        chapters.forEach((chapter) => {
+          const isTransitionParticipant = chapter === outgoing || chapter === incoming;
+          chapter.hidden = !isTransitionParticipant;
+          chapter.setAttribute('aria-hidden', String(chapter !== incoming));
+          chapter.classList.toggle('is-active', chapter === incoming);
+          if (!isTransitionParticipant) gsap.set(chapter, { clearProps: 'opacity,visibility,transform' });
+        });
+        gsap.set(outgoing, { autoAlpha: 1, x: 0, rotationY: 0 });
+        gsap.set(incoming, { autoAlpha: 0, x: direction * -22, rotationY: direction * -8 });
         chapterTimeline = gsap.timeline({
           onComplete: () => {
-            currentChapter = nextIndex;
+            outgoing.hidden = true;
+            outgoing.setAttribute('aria-hidden', 'true');
+            gsap.set(outgoing, { clearProps: 'opacity,visibility,transform' });
             transientAnimations.delete(chapterTimeline);
             chapterTimeline = null;
           },
@@ -474,12 +484,7 @@
           .to(outgoing, { autoAlpha: 0, x: direction * 22, rotationY: direction * 8, duration: 0.18, ease: 'power1.in' })
           .add(() => {
             outgoing.hidden = true;
-            outgoing.setAttribute('aria-hidden', 'true');
-            outgoing.classList.remove('is-active');
-            incoming.hidden = false;
-            incoming.setAttribute('aria-hidden', 'false');
-            incoming.classList.add('is-active');
-            gsap.set(incoming, { autoAlpha: 0, x: direction * -22, rotationY: direction * -8 });
+            gsap.set(outgoing, { clearProps: 'opacity,visibility,transform' });
           })
           .to(incoming, { autoAlpha: 1, x: 0, rotationY: 0, duration: 0.34, ease: 'power2.out' });
       };
@@ -498,16 +503,25 @@
         section.style.setProperty('--wbg905-product-y', `${pose.y.toFixed(2)}px`);
         section.style.setProperty('--wbg905-product-scale', pose.scale.toFixed(4));
 
-        const active = progress < 0.28 ? 0 : progress < 0.56 ? 1 : 2;
-        const calloutIndex = progress < 0.28 ? 0 : progress < 0.56 ? 1 : progress < 0.72 ? 2 : 3;
+        const active = progress < 0.34 ? 0 : progress < 0.67 ? 1 : 2;
+        const calloutGroup = progress < 0.34 ? 'panel' : progress < 0.67 ? 'storage' : 'durability';
         if (active !== lastBenefit) {
           setActiveItem(benefits, active);
           turnToChapter(active);
+          section.dataset.storyState = String(active + 1);
+          section.classList.toggle('is-final-state', active === 2);
           lastBenefit = active;
         }
-        if (calloutIndex !== lastCallout) {
-          callouts.forEach((item, index) => item.classList.toggle('is-active', index === calloutIndex));
-          lastCallout = calloutIndex;
+        if (calloutGroup !== lastCalloutGroup) {
+          callouts.forEach((item, index) => {
+            const activeCallout = calloutGroup === 'panel'
+              ? index === 0
+              : calloutGroup === 'storage'
+                ? index === 3
+                : index === 1 || index === 2;
+            item.classList.toggle('is-active', activeCallout);
+          });
+          lastCalloutGroup = calloutGroup;
         }
         updateStoryProgress(storyProgress, active, progress);
       };
@@ -586,10 +600,14 @@
       let lastActive = -1;
       const update = (progress) => {
         const active = overlays.length
-          ? (progress < 0.28 ? 0 : progress < 0.58 ? Math.min(1, overlays.length - 1) : overlays.length - 1)
+          ? (progress < 0.34 ? 0 : progress < 0.68 ? Math.min(1, overlays.length - 1) : overlays.length - 1)
           : -1;
         if (active !== lastActive) {
           setActiveItem(overlays, active);
+          if (active >= 0) {
+            section.dataset.storyState = String(active + 1);
+            sceneRoot.dataset.storyState = String(active + 1);
+          }
           lastActive = active;
         }
         updateStoryProgress(storyProgress, active, progress);
@@ -628,53 +646,16 @@
     revealGroup(process, [...(process?.querySelectorAll(':scope > li') || [])], profile, { start: 'top 82%', y: 10 });
   };
 
-  const buildWbg901Progression = (profile, stickyTop) => {
+  const buildWbg901Progression = (profile) => {
     const section = document.querySelector('[data-motion-section="wbg901"]');
-    const track = section?.querySelector('[data-wbg901-track]');
-    const scene = section?.querySelector('[data-wbg901-scene]');
     const stage = section?.querySelector('.wbg901-product__stage');
     const image = stage?.querySelector('.wbg901-product__main-image');
     const features = [...(section?.querySelectorAll('.wbg901-product__features > li') || [])];
     if (!section || !stage) return;
     setActiveItem(features, 0);
-
-    if (window.innerWidth >= 1024 && track && scene && features.length) {
-      section.style.setProperty('--wbg901-sticky-top', `${stickyTop}px`);
-      let storyHasEnteredViewport = false;
-      const update = (progress) => {
-        const active = Math.min(features.length - 1, Math.floor(Math.min(0.999999, Math.max(0, progress)) * features.length));
-        setActiveItem(features, active);
-      };
-      const story = ScrollTrigger.create({
-        id: 'wbg901-product-story',
-        trigger: track,
-        start: `top ${stickyTop}px`,
-        end: () => `bottom ${stickyTop + scene.offsetHeight}px`,
-        invalidateOnRefresh: true,
-        onEnter: (self) => {
-          storyHasEnteredViewport = true;
-          update(self.progress);
-        },
-        onEnterBack: (self) => {
-          storyHasEnteredViewport = true;
-          update(self.progress);
-        },
-        onLeave: () => { storyHasEnteredViewport = false; },
-        onLeaveBack: (self) => {
-          if (storyHasEnteredViewport) update(self.progress);
-          storyHasEnteredViewport = false;
-        },
-        onUpdate: (self) => { if (storyHasEnteredViewport) update(self.progress); },
-      });
-      const trackBounds = track.getBoundingClientRect();
-      if (trackBounds.top < window.innerHeight && trackBounds.bottom > 0) {
-        storyHasEnteredViewport = true;
-        update(story.progress);
-      }
-    } else {
-      revealMediaOnce(stage, stage, image, profile, { start: 'top 78%', fromScale: 1.025 });
-      revealGroup(section.querySelector('.wbg901-product__features'), features, profile, { start: 'top 78%', y: 10 });
-    }
+    revealMediaOnce(stage, stage, image, profile, { start: 'top 78%', fromScale: 1.025 });
+    revealGroup(section.querySelector('.wbg901-product__features'), features, profile, { start: 'top 78%', y: 10 });
+    activateOnViewportCenter(features, { start: 'center 58%' });
     enterOnce(section.querySelector('.wbg901-product__intro'), { start: 'top 74%', y: profile.y, duration: profile.reveal });
     enterOnce(section.querySelector('.wbg901-product__actions'), { start: 'top 82%', y: 12, duration: profile.reveal });
   };
@@ -730,7 +711,7 @@
         { element: content.querySelector('.about-shahrokh__cta'), y: 8, duration: 0.44, at: 0.32 },
       ], profile);
       const media = about.querySelector('.about-shahrokh__media');
-      mobileRevealMedia(media, media, media?.querySelector('img'));
+      mobileRevealMedia(media, media, media?.querySelector('img'), { fromScale: 1.025 });
       const features = [...about.querySelectorAll('.about-shahrokh__features > li')];
       mobileStagger(about.querySelector('.about-shahrokh__features'), features, profile, { y: 14, batchMax: 2 });
     }
@@ -832,7 +813,7 @@
       const stage = wbg901.querySelector('.wbg901-product__stage');
       mobileRevealMedia(stage, stage, stage?.querySelector('.wbg901-product__main-image'), { fromScale: 0.97 });
       const features = [...wbg901.querySelectorAll('.wbg901-product__features > li')];
-      mobileActivateOnCenter(features, { start: 'center 60%' });
+      activateOnViewportCenter(features, { start: 'center 60%' });
       const actions = wbg901.querySelector('.wbg901-product__actions');
       mobileRevealSequence(actions, [{ element: actions, y: 10, duration: 0.46, at: 0 }], profile);
       const details = wbg901.querySelector('[data-wbg901-gallery]');
@@ -882,7 +863,7 @@
         { element: content.querySelector('.about-shahrokh__cta'), y: 8, duration: 0.42, at: 0.34 },
       ], profile, 'top 72%');
       const media = about.querySelector('.about-shahrokh__media');
-      revealMediaOnce(media, media, media?.querySelector('img'), profile, { start: 'top 78%', fromScale: 1.035 });
+      revealMediaOnce(media, media, media?.querySelector('img'), profile, { start: 'top 78%', fromScale: 1.025 });
       const benefits = [...about.querySelectorAll('.about-shahrokh__features > li')];
       revealGroup(about.querySelector('.about-shahrokh__features'), benefits, profile, { start: 'top 82%', y: 12 });
     }
@@ -953,7 +934,7 @@
       revealGroup(lower, [...(lower?.querySelectorAll('.industry-applications__benefit-list > li') || [])], profile, { start: 'top 82%', y: 10 });
     }
 
-    buildWbg901Progression(profile, stickyTop);
+    buildWbg901Progression(profile);
 
     const brand = document.querySelector('[data-motion-section="brand"]');
     if (brand) {
@@ -1002,6 +983,7 @@
           wbg905?.style.removeProperty('--mobile-story-top');
           wbg905?.querySelector('[data-product-story-hint]')?.style.removeProperty('opacity');
           wbg905?.classList.remove('is-final-state');
+          delete wbg905?.dataset.storyState;
           const productChapters = [...(wbg905?.querySelectorAll('[data-product-chapter]') || [])];
           productChapters.forEach((chapter, index) => {
             chapter.hidden = index !== 0;
@@ -1019,6 +1001,9 @@
           capabilities?.style.removeProperty('--mobile-story-top');
           capabilities?.querySelector('[data-capabilities-scroll-hint]')?.style.removeProperty('opacity');
           capabilities?.classList.remove('is-final-state');
+          delete capabilities?.dataset.storyState;
+          const workspaceScene = capabilities?.querySelector('[data-capabilities-scene]');
+          if (workspaceScene) delete workspaceScene.dataset.storyState;
           delete capabilities?.dataset.mobileIntroRevealed;
           const workspaceStates = [...(capabilities?.querySelectorAll('.capabilities-section__benefits li') || [])];
           workspaceStates.forEach((item) => item.setAttribute('aria-hidden', 'false'));
@@ -1026,7 +1011,6 @@
           const wbg901 = document.querySelector('[data-motion-section="wbg901"]');
           const wbg901Features = [...(wbg901?.querySelectorAll('.wbg901-product__features > li') || [])];
           setActiveItem(wbg901Features, 0);
-          wbg901?.style.removeProperty('--wbg901-sticky-top');
         };
       });
     });
@@ -1054,6 +1038,7 @@
     window.addEventListener('pagehide', (event) => {
       if (event.persisted) return;
       if (resizeRefreshTimer) window.clearTimeout(resizeRefreshTimer);
+      if (reducedMotionChangeHandler) reducedMotion.removeEventListener('change', reducedMotionChangeHandler);
       motionMatchMedia?.revert();
       killTransientAnimations();
       disconnectMobileObservers();
